@@ -1,9 +1,9 @@
 package org.homo.orderdemo.model;
 
-import org.homo.pocket.annotation.Column;
-import org.homo.pocket.annotation.Entity;
-import org.homo.pocket.annotation.ManyToOne;
-import org.homo.pocket.model.BaseEntity;
+import org.hunter.pocket.annotation.Column;
+import org.hunter.pocket.annotation.Entity;
+import org.hunter.pocket.annotation.ManyToOne;
+import org.hunter.pocket.model.BaseEntity;
 
 import java.math.BigDecimal;
 

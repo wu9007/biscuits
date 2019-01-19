@@ -1,8 +1,9 @@
 package org.homo.authority.model;
 
-import org.homo.pocket.annotation.Column;
-import org.homo.pocket.annotation.Entity;
-import org.homo.pocket.model.BaseEntity;
+
+import org.hunter.pocket.annotation.Column;
+import org.hunter.pocket.annotation.Entity;
+import org.hunter.pocket.model.BaseEntity;
 
 /**
  * @author wujianchuan 2018/12/27

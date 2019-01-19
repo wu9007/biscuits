@@ -1,16 +1,17 @@
-package org.homo.dbconnect;
+package org.homo.config;
 
 import org.homo.Application;
-import org.homo.pocket.criteria.Criteria;
-import org.homo.pocket.criteria.Restrictions;
-import org.homo.pocket.session.Session;
-import org.homo.pocket.session.SessionFactory;
-import org.homo.pocket.session.Transaction;
 import org.homo.orderdemo.model.Order;
+import org.hunter.pocket.criteria.Criteria;
+import org.hunter.pocket.criteria.Restrictions;
+import org.hunter.pocket.session.Session;
+import org.hunter.pocket.session.SessionFactory;
+import org.hunter.pocket.session.Transaction;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
