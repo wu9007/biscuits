@@ -30,6 +30,6 @@ pocket:
       hostName: 127.0.0.1
 
 server:
-  port: 8081
+  port: 8088
   servlet:
     context-path: /

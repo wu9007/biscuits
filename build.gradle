@@ -57,7 +57,6 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-web:2.1.1.RELEASE')
     implementation('org.springframework.boot:spring-boot-starter-cache:2.1.1.RELEASE')
     implementation('org.springframework.boot:spring-boot-starter-data-redis:2.1.1.RELEASE')
-    implementation('org.apache.commons:commons-lang3:3.8.1')
     implementation('org.hunter:pocket:0.0.1-PRE-RELEASE')
 
     implementation('mysql:mysql-connector-java:8.0.13')
