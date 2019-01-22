@@ -5,7 +5,7 @@ apply plugin: "jacoco"
 apply plugin: 'build-dashboard'
 apply plugin: 'maven-publish'
 
-group = 'org.homo'
+group = 'org.hunter'
 version = '0.0.1-PRE-RELEASE'
 sourceCompatibility = 1.8
 
@@ -19,16 +19,14 @@ compileTestJava {
 
 jar {
     manifest {
-        attributes 'Implementation-Title': 'Homo',
+        attributes 'Implementation-Title': 'skeleton',
                 'Implementation-Version': version
     }
 
-    exclude "org/homo/Application.class"
-    exclude "org/homo/authority"
-    exclude "org/homo/config"
-    exclude "org/homo/orderdemo"
+    exclude "org/skeleton/Application.class"
+    exclude "org/skeleton/authority"
+    exclude "org/skeleton/config"
     exclude "application*.yml"
-    exclude "logback-spring.xml"
 }
 
 javadoc {
