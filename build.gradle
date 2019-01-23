@@ -57,6 +57,9 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-data-redis:2.1.1.RELEASE')
     implementation('org.hunter:pocket:0.0.1-PRE-RELEASE')
 
+    implementation 'com.netflix.feign:feign-core:8.18.0'
+    implementation 'com.netflix.feign:feign-jackson:8.18.0'
+
     implementation('mysql:mysql-connector-java:8.0.13')
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor:2.1.1.RELEASE")
     testImplementation('org.springframework.boot:spring-boot-starter-test:2.1.1.RELEASE')

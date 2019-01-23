@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "service.node",
+      "type": "java.util.List<com.example.demo1.ServiceNodeConfig>",
+      "description": "java.util.List<com.example.demo1.ServiceNodeConfig>."
+    }
+  ]
+}
