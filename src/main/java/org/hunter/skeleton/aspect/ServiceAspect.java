@@ -13,6 +13,7 @@ import org.hunter.pocket.session.Session;
 import org.hunter.pocket.session.SessionFactory;
 import org.hunter.pocket.session.Transaction;
 import org.hunter.skeleton.annotation.Affairs;
+import org.hunter.skeleton.annotation.Business;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -44,12 +45,13 @@ public class ServiceAspect {
         Object target = joinPoint.getTarget();
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         Affairs affairs = method.getDeclaredAnnotation(Affairs.class);
+        Business business = target.getClass().getAnnotation(Business.class);
         log.info("<Before> Call method: {}({})", method.getName(), StringUtils.join(joinPoint.getArgs(), ","));
         try {
             Field sessionThreadLocalField = target.getClass().getSuperclass().getDeclaredField("sessionThreadLocal");
             sessionThreadLocalField.setAccessible(true);
             this.sessionThreadLocal = (ThreadLocal<Session>) sessionThreadLocalField.get(target);
-            this.sessionThreadLocal.set(SessionFactory.getSession("immune"));
+            this.sessionThreadLocal.set(SessionFactory.getSession(business.session()));
             Session session = sessionThreadLocal.get();
             session.open();
             transOn.set(false);

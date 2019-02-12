@@ -6,6 +6,7 @@ import org.hunter.pocket.session.Session;
 import org.hunter.pocket.session.SessionFactory;
 import org.hunter.pocket.session.Transaction;
 import org.hunter.skeleton.annotation.Auth;
+import org.hunter.skeleton.annotation.Controller;
 import org.hunter.skeleton.controller.AbstractController;
 import org.hunter.skeleton.model.AuthMapperRelation;
 import org.hunter.skeleton.model.Authority;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,31 +52,45 @@ public class AuthLauncher implements CommandLineRunner {
     private String serverName;
 
     @Autowired
-    public AuthLauncher(Map<String, AbstractController> controllerMap, List<Permission> permissionList, ApplicationContext context) {
-        this.controllerMap = controllerMap;
+    public AuthLauncher(Map<String, AbstractController> controllerMap, @Nullable List<Permission> permissionList, ApplicationContext context) {
+        this.controllerMap = controllerMap.entrySet().stream()
+                .filter(item -> {
+                    Controller controller = item.getValue().getClass().getAnnotation(Controller.class);
+                    return controller.auth();
+                })
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         this.context = context;
         this.permissionList = permissionList;
     }
 
     @Override
     public void run(String... args) throws Exception {
-        this.serverName = Objects.requireNonNull(this.context.getEnvironment().getProperty("spring.application.name")).toUpperCase();
+        if (this.permissionList != null) {
+            this.serverName = Objects.requireNonNull(this.context.getEnvironment().getProperty("spring.application.name")).toUpperCase();
 
-        Session session = SessionFactory.getSession("skeleton");
-        session.open();
-        Transaction transactional = session.getTransaction();
-        transactional.begin();
-        PermissionFactory.init(this.initPermissionMap(session));
-        this.permissionList.forEach(Permission::init);
-        Map<String, Mapper> oldMapperMap = this.getMapperMap(session);
-        this.deleteUselessMapper(session, oldMapperMap);
-        Map<String, AuthMapperRelation> oldAuthMapperIdMap = this.getAuthMapperIdMap(session);
-        this.deleteUselessAuthMapper(session, oldAuthMapperIdMap);
-        saveAuthAndMapper(session, oldMapperMap, oldAuthMapperIdMap);
-        transactional.commit();
-        session.close();
+            Session session = SessionFactory.getSession("skeleton");
+            session.open();
+            Transaction transactional = session.getTransaction();
+            transactional.begin();
+            PermissionFactory.init(this.initPermissionMap(session));
+            this.permissionList.forEach(Permission::init);
+            Map<String, Mapper> oldMapperMap = this.getMapperMap(session);
+            this.deleteUselessMapper(session, oldMapperMap);
+            Map<String, AuthMapperRelation> oldAuthMapperIdMap = this.getAuthMapperIdMap(session);
+            this.deleteUselessAuthMapper(session, oldAuthMapperIdMap);
+            saveAuthAndMapper(session, oldMapperMap, oldAuthMapperIdMap);
+            transactional.commit();
+            session.close();
+        }
     }
 
+    /**
+     * 拿到数据库中的已有权限
+     *
+     * @param session session
+     * @return 权限集合
+     * @throws Exception e
+     */
     private Map<String, Authority> initPermissionMap(Session session) throws Exception {
         Criteria criteria = session.creatCriteria(Authority.class);
         criteria.add(Restrictions.equ("serverName", serverName));
@@ -82,6 +98,13 @@ public class AuthLauncher implements CommandLineRunner {
         return authorityList.stream().collect(Collectors.toMap(item -> item.getServerName() + "_" + item.getId(), item -> item));
     }
 
+    /**
+     * 从数据库中获取所有映射 Mapper
+     *
+     * @param session session
+     * @return 所有映射 Mapper
+     * @throws Exception e
+     */
     private Map<String, Mapper> getMapperMap(Session session) throws Exception {
         Criteria mapperCriteria = session.creatCriteria(Mapper.class);
         mapperCriteria.add(Restrictions.equ("serverName", serverName));
@@ -89,6 +112,13 @@ public class AuthLauncher implements CommandLineRunner {
         return mapperList.stream().collect(Collectors.toMap(Mapper::getId, item -> item));
     }
 
+    /**
+     * 获取 Map 键为：服务名称+权限id+路径id
+     *
+     * @param session session
+     * @return 从数据库中获取所有 权限和路由关系
+     * @throws Exception e
+     */
     private Map<String, AuthMapperRelation> getAuthMapperIdMap(Session session) throws Exception {
         Criteria criteria = session.creatCriteria(AuthMapperRelation.class);
         criteria.add(Restrictions.equ("serverName", serverName));
@@ -106,6 +136,13 @@ public class AuthLauncher implements CommandLineRunner {
                 }, item -> item));
     }
 
+    /**
+     * 保存数据库中没有的 Mapper 和 Authority
+     *
+     * @param session            session
+     * @param oldMapperMap       数据库中查旧的的 Mapper
+     * @param oldAuthMapperIdMap 数据库中旧的 Authority
+     */
     private void saveAuthAndMapper(Session session, Map<String, Mapper> oldMapperMap, Map<String, AuthMapperRelation> oldAuthMapperIdMap) {
         controllerMap.forEach((k, v) -> {
             Arrays.stream(v.getClass().getMethods())
@@ -138,7 +175,7 @@ public class AuthLauncher implements CommandLineRunner {
     }
 
     /**
-     * 删除数据库多余的Mapper
+     * 删除数据库多余的 Mapper
      *
      * @param session      session
      * @param oldMapperMap 数据库中查询所得的Mapper
@@ -201,7 +238,12 @@ public class AuthLauncher implements CommandLineRunner {
                 });
     }
 
-
+    /**
+     * 获取到类中路由方法
+     *
+     * @param method method
+     * @return Mapper
+     */
     private Mapper getMethodMapper(Method method) {
         String mapperId;
         String requestMethod;
