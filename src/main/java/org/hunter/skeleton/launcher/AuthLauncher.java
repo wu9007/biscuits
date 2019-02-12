@@ -24,9 +24,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -65,8 +67,10 @@ public class AuthLauncher implements CommandLineRunner {
         PermissionFactory.init(this.initPermissionMap(session));
         this.permissionList.forEach(Permission::init);
         Map<String, Mapper> oldMapperMap = this.getMapperMap(session);
-        Map<String, AuthMapperRelation> authMapperIdMap = this.getAuthMapperIdMap(session);
-        saveAuthAndMapper(session, oldMapperMap, authMapperIdMap);
+        this.deleteUselessMapper(session, oldMapperMap);
+        Map<String, AuthMapperRelation> oldAuthMapperIdMap = this.getAuthMapperIdMap(session);
+        this.deleteUselessAuthMapper(session, oldAuthMapperIdMap);
+        saveAuthAndMapper(session, oldMapperMap, oldAuthMapperIdMap);
         transactional.commit();
         session.close();
     }
@@ -75,7 +79,7 @@ public class AuthLauncher implements CommandLineRunner {
         Criteria criteria = session.creatCriteria(Authority.class);
         criteria.add(Restrictions.equ("serverName", serverName));
         List<Authority> authorityList = criteria.list();
-        return authorityList.stream().collect(Collectors.toMap(item -> item.getServerName() + item.getId(), item -> item));
+        return authorityList.stream().collect(Collectors.toMap(item -> item.getServerName() + "_" + item.getId(), item -> item));
     }
 
     private Map<String, Mapper> getMapperMap(Session session) throws Exception {
@@ -90,62 +94,41 @@ public class AuthLauncher implements CommandLineRunner {
         criteria.add(Restrictions.equ("serverName", serverName));
         List<AuthMapperRelation> authMapperList = criteria.list();
         return authMapperList.stream()
-                .collect(Collectors.toMap(item -> item.getAuthUuid().toString() + item.getMapperUuid(), item -> item));
+                .collect(Collectors.toMap(item -> {
+                    try {
+                        Authority authority = (Authority) session.findOne(Authority.class, item.getAuthUuid());
+                        Mapper mapper = (Mapper) session.findOne(Mapper.class, item.getMapperUuid());
+                        return authority.getServerName() + "_" + authority.getId() + "_" + mapper.getId();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                }, item -> item));
     }
 
-    private void saveAuthAndMapper(Session session, Map<String, Mapper> mapperMap, Map<String, AuthMapperRelation> authMapperIdMap) {
+    private void saveAuthAndMapper(Session session, Map<String, Mapper> oldMapperMap, Map<String, AuthMapperRelation> oldAuthMapperIdMap) {
         controllerMap.forEach((k, v) -> {
             Arrays.stream(v.getClass().getMethods())
                     .filter(method -> method.getAnnotation(Auth.class) != null)
                     .forEach(method -> {
-                        String mapperId;
-                        String requestMethod;
-                        if (method.getAnnotation(RequestMapping.class) != null) {
-                            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                            mapperId = String.join(",", Arrays.asList(requestMapping.value()));
-                            requestMethod = requestMapping.method().length > 0
-                                    ? Arrays.stream(requestMapping.method())
-                                    .map(item -> {
-                                        if (RequestMethod.GET.equals(item)) {
-                                            return "get";
-                                        } else if (RequestMethod.POST.equals(item)) {
-                                            return "post";
-                                        } else {
-                                            throw new RuntimeException("不支持" + item.name() + "请求方式");
-                                        }
-                                    })
-                                    .collect(Collectors.joining(","))
-                                    : "get,post";
-
-                        } else if (method.getAnnotation(GetMapping.class) != null) {
-                            mapperId = String.join(",", Arrays.asList(method.getAnnotation(GetMapping.class).value()));
-                            requestMethod = "get";
-                        } else if (method.getAnnotation(PostMapping.class) != null) {
-                            mapperId = String.join(",", Arrays.asList(method.getAnnotation(PostMapping.class).value()));
-                            requestMethod = "post";
-                        } else {
-                            throw new RuntimeException("未找到注解");
-                        }
-
+                        Mapper mapper = this.getMethodMapper(method);
                         try {
                             Auth auth = method.getAnnotation(Auth.class);
                             String auhId = auth.value();
                             Authority authority = PermissionFactory.get(serverName, auhId);
                             if (authority != null) {
-                                Mapper mapper;
-                                if (!mapperMap.containsKey(mapperId)) {
-                                    mapper = new Mapper(serverName, requestMethod, mapperId);
+                                if (!oldMapperMap.containsKey(mapper.getId())) {
                                     session.save(mapper);
                                 } else {
-                                    mapper = mapperMap.get(mapperId);
+                                    mapper = oldMapperMap.get(mapper.getId());
                                 }
                                 AuthMapperRelation authMapper;
-                                if (!authMapperIdMap.containsKey(authority.getUuid().toString() + mapper.getUuid())) {
+                                if (!oldAuthMapperIdMap.containsKey(authority.getServerName() + "_" + authority.getId().toString() + "_" + mapper.getId())) {
                                     authMapper = new AuthMapperRelation(serverName, authority.getUuid(), mapper.getUuid());
                                     session.save(authMapper);
                                 }
                             } else {
-                                throw new RuntimeException(serverName + mapperId + "未找到对应权限");
+                                throw new RuntimeException("ServerName = " + serverName + " MapperId = " + mapper.getId() + "   未找到对应权限");
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -154,8 +137,100 @@ public class AuthLauncher implements CommandLineRunner {
         });
     }
 
-    private void deleteMapper(Session session, Map<String, Mapper> oldMapperMap) {
-        //TODO 删除Mapper
+    /**
+     * 删除数据库多余的Mapper
+     *
+     * @param session      session
+     * @param oldMapperMap 数据库中查询所得的Mapper
+     */
+    private void deleteUselessMapper(Session session, Map<String, Mapper> oldMapperMap) {
+        Map<String, Mapper> modernMapperMap = controllerMap.entrySet().stream()
+                .map(controller ->
+                        Arrays.stream(controller.getValue().getClass().getMethods())
+                                .filter(this.isMapperMethod)
+                                .map(this::getMethodMapper)
+                                .collect(Collectors.toList())
+                )
+                .flatMap(Collection::stream)
+                .collect(Collectors.toMap(Mapper::getId, item -> item));
+        oldMapperMap.entrySet().stream()
+                .filter((item -> !modernMapperMap.containsKey(item.getKey())))
+                .forEach(item -> {
+                    try {
+                        Mapper mapper = item.getValue();
+                        Criteria criteria = session.creatCriteria(AuthMapperRelation.class);
+                        criteria.add(Restrictions.equ("mapperUuid", mapper.getUuid()));
+                        criteria.delete();
+                        session.delete(mapper);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
     }
-    //TODO 删除AuthMapperRelation
+
+    private Predicate<Method> isMapperMethod = method -> method.getAnnotation(RequestMapping.class) != null || method.getAnnotation(GetMapping.class) != null || method.getAnnotation(PostMapping.class) != null;
+
+    /**
+     * 删除数据库多余的 AuthMapperRelation
+     *
+     * @param session                  session
+     * @param oldAuthMapperRelationMap 数据库查询出的 AuthMapperRelation
+     */
+    private void deleteUselessAuthMapper(Session session, Map<String, AuthMapperRelation> oldAuthMapperRelationMap) {
+        String modernAuthMapperRelationMapKeys = controllerMap.entrySet().stream()
+                .map(controller ->
+                        Arrays.stream(controller.getValue().getClass().getMethods())
+                                .filter(this.isMapperMethod)
+                                .map(method -> {
+                                    Mapper mapper = this.getMethodMapper(method);
+                                    Auth auth = method.getAnnotation(Auth.class);
+                                    return this.serverName + "_" + auth.value() + "_" + mapper.getId();
+                                })
+                                .collect(Collectors.toList())
+                )
+                .flatMap(Collection::stream)
+                .collect(Collectors.joining(" ,"));
+        oldAuthMapperRelationMap.keySet().stream()
+                .filter(item -> !modernAuthMapperRelationMapKeys.contains(item))
+                .forEach(item -> {
+                    try {
+                        session.delete(oldAuthMapperRelationMap.get(item));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+    }
+
+
+    private Mapper getMethodMapper(Method method) {
+        String mapperId;
+        String requestMethod;
+        if (method.getAnnotation(RequestMapping.class) != null) {
+            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            mapperId = String.join(",", Arrays.asList(requestMapping.value()));
+            requestMethod = requestMapping.method().length > 0
+                    ? Arrays.stream(requestMapping.method())
+                    .map(item -> {
+                        if (RequestMethod.GET.equals(item)) {
+                            return "get";
+                        } else if (RequestMethod.POST.equals(item)) {
+                            return "post";
+                        } else {
+                            throw new RuntimeException("不支持" + item.name() + "请求方式");
+                        }
+                    })
+                    .collect(Collectors.joining(","))
+                    : "get,post";
+
+        } else if (method.getAnnotation(GetMapping.class) != null) {
+            mapperId = String.join(",", Arrays.asList(method.getAnnotation(GetMapping.class).value()));
+            requestMethod = "get";
+        } else if (method.getAnnotation(PostMapping.class) != null) {
+            mapperId = String.join(",", Arrays.asList(method.getAnnotation(PostMapping.class).value()));
+            requestMethod = "post";
+        } else {
+            throw new RuntimeException("未找到注解");
+        }
+        return new Mapper(this.serverName, requestMethod, mapperId);
+    }
 }
