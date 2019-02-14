@@ -7,7 +7,7 @@ import org.hunter.pocket.model.BaseEntity;
 /**
  * @author wujianchuan 2019/1/30
  */
-@Entity(table = "TBL_USER_ROLE")
+@Entity(table = "TBL_USER_ROLE", tableId = 107)
 public class UserRoleRelation extends BaseEntity {
     @ManyToOne(name = "USER_UUID")
     private Long userUuid;

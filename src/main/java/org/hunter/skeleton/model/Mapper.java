@@ -10,7 +10,7 @@ import org.hunter.pocket.model.BaseEntity;
  *
  * @author wujianchuan 2019/2/3
  */
-@Entity(table = "TBL_MAPPER")
+@Entity(table = "TBL_MAPPER", tableId = 103)
 public class Mapper extends BaseEntity {
     @Column(name = "SERVER_NAME", businessName = "服务名")
     private String serverName;

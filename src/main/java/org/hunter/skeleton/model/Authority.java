@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * @author wujianchuan 2019/1/30
  */
-@Entity(table = "TBL_AUTHORITY")
+@Entity(table = "TBL_AUTHORITY", tableId = 102)
 public class Authority extends BaseEntity {
     @Column(name = "SERVER_NAME")
     private String serverName;

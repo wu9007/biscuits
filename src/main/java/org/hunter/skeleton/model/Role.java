@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * @author wujianchuan 2019/1/30
  */
-@Entity(table = "TBL_ROLE")
+@Entity(table = "TBL_ROLE", tableId = 104)
 public class Role extends BaseEntity {
     @Column(name = "NAME")
     private String name;

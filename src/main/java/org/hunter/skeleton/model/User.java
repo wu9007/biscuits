@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author wujianchuan 2019/1/30
  */
-@Entity(table = "TBL_USER", businessName = "人员")
+@Entity(table = "TBL_USER", tableId = 106, businessName = "人员")
 public class User extends BaseEntity {
     @Column(name = "AVATAR", businessName = "昵称")
     private String avatar;

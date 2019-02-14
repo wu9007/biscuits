@@ -7,7 +7,7 @@ import org.hunter.pocket.model.BaseEntity;
 /**
  * @author wujianchuan 2019/2/3
  */
-@Entity(table = "TBL_AUTH_MAPPER")
+@Entity(table = "TBL_AUTH_MAPPER", tableId = 101)
 public class AuthMapperRelation extends BaseEntity {
     @Column(name = "SERVER_NAME")
     private String serverName;
