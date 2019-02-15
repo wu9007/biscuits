@@ -13,4 +13,11 @@ public interface Repository {
      * @param sessionThreadLocal sessionThreadLocal
      */
     void setSession(ThreadLocal<Session> sessionThreadLocal);
+
+    /**
+     * 获取 session
+     *
+     * @return session.
+     */
+    Session session();
 }
