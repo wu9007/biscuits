@@ -35,11 +35,11 @@ public class ServiceAspect {
     private ThreadLocal<Session> sessionThreadLocal;
     private ThreadLocal<Boolean> transOn = new ThreadLocal<>();
 
-    @Pointcut("execution(public * org.hunter.*.service.*.*(..))")
-    public void print() {
+    @Pointcut("execution(public * org.hunter.*.*.service.*.*(..))")
+    public void point() {
     }
 
-    @Before("print()")
+    @Before("point()")
     public void before(JoinPoint joinPoint) {
         startTime = System.currentTimeMillis();
         Object target = joinPoint.getTarget();
@@ -65,7 +65,7 @@ public class ServiceAspect {
         }
     }
 
-    @After("print()")
+    @After("point()")
     public void after() {
         Session session = this.sessionThreadLocal.get();
         if (this.transOn.get()) {
@@ -81,13 +81,13 @@ public class ServiceAspect {
         endTime = System.currentTimeMillis() - startTime;
     }
 
-    @AfterReturning(pointcut = "print()", returning = "object")
+    @AfterReturning(pointcut = "point()", returning = "object")
     public void getAfterReturn(Object object) {
         log.info("<AfterReturning> Consuming time={}ms", endTime);
         log.info("afterReturning={}", object.toString());
     }
 
-    @AfterThrowing(pointcut = "print()", throwing = "exception")
+    @AfterThrowing(pointcut = "point()", throwing = "exception")
     public void afterThrowing(Exception exception) {
         Session session = this.sessionThreadLocal.get();
         if (this.transOn.get()) {
