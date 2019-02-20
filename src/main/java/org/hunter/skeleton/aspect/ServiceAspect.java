@@ -90,16 +90,19 @@ public class ServiceAspect {
     @AfterThrowing(pointcut = "point()", throwing = "exception")
     public void afterThrowing(Exception exception) {
         Session session = this.sessionThreadLocal.get();
-        if (this.transOn.get()) {
-            try {
-                session.getTransaction().rollBack();
-                this.transOn.set(false);
-            } catch (SQLException e) {
-                e.printStackTrace();
+        if (session != null && session.getClosed()) {
+
+            if (this.transOn.get()) {
+                try {
+                    session.getTransaction().rollBack();
+                    this.transOn.set(false);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
+            session.close();
+            this.sessionThreadLocal.remove();
         }
-        session.close();
-        this.sessionThreadLocal.remove();
         endTime = System.currentTimeMillis() - startTime;
         exception.printStackTrace();
     }
