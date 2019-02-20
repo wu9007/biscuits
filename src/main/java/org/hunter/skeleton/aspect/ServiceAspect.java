@@ -94,7 +94,7 @@ public class ServiceAspect {
     @AfterReturning(pointcut = "point()", returning = "object")
     public void getAfterReturn(Object object) {
         log.info("<AfterReturning> Consuming time={}ms", endTime);
-        log.info("afterReturning={}", object.toString());
+        log.info("afterReturning={}", object != null ? object.toString() : null);
     }
 
     @AfterThrowing(pointcut = "point()", throwing = "exception")
