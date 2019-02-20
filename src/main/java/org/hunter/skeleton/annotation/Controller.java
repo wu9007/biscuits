@@ -23,7 +23,7 @@ public @interface Controller {
     String value() default "";
 
     @AliasFor(value = "path", annotation = RequestMapping.class)
-    String[] bundleId();
+    String[] bundleId() default "";
 
     boolean auth() default true;
 }
