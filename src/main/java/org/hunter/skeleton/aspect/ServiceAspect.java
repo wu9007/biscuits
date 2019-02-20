@@ -53,12 +53,20 @@ public class ServiceAspect {
             this.sessionThreadLocal = (ThreadLocal<Session>) sessionThreadLocalField.get(target);
             this.sessionThreadLocal.set(SessionFactory.getSession(business.session()));
             Session session = sessionThreadLocal.get();
-            session.open();
-            transOn.set(false);
-            if (affairs != null && affairs.on()) {
-                Transaction transaction = session.getTransaction();
-                transaction.begin();
-                transOn.set(true);
+            if (session != null) {
+                if (session.getClosed()) {
+                    session.open();
+                    transOn.set(false);
+                    if (affairs != null && affairs.on()) {
+                        Transaction transaction = session.getTransaction();
+                        transaction.begin();
+                        transOn.set(true);
+                    }
+                } else {
+                    throw new RuntimeException("the session has been opened.");
+                }
+            } else {
+                throw new NullPointerException("Can not find session in thread local.");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -68,16 +76,18 @@ public class ServiceAspect {
     @After("point()")
     public void after() {
         Session session = this.sessionThreadLocal.get();
-        if (this.transOn.get()) {
-            try {
-                session.getTransaction().commit();
-                this.transOn.set(false);
-            } catch (SQLException e) {
-                e.printStackTrace();
+        if (session != null && !session.getClosed()) {
+            if (this.transOn.get()) {
+                try {
+                    session.getTransaction().commit();
+                    this.transOn.set(false);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
+            session.close();
+            this.sessionThreadLocal.remove();
         }
-        session.close();
-        this.sessionThreadLocal.remove();
         endTime = System.currentTimeMillis() - startTime;
     }
 
@@ -90,8 +100,7 @@ public class ServiceAspect {
     @AfterThrowing(pointcut = "point()", throwing = "exception")
     public void afterThrowing(Exception exception) {
         Session session = this.sessionThreadLocal.get();
-        if (session != null && session.getClosed()) {
-
+        if (session != null && !session.getClosed()) {
             if (this.transOn.get()) {
                 try {
                     session.getTransaction().rollBack();
