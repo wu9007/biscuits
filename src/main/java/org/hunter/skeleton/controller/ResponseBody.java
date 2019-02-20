@@ -23,36 +23,36 @@ public class ResponseBody {
         return instance;
     }
 
-    public static ResponseBody newPrimaryInstance(String message, Object object) {
-        ResponseBody instance = new ResponseBody("注意", message, object);
+    public static ResponseBody newPrimaryInstance(String title, String message, Object object) {
+        ResponseBody instance = new ResponseBody(title, message, object);
         instance.setSuccess(true);
         instance.setCategory(CategoryTypes.PRIMARY);
         return instance;
     }
 
-    public static ResponseBody newSuccessInstance(String message, Object object) {
-        ResponseBody instance = new ResponseBody("成功", message, object);
+    public static ResponseBody newSuccessInstance(String title, String message, Object object) {
+        ResponseBody instance = new ResponseBody(title, message, object);
         instance.setSuccess(true);
         instance.setCategory(CategoryTypes.SUCCESS);
         return instance;
     }
 
-    public static ResponseBody newInfoInstance(String message, Object object) {
-        ResponseBody instance = new ResponseBody("提醒", message, object);
+    public static ResponseBody newInfoInstance(String title, String message, Object object) {
+        ResponseBody instance = new ResponseBody(title, message, object);
         instance.setSuccess(true);
         instance.setCategory(CategoryTypes.INFO);
         return instance;
     }
 
-    public static ResponseBody newWaringInstance(String message, Object object) {
-        ResponseBody instance = new ResponseBody("警告", message, object);
+    public static ResponseBody newWaringInstance(String title, String message, Object object) {
+        ResponseBody instance = new ResponseBody(title, message, object);
         instance.setSuccess(false);
         instance.setCategory(CategoryTypes.WARING);
         return instance;
     }
 
-    public static ResponseBody newDangerInstance(String message, Object object) {
-        ResponseBody instance = new ResponseBody("错误", message, object);
+    public static ResponseBody newDangerInstance(String title, String message, Object object) {
+        ResponseBody instance = new ResponseBody(title, message, object);
         instance.setSuccess(false);
         instance.setCategory(CategoryTypes.DANGER);
         return instance;
