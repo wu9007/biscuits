@@ -16,16 +16,19 @@ public class Mapper extends BaseEntity {
     private String serverName;
     @Column(name = "REQUEST_METHOD", businessName = "请求方式")
     private String requestMethod;
-    @Column(name = "ID", businessName = "映射")
-    private String id;
+    @Column(name = "BUNDLE_ID", businessName = "绑定菜单")
+    private String bundleId;
+    @Column(name = "ACTION_ID", businessName = "映射")
+    private String actionId;
 
     public Mapper() {
     }
 
-    public Mapper(String serverName, String requestMethod, String id) {
+    public Mapper(String serverName, String requestMethod,String bundleId, String actionId) {
         this.serverName = serverName;
         this.requestMethod = requestMethod;
-        this.id = id;
+        this.bundleId = bundleId;
+        this.actionId = actionId;
     }
 
     public String getServerName() {
@@ -44,16 +47,24 @@ public class Mapper extends BaseEntity {
         this.requestMethod = requestMethod;
     }
 
-    public String getId() {
-        return id;
+    public String getBundleId() {
+        return bundleId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setBundleId(String bundleId) {
+        this.bundleId = bundleId;
+    }
+
+    public String getActionId() {
+        return actionId;
+    }
+
+    public void setActionId(String actionId) {
+        this.actionId = actionId;
     }
 
     @JsonIgnore
     public String getPath() {
-        return "/" + this.getServerName() + this.getId();
+        return "/" + this.getServerName() + "/" + this.getBundleId() + this.getActionId();
     }
 }
