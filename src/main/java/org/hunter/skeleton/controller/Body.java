@@ -3,56 +3,56 @@ package org.hunter.skeleton.controller;
 /**
  * @author wujianchuan 2019/2/20
  */
-public class ResponseBody {
+public class Body {
     private Boolean success;
     private String category;
     private String title;
     private String message;
     private Object object;
 
-    private ResponseBody(String title, String message, Object object) {
+    private Body(String title, String message, Object object) {
         this.title = title;
         this.message = message;
         this.object = object;
     }
 
-    public static ResponseBody newDefaultInstance(String title, String message, Object object) {
-        ResponseBody instance = new ResponseBody(title, message, object);
+    public static Body newDefaultInstance(String title, String message, Object object) {
+        Body instance = new Body(title, message, object);
         instance.setSuccess(true);
         instance.setCategory(CategoryTypes.DEFAULT);
         return instance;
     }
 
-    public static ResponseBody newPrimaryInstance(String title, String message, Object object) {
-        ResponseBody instance = new ResponseBody(title, message, object);
+    public static Body newPrimaryInstance(String title, String message, Object object) {
+        Body instance = new Body(title, message, object);
         instance.setSuccess(true);
         instance.setCategory(CategoryTypes.PRIMARY);
         return instance;
     }
 
-    public static ResponseBody newSuccessInstance(String title, String message, Object object) {
-        ResponseBody instance = new ResponseBody(title, message, object);
+    public static Body newSuccessInstance(String title, String message, Object object) {
+        Body instance = new Body(title, message, object);
         instance.setSuccess(true);
         instance.setCategory(CategoryTypes.SUCCESS);
         return instance;
     }
 
-    public static ResponseBody newInfoInstance(String title, String message, Object object) {
-        ResponseBody instance = new ResponseBody(title, message, object);
+    public static Body newInfoInstance(String title, String message, Object object) {
+        Body instance = new Body(title, message, object);
         instance.setSuccess(true);
         instance.setCategory(CategoryTypes.INFO);
         return instance;
     }
 
-    public static ResponseBody newWaringInstance(String title, String message, Object object) {
-        ResponseBody instance = new ResponseBody(title, message, object);
+    public static Body newWaringInstance(String title, String message, Object object) {
+        Body instance = new Body(title, message, object);
         instance.setSuccess(false);
         instance.setCategory(CategoryTypes.WARING);
         return instance;
     }
 
-    public static ResponseBody newDangerInstance(String title, String message, Object object) {
-        ResponseBody instance = new ResponseBody(title, message, object);
+    public static Body newDangerInstance(String title, String message, Object object) {
+        Body instance = new Body(title, message, object);
         instance.setSuccess(false);
         instance.setCategory(CategoryTypes.DANGER);
         return instance;
