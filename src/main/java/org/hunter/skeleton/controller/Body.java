@@ -51,10 +51,10 @@ public class Body {
         return instance;
     }
 
-    public static Body newDangerInstance(String title, String message, Object object) {
+    public static Body newErrorInstance(String title, String message, Object object) {
         Body instance = new Body(title, message, object);
         instance.setSuccess(false);
-        instance.setCategory(CategoryTypes.DANGER);
+        instance.setCategory(CategoryTypes.ERROR);
         return instance;
     }
 

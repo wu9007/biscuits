@@ -8,6 +8,6 @@ public interface CategoryTypes {
     String PRIMARY = "primary";
     String SUCCESS = "success";
     String INFO = "info";
-    String WARING = "waring";
-    String DANGER = "danger";
+    String WARING = "warning";
+    String ERROR = "error";
 }
