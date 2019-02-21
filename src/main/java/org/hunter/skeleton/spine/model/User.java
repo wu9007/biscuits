@@ -25,6 +25,7 @@ public class User extends BaseEntity {
     private List<UserRoleRelation> userRoleRelations;
     @Column(name = "LAST_PASSWORD_RESET_DATE", businessName = "密码最后更新时间")
     private Date lastPasswordResetDate;
+    //TODO 调整角色时需要将token置为过期，谢谢
     @Column(name = "LAST_ROLE_RESET_DATE", businessName = "角色最后更新时间")
     private Date lastRoleModifyDate;
 
