@@ -2,7 +2,7 @@ package org.hunter.skeleton.permission;
 
 import org.hunter.pocket.session.Session;
 import org.hunter.pocket.session.SessionFactory;
-import org.hunter.skeleton.model.Authority;
+import org.hunter.skeleton.spine.model.Authority;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

@@ -1,4 +1,4 @@
-package org.hunter.skeleton.model;
+package org.hunter.skeleton.spine.model;
 
 import org.hunter.pocket.annotation.Column;
 import org.hunter.pocket.annotation.Entity;
@@ -12,8 +12,8 @@ import java.util.List;
  */
 @Entity(table = "TBL_AUTHORITY", tableId = 102)
 public class Authority extends BaseEntity {
-    @Column(name = "SERVER_NAME")
-    private String serverName;
+    @Column(name = "SERVER_ID")
+    private String serverId;
     @Column(name = "ID")
     private String id;
     @Column(name = "NAME")
@@ -28,19 +28,19 @@ public class Authority extends BaseEntity {
     public Authority() {
     }
 
-    public Authority(String serverName, String id, String name, String comment) {
-        this.serverName = serverName;
+    public Authority(String serverId, String id, String name, String comment) {
+        this.serverId = serverId;
         this.id = id;
         this.name = name;
         this.comment = comment;
     }
 
-    public String getServerName() {
-        return serverName;
+    public String getServerId() {
+        return serverId;
     }
 
-    public void setServerName(String serverName) {
-        this.serverName = serverName;
+    public void setServerId(String serverId) {
+        this.serverId = serverId;
     }
 
     public String getId() {

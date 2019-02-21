@@ -1,4 +1,4 @@
-package org.hunter.skeleton.model;
+package org.hunter.skeleton.spine.model;
 
 import org.hunter.pocket.annotation.Column;
 import org.hunter.pocket.annotation.Entity;
@@ -12,12 +12,22 @@ import java.util.List;
  */
 @Entity(table = "TBL_ROLE", tableId = 104)
 public class Role extends BaseEntity {
+    @Column(name = "ID")
+    private String id;
     @Column(name = "NAME")
     private String name;
     @OneToMany(clazz = UserRoleRelation.class, name = "ROLE_UUID")
     private List<UserRoleRelation> userRoleRelations;
     @OneToMany(clazz = RoleAuthRelation.class, name = "ROLE_UUID")
     private List<RoleAuthRelation> roleAuthRelationList;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

@@ -1,4 +1,4 @@
-package org.hunter.skeleton.model;
+package org.hunter.skeleton.spine.model;
 
 import org.hunter.pocket.annotation.Column;
 import org.hunter.pocket.annotation.Entity;

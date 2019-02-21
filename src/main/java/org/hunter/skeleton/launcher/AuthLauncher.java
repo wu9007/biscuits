@@ -9,9 +9,9 @@ import org.hunter.skeleton.annotation.Action;
 import org.hunter.skeleton.annotation.Auth;
 import org.hunter.skeleton.annotation.Controller;
 import org.hunter.skeleton.controller.AbstractController;
-import org.hunter.skeleton.model.AuthMapperRelation;
-import org.hunter.skeleton.model.Authority;
-import org.hunter.skeleton.model.Mapper;
+import org.hunter.skeleton.spine.model.AuthMapperRelation;
+import org.hunter.skeleton.spine.model.Authority;
+import org.hunter.skeleton.spine.model.Mapper;
 import org.hunter.skeleton.permission.Permission;
 import org.hunter.skeleton.permission.PermissionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,7 +96,7 @@ public class AuthLauncher implements CommandLineRunner {
         Criteria criteria = session.creatCriteria(Authority.class);
         criteria.add(Restrictions.equ("serverName", serverName));
         List<Authority> authorityList = criteria.list();
-        return authorityList.stream().collect(Collectors.toMap(item -> item.getServerName() + "_" + item.getId(), item -> item));
+        return authorityList.stream().collect(Collectors.toMap(item -> item.getServerId() + "_" + item.getId(), item -> item));
     }
 
     /**
@@ -129,7 +129,7 @@ public class AuthLauncher implements CommandLineRunner {
                     try {
                         Authority authority = (Authority) session.findOne(Authority.class, item.getAuthUuid());
                         Mapper mapper = (Mapper) session.findOne(Mapper.class, item.getMapperUuid());
-                        return authority.getServerName() + "_" + authority.getId() + "_" + mapper.getBundleId() + mapper.getActionId();
+                        return authority.getServerId() + "_" + authority.getId() + "_" + mapper.getBundleId() + mapper.getActionId();
                     } catch (Exception e) {
                         e.printStackTrace();
                         return null;
@@ -164,7 +164,7 @@ public class AuthLauncher implements CommandLineRunner {
                                     mapper = oldMapperMap.get(mapperId);
                                 }
                                 AuthMapperRelation authMapper;
-                                if (!oldAuthMapperIdMap.containsKey(authority.getServerName() + "_" + authority.getId().toString() + "_" + mapperId)) {
+                                if (!oldAuthMapperIdMap.containsKey(authority.getServerId() + "_" + authority.getId().toString() + "_" + mapperId)) {
                                     authMapper = new AuthMapperRelation(serverName, authority.getUuid(), mapper.getUuid());
                                     session.save(authMapper);
                                 }

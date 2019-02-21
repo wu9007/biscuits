@@ -1,4 +1,4 @@
-package org.hunter.skeleton.model;
+package org.hunter.skeleton.spine.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hunter.pocket.annotation.Column;
@@ -12,8 +12,8 @@ import org.hunter.pocket.model.BaseEntity;
  */
 @Entity(table = "TBL_MAPPER", tableId = 103)
 public class Mapper extends BaseEntity {
-    @Column(name = "SERVER_NAME", businessName = "服务名")
-    private String serverName;
+    @Column(name = "SERVER_ID", businessName = "服务名")
+    private String serverId;
     @Column(name = "REQUEST_METHOD", businessName = "请求方式")
     private String requestMethod;
     @Column(name = "BUNDLE_ID", businessName = "绑定菜单")
@@ -24,19 +24,19 @@ public class Mapper extends BaseEntity {
     public Mapper() {
     }
 
-    public Mapper(String serverName, String requestMethod,String bundleId, String actionId) {
-        this.serverName = serverName;
+    public Mapper(String serverId, String requestMethod, String bundleId, String actionId) {
+        this.serverId = serverId;
         this.requestMethod = requestMethod;
         this.bundleId = bundleId;
         this.actionId = actionId;
     }
 
-    public String getServerName() {
-        return serverName;
+    public String getServerId() {
+        return serverId;
     }
 
-    public void setServerName(String serverName) {
-        this.serverName = serverName;
+    public void setServerId(String serverId) {
+        this.serverId = serverId;
     }
 
     public String getRequestMethod() {
@@ -65,6 +65,6 @@ public class Mapper extends BaseEntity {
 
     @JsonIgnore
     public String getPath() {
-        return "/" + this.getServerName() + "/" + this.getBundleId() + this.getActionId();
+        return "/" + this.getServerId() + "/" + this.getBundleId() + this.getActionId();
     }
 }

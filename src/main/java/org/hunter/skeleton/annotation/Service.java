@@ -2,7 +2,6 @@ package org.hunter.skeleton.annotation;
 
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -16,8 +15,8 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Service
-public @interface Business {
+@Component
+public @interface Service {
 
     @AliasFor(annotation = Component.class)
     String value() default "";

@@ -1,4 +1,4 @@
-package org.hunter.skeleton.model;
+package org.hunter.skeleton.spine.model;
 
 import org.hunter.pocket.annotation.Column;
 import org.hunter.pocket.annotation.Entity;
@@ -9,8 +9,8 @@ import org.hunter.pocket.model.BaseEntity;
  */
 @Entity(table = "TBL_AUTH_MAPPER", tableId = 101)
 public class AuthMapperRelation extends BaseEntity {
-    @Column(name = "SERVER_NAME")
-    private String serverName;
+    @Column(name = "SERVER_ID")
+    private String serverId;
     @Column(name = "AUTH_UUID")
     private Long authUuid;
     @Column(name = "MAPPER_UUID")
@@ -19,18 +19,18 @@ public class AuthMapperRelation extends BaseEntity {
     public AuthMapperRelation() {
     }
 
-    public AuthMapperRelation(String serverName, Long authUuid, Long mapperUuid) {
-        this.serverName = serverName;
+    public AuthMapperRelation(String serverId, Long authUuid, Long mapperUuid) {
+        this.serverId = serverId;
         this.authUuid = authUuid;
         this.mapperUuid = mapperUuid;
     }
 
-    public String getServerName() {
-        return serverName;
+    public String getServerId() {
+        return serverId;
     }
 
-    public void setServerName(String serverName) {
-        this.serverName = serverName;
+    public void setServerId(String serverId) {
+        this.serverId = serverId;
     }
 
     public Long getAuthUuid() {
