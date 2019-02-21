@@ -6,12 +6,14 @@ import org.hunter.skeleton.spine.model.Authority;
 import org.hunter.skeleton.spine.model.Mapper;
 import org.hunter.skeleton.spine.model.Role;
 import org.hunter.skeleton.spine.model.User;
+import org.hunter.skeleton.spine.model.UserRoleRelation;
 import org.hunter.skeleton.spine.repository.RoleRepository;
 import org.hunter.skeleton.spine.service.AuthorityService;
 import org.hunter.skeleton.spine.service.MapperService;
 import org.hunter.skeleton.spine.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -50,7 +52,6 @@ public class RoleServiceImpl extends AbstractService implements RoleService {
     public String getServers(String roleIds) {
         return Arrays.stream(roleIds.split(","))
                 .map(this::loadById)
-                .filter(role -> role.getRoleAuthRelationList() != null)
                 .map(this.authorityService::loadByRole)
                 .flatMap(Collection::stream)
                 .map(Authority::getServerId)
@@ -62,10 +63,8 @@ public class RoleServiceImpl extends AbstractService implements RoleService {
     public String getBundles(String serverId, String roleIds) {
         return Arrays.stream(roleIds.split(","))
                 .map(this::loadById)
-                .filter(role -> role.getRoleAuthRelationList() != null)
                 .map(role -> this.authorityService.loadByServerRole(serverId, role))
                 .flatMap(Collection::parallelStream)
-                .filter(authority -> authority.getAuthMapperRelationList() != null)
                 .map(this.mapperService::loadByAuthority)
                 .flatMap(Collection::parallelStream)
                 .map(Mapper::getBundleId)
@@ -76,10 +75,15 @@ public class RoleServiceImpl extends AbstractService implements RoleService {
 
     @Override
     public List<Role> loadByUser(User user) {
-        return user.getUserRoleRelations().stream()
-                .map(userRoleRelation -> this.loadByUuId(userRoleRelation.getRoleUuid()))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        List<Role> roles = new ArrayList<>();
+        List<UserRoleRelation> userRoleRelations = user.getUserRoleRelations();
+        if (userRoleRelations != null && userRoleRelations.size() > 0) {
+            roles = userRoleRelations.stream()
+                    .map(userRoleRelation -> this.loadByUuId(userRoleRelation.getRoleUuid()))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+        }
+        return roles;
     }
 
     @Override

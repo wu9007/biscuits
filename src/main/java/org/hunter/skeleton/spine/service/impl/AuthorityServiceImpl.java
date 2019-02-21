@@ -4,10 +4,12 @@ import org.hunter.skeleton.annotation.Service;
 import org.hunter.skeleton.service.AbstractService;
 import org.hunter.skeleton.spine.model.Authority;
 import org.hunter.skeleton.spine.model.Role;
+import org.hunter.skeleton.spine.model.RoleAuthRelation;
 import org.hunter.skeleton.spine.repository.AuthorityRepository;
 import org.hunter.skeleton.spine.service.AuthorityService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -27,17 +29,27 @@ public class AuthorityServiceImpl extends AbstractService implements AuthoritySe
 
     @Override
     public List<Authority> loadByRole(Role role) {
-        return role.getRoleAuthRelationList().stream()
-                .map(roleAuthRelation -> this.authorityRepository.findOne(roleAuthRelation.getAuthUuid()))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        List<Authority> authorities = new ArrayList<>();
+        List<RoleAuthRelation> roleAuthRelations = role.getRoleAuthRelationList();
+        if (roleAuthRelations != null && roleAuthRelations.size() > 0) {
+            authorities = roleAuthRelations.stream()
+                    .map(roleAuthRelation -> this.authorityRepository.findOne(roleAuthRelation.getAuthUuid()))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+        }
+        return authorities;
     }
 
     @Override
     public List<Authority> loadByServerRole(String serverId, Role role) {
-        return role.getRoleAuthRelationList().stream()
-                .map(roleAuthRelation -> this.authorityRepository.findOne(roleAuthRelation.getAuthUuid()))
-                .filter(authority -> authority != null && serverId.equals(authority.getServerId()))
-                .collect(Collectors.toList());
+        List<Authority> authorities = new ArrayList<>();
+        List<RoleAuthRelation> roleAuthRelations = role.getRoleAuthRelationList();
+        if (roleAuthRelations != null && roleAuthRelations.size() > 0) {
+            authorities = roleAuthRelations.stream()
+                    .map(roleAuthRelation -> this.authorityRepository.findOne(roleAuthRelation.getAuthUuid()))
+                    .filter(authority -> authority != null && serverId.equals(authority.getServerId()))
+                    .collect(Collectors.toList());
+        }
+        return authorities;
     }
 }
