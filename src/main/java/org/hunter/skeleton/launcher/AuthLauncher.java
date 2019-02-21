@@ -46,7 +46,7 @@ public class AuthLauncher implements CommandLineRunner {
     private final
     ApplicationContext context;
 
-    private String serverName;
+    private String serverId;
 
     @Autowired
     public AuthLauncher(Map<String, AbstractController> controllerMap, @Nullable List<Permission> permissionList, ApplicationContext context) {
@@ -63,7 +63,7 @@ public class AuthLauncher implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if (this.permissionList != null) {
-            this.serverName = Objects.requireNonNull(this.context.getEnvironment().getProperty("spring.application.name")).toUpperCase();
+            this.serverId = Objects.requireNonNull(this.context.getEnvironment().getProperty("spring.application.name")).toUpperCase();
 
             Session session = SessionFactory.getSession("skeleton");
             session.open();
@@ -94,7 +94,7 @@ public class AuthLauncher implements CommandLineRunner {
      */
     private Map<String, Authority> initPermissionMap(Session session) throws Exception {
         Criteria criteria = session.creatCriteria(Authority.class);
-        criteria.add(Restrictions.equ("serverName", serverName));
+        criteria.add(Restrictions.equ("serverId", serverId));
         List<Authority> authorityList = criteria.list();
         return authorityList.stream().collect(Collectors.toMap(item -> item.getServerId() + "_" + item.getId(), item -> item));
     }
@@ -108,7 +108,7 @@ public class AuthLauncher implements CommandLineRunner {
      */
     private Map<String, Mapper> getMapperMap(Session session) throws Exception {
         Criteria mapperCriteria = session.creatCriteria(Mapper.class);
-        mapperCriteria.add(Restrictions.equ("serverName", serverName));
+        mapperCriteria.add(Restrictions.equ("serverId", serverId));
         List<Mapper> mapperList = mapperCriteria.list();
         return mapperList.stream().collect(Collectors.toMap(item -> item.getBundleId() + item.getActionId(), item -> item));
     }
@@ -122,7 +122,7 @@ public class AuthLauncher implements CommandLineRunner {
      */
     private Map<String, AuthMapperRelation> getAuthMapperIdMap(Session session) throws Exception {
         Criteria criteria = session.creatCriteria(AuthMapperRelation.class);
-        criteria.add(Restrictions.equ("serverName", serverName));
+        criteria.add(Restrictions.equ("serverId", serverId));
         List<AuthMapperRelation> authMapperList = criteria.list();
         return authMapperList.stream()
                 .collect(Collectors.toMap(item -> {
@@ -156,7 +156,7 @@ public class AuthLauncher implements CommandLineRunner {
                         try {
                             Auth auth = method.getAnnotation(Auth.class);
                             String auhId = auth.value();
-                            Authority authority = PermissionFactory.get(serverName, auhId);
+                            Authority authority = PermissionFactory.get(serverId, auhId);
                             if (authority != null) {
                                 if (!oldMapperMap.containsKey(mapperId)) {
                                     session.save(mapper);
@@ -165,11 +165,11 @@ public class AuthLauncher implements CommandLineRunner {
                                 }
                                 AuthMapperRelation authMapper;
                                 if (!oldAuthMapperIdMap.containsKey(authority.getServerId() + "_" + authority.getId().toString() + "_" + mapperId)) {
-                                    authMapper = new AuthMapperRelation(serverName, authority.getUuid(), mapper.getUuid());
+                                    authMapper = new AuthMapperRelation(serverId, authority.getUuid(), mapper.getUuid());
                                     session.save(authMapper);
                                 }
                             } else {
-                                throw new RuntimeException("ServerName = " + serverName + " MapperId = " + mapperId + "   未找到对应权限");
+                                throw new RuntimeException("serverId = " + serverId + " MapperId = " + mapperId + "   未找到对应权限");
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -231,7 +231,7 @@ public class AuthLauncher implements CommandLineRunner {
                                     .map(method -> {
                                         Mapper mapper = this.getMethodMapper(bundleId, method);
                                         Auth auth = method.getAnnotation(Auth.class);
-                                        return this.serverName + "_" + auth.value() + "_" + mapper.getBundleId() + mapper.getActionId();
+                                        return this.serverId + "_" + auth.value() + "_" + mapper.getBundleId() + mapper.getActionId();
                                     })
                                     .collect(Collectors.toList());
                         }
@@ -260,6 +260,6 @@ public class AuthLauncher implements CommandLineRunner {
         String mapperId = method.getAnnotation(Action.class).actionId()[0];
         String requestMethods = Arrays.stream(action.method()).map(Enum::name).collect(Collectors.joining(","));
 
-        return new Mapper(this.serverName, requestMethods, bundleId, mapperId);
+        return new Mapper(this.serverId, requestMethods, bundleId, mapperId);
     }
 }
