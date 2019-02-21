@@ -51,5 +51,11 @@ public interface RoleService {
      */
     List<Role> loadByUser(User user);
 
-
+    /**
+     * load accessible path by role ids.
+     *
+     * @param roleIds role ids (String)
+     * @return all accessible path (String).
+     */
+    String loadAccessiblePathByRoleIds(String roleIds);
 }

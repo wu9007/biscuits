@@ -81,4 +81,16 @@ public class RoleServiceImpl extends AbstractService implements RoleService {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public String loadAccessiblePathByRoleIds(String roleIds) {
+        return Arrays.stream(roleIds.split(","))
+                .map(this.roleRepository::findById)
+                .map(this.authorityService::loadByRole)
+                .flatMap(Collection::parallelStream)
+                .map(this.mapperService::loadByAuthority)
+                .flatMap(Collection::parallelStream)
+                .map(Mapper::getPath)
+                .collect(Collectors.joining(","));
+    }
 }

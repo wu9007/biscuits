@@ -25,6 +25,8 @@ public class User extends BaseEntity {
     private List<UserRoleRelation> userRoleRelations;
     @Column(name = "LAST_PASSWORD_RESET_DATE", businessName = "密码最后更新时间")
     private Date lastPasswordResetDate;
+    @Column(name = "LAST_ROLE_RESET_DATE", businessName = "角色最后更新时间")
+    private Date lastRoleModifyDate;
 
     public String getAvatar() {
         return avatar;
@@ -72,5 +74,13 @@ public class User extends BaseEntity {
 
     public void setLastPasswordResetDate(Date lastPasswordResetDate) {
         this.lastPasswordResetDate = lastPasswordResetDate;
+    }
+
+    public Date getLastRoleModifyDate() {
+        return lastRoleModifyDate;
+    }
+
+    public void setLastRoleModifyDate(Date lastRoleModifyDate) {
+        this.lastRoleModifyDate = lastRoleModifyDate;
     }
 }
