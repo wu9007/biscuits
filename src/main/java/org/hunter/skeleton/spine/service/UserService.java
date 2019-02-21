@@ -1,7 +1,6 @@
 package org.hunter.skeleton.spine.service;
 
 import org.hunter.skeleton.spine.model.User;
-import reactor.core.publisher.Mono;
 
 /**
  * @author wujianchuan 2019/1/30
@@ -13,9 +12,8 @@ public interface UserService {
      *
      * @param avatar user avatar.
      * @return user model.
-     * @throws Exception e.
      */
-    User loadUser(String avatar) throws Exception;
+    User loadUser(String avatar);
 
     /**
      * load user.

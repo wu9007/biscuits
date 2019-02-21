@@ -10,8 +10,20 @@ import java.util.List;
  */
 public interface RoleService {
 
+    /**
+     * load role by role uuid.
+     *
+     * @param uuid role uuid.
+     * @return role.
+     */
     Role loadByUuId(long uuid);
 
+    /**
+     * load role by role id,
+     *
+     * @param id role id,
+     * @return role.
+     */
     Role loadById(String id);
 
     /**
@@ -31,5 +43,13 @@ public interface RoleService {
      */
     String getBundles(String serverId, String roles);
 
+    /**
+     * load user roles.
+     *
+     * @param user user.
+     * @return roles.
+     */
     List<Role> loadByUser(User user);
+
+
 }

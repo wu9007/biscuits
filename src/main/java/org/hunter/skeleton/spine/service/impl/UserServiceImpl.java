@@ -27,7 +27,7 @@ public class UserServiceImpl extends AbstractService implements UserService {
     }
 
     @Override
-    public User loadUser(String avatar) throws Exception {
+    public User loadUser(String avatar){
         return this.userRepository.findByAvatar(avatar);
     }
 
