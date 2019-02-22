@@ -15,19 +15,19 @@ public class UserRepositoryImpl extends AbstractRepository implements UserReposi
 
     @Override
     public int saveUser(User user) {
-        return this.session().save(user);
+        return this.session.save(user);
     }
 
     @Override
     public User findByAvatar(String avatar) {
-        Criteria criteria = this.session().creatCriteria(User.class);
+        Criteria criteria = this.session.creatCriteria(User.class);
         criteria.add(Restrictions.equ("avatar", avatar));
         return (User) criteria.unique(true);
     }
 
     @Override
     public User findByAvatarAndPassword(String avatar, String password) {
-        Criteria criteria = this.session().creatCriteria(User.class);
+        Criteria criteria = this.session.creatCriteria(User.class);
         criteria.add(Restrictions.and(Restrictions.equ("avatar", avatar), Restrictions.equ("password", password)));
         return (User) criteria.unique(true);
     }

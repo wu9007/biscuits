@@ -35,7 +35,7 @@ public class RoleServiceImpl extends AbstractService implements RoleService {
         this.roleRepository = roleRepository;
         this.authorityService = authorityService;
         this.mapperService = mapperService;
-        this.roleRepository.setSession(this.sessionThreadLocal);
+        this.roleRepository.setSession(this.session);
     }
 
     @Override

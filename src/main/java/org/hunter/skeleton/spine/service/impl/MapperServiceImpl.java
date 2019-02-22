@@ -24,7 +24,7 @@ public class MapperServiceImpl extends AbstractService implements MapperService 
     @Autowired
     public MapperServiceImpl(MapperRepository mapperRepository) {
         this.mapperRepository = mapperRepository;
-        this.mapperRepository.setSession(this.sessionThreadLocal);
+        this.mapperRepository.setSession(this.session);
     }
 
     @Override

@@ -14,12 +14,12 @@ import org.springframework.stereotype.Repository;
 public class RoleRepositoryImpl extends AbstractRepository implements RoleRepository {
     @Override
     public Role findOne(Long uuid) {
-        return (Role) this.session().findOne(Role.class, uuid);
+        return (Role) this.session.findOne(Role.class, uuid);
     }
 
     @Override
     public Role findById(String id) {
-        Criteria criteria = this.session().creatCriteria(Role.class);
+        Criteria criteria = this.session.creatCriteria(Role.class);
         criteria.add(Restrictions.equ("id", id));
         return (Role) criteria.unique(true);
     }

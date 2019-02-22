@@ -12,6 +12,6 @@ import org.hunter.skeleton.spine.repository.MapperRepository;
 public class MapperRepositoryImpl extends AbstractRepository implements MapperRepository {
     @Override
     public Mapper findOne(long uuid) {
-        return (Mapper) this.session().findOne(Mapper.class, uuid);
+        return (Mapper) this.session.findOne(Mapper.class, uuid);
     }
 }

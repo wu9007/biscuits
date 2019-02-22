@@ -7,15 +7,10 @@ import org.hunter.pocket.session.Session;
  */
 public abstract class AbstractRepository implements Repository {
 
-    private ThreadLocal<Session> sessionThreadLocal;
+    protected Session session;
 
     @Override
-    public void setSession(ThreadLocal<Session> sessionThreadLocal) {
-        this.sessionThreadLocal = sessionThreadLocal;
-    }
-
-    @Override
-    public Session session() {
-        return this.sessionThreadLocal.get();
+    public void setSession(Session session) {
+        this.session = session;
     }
 }
