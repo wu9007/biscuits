@@ -128,4 +128,7 @@ public class User extends AbstractEntity {
         this.userRoleRelations = userRoleRelations;
     }
 
+    public UserView getView() {
+        return new UserView(this.getAvatar(), this.getName(), this.getPhone(), this.getMemo(), this.getSort());
+    }
 }
