@@ -12,6 +12,7 @@ import java.util.List;
  */
 @Entity(table = "TBL_AUTHORITY", tableId = 102)
 public class Authority extends BaseEntity {
+    private static final long serialVersionUID = 8811730322368476299L;
     @Column(name = "SERVER_ID")
     private String serverId;
     @Column(name = "ID")

@@ -13,6 +13,7 @@ import java.util.List;
  */
 @Entity(table = "TBL_USER", tableId = 106, businessName = "人员")
 public class User extends AbstractEntity {
+    private static final long serialVersionUID = 9034066443646846844L;
     @Column(name = "CODE", businessName = "昵称")
     private String avatar;
     @Column(name = "NAME", businessName = "姓名")

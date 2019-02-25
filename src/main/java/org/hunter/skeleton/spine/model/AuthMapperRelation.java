@@ -9,6 +9,7 @@ import org.hunter.pocket.model.BaseEntity;
  */
 @Entity(table = "TBL_AUTH_MAPPER", tableId = 101)
 public class AuthMapperRelation extends BaseEntity {
+    private static final long serialVersionUID = 3635488973894838870L;
     @Column(name = "SERVER_ID")
     private String serverId;
     @Column(name = "AUTH_UUID")

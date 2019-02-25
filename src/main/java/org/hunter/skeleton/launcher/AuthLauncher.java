@@ -11,6 +11,7 @@ import org.hunter.skeleton.annotation.Controller;
 import org.hunter.skeleton.controller.AbstractController;
 import org.hunter.skeleton.spine.model.AuthMapperRelation;
 import org.hunter.skeleton.spine.model.Authority;
+import org.hunter.skeleton.spine.model.Bundle;
 import org.hunter.skeleton.spine.model.Mapper;
 import org.hunter.skeleton.permission.Permission;
 import org.hunter.skeleton.permission.PermissionFactory;
@@ -43,46 +44,58 @@ public class AuthLauncher implements CommandLineRunner {
     private final
     List<Permission> permissionList;
 
-    private final
-    ApplicationContext context;
-
     private String serverId;
+    private Map<String, Mapper> oldMapperMap;
+    private Map<String, AuthMapperRelation> oldAuthMapperRelationMap;
+    private Map<String, Bundle> bundleMap;
 
     @Autowired
     public AuthLauncher(Map<String, AbstractController> controllerMap, @Nullable List<Permission> permissionList, ApplicationContext context) {
         this.controllerMap = controllerMap.entrySet().stream()
-                .filter(item -> {
-                    Controller controller = item.getValue().getClass().getAnnotation(Controller.class);
-                    return controller.auth();
-                })
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        this.context = context;
         this.permissionList = permissionList;
+        this.serverId = Objects.requireNonNull(context.getEnvironment().getProperty("spring.application.name")).toUpperCase();
     }
 
     @Override
     public void run(String... args) throws Exception {
-        if (this.permissionList != null) {
-            this.serverId = Objects.requireNonNull(this.context.getEnvironment().getProperty("spring.application.name")).toUpperCase();
+        Session session = SessionFactory.getSession("skeleton");
+        session.open();
+        Transaction transactional = session.getTransaction();
+        transactional.begin();
+        this.execute(session);
+        transactional.commit();
+        session.close();
+    }
 
-            Session session = SessionFactory.getSession("skeleton");
-            session.open();
-            Transaction transactional = session.getTransaction();
-            transactional.begin();
-            PermissionFactory.init(this.initPermissionMap(session));
-            this.permissionList.forEach(Permission::init);
-            Map<String, Mapper> oldMapperMap = this.getMapperMap(session);
-            if (oldMapperMap != null && oldMapperMap.size() > 0) {
-                this.deleteUselessMapper(session, oldMapperMap);
-            }
-            Map<String, AuthMapperRelation> oldAuthMapperIdMap = this.getAuthMapperIdMap(session);
-            if (oldAuthMapperIdMap != null && oldAuthMapperIdMap.size() > 0) {
-                this.deleteUselessAuthMapper(session, oldAuthMapperIdMap);
-            }
-            saveAuthAndMapper(session, oldMapperMap, oldAuthMapperIdMap);
-            transactional.commit();
-            session.close();
+    private void execute(Session session) throws Exception {
+        //把数据库中的权限放入到工厂缓存起来
+        PermissionFactory.init(this.getPermissionMap(session));
+        //将新赠的权限放入到工程缓存中
+        this.permissionList.forEach(Permission::init);
+
+        //获取数据库中的bundle对象，以键值对的方式返回，key-> serverId + bundleId
+        this.bundleMap = this.getBundleMap(session);
+
+        //获取数据库中的Mapper对象，以键值对的方式返回，key-> bundleId + actionId
+        this.oldMapperMap = this.getMapperMap(session);
+        if (this.oldMapperMap != null && this.oldMapperMap.size() > 0) {
+            //删除无用的mapper
+            this.deleteUselessMapper(session);
         }
+
+        //获取数据库中权限和路由关联表对象，以键值对的方式返回，key->serverId + authorityId + bundleId + actionId
+        this.oldAuthMapperRelationMap = this.getAuthMapperRelationMap(session);
+        if (this.oldAuthMapperRelationMap != null && this.oldAuthMapperRelationMap.size() > 0) {
+            //删除多余的权限和路由的关联对象
+            this.deleteUselessAuthMapper(session);
+        }
+
+        //保存bundle、auth、mapper
+        this.saveBundleAuthAndMapper(session);
+
+        //删除多余的bundle
+        this.deleteUselessBundle(session);
     }
 
     /**
@@ -92,11 +105,26 @@ public class AuthLauncher implements CommandLineRunner {
      * @return 权限集合
      * @throws Exception e
      */
-    private Map<String, Authority> initPermissionMap(Session session) throws Exception {
+    private Map<String, Authority> getPermissionMap(Session session) throws Exception {
         Criteria criteria = session.creatCriteria(Authority.class);
         criteria.add(Restrictions.equ("serverId", serverId));
         List<Authority> authorityList = criteria.list();
         return authorityList.stream().collect(Collectors.toMap(item -> item.getServerId() + "_" + item.getId(), item -> item));
+    }
+
+    /**
+     * 获取数据库中的bundle
+     *
+     * @param session session.
+     * @return key -> serverId + bundleId, value -> bundle
+     * @throws Exception e
+     */
+    private Map<String, Bundle> getBundleMap(Session session) throws Exception {
+        Criteria criteria = session.creatCriteria(Bundle.class);
+        criteria.add(Restrictions.equ("serverId", serverId));
+        List<Bundle> bundles = criteria.list();
+        return bundles.stream()
+                .collect(Collectors.toMap(item -> item.getServerId() + item.getBundleId(), item -> item));
     }
 
     /**
@@ -120,7 +148,7 @@ public class AuthLauncher implements CommandLineRunner {
      * @return 从数据库中获取所有 权限和路由关系
      * @throws Exception e
      */
-    private Map<String, AuthMapperRelation> getAuthMapperIdMap(Session session) throws Exception {
+    private Map<String, AuthMapperRelation> getAuthMapperRelationMap(Session session) throws Exception {
         Criteria criteria = session.creatCriteria(AuthMapperRelation.class);
         criteria.add(Restrictions.equ("serverId", serverId));
         List<AuthMapperRelation> authMapperList = criteria.list();
@@ -138,38 +166,48 @@ public class AuthLauncher implements CommandLineRunner {
     }
 
     /**
-     * 保存数据库中没有的 Mapper 和 Authority
+     * 保存数据库中没有的 Bundle Mapper 和 Authority
      *
-     * @param session            session
-     * @param oldMapperMap       数据库中查旧的的 Mapper
-     * @param oldAuthMapperIdMap 数据库中旧的 Authority
+     * @param session session
      */
-    private void saveAuthAndMapper(Session session, Map<String, Mapper> oldMapperMap, Map<String, AuthMapperRelation> oldAuthMapperIdMap) {
+    private void saveBundleAuthAndMapper(Session session) {
         controllerMap.forEach((k, v) -> {
-            String bundleId = v.getClass().getAnnotation(Controller.class).bundleId()[0];
+            Controller controllerAnnotation = v.getClass().getAnnotation(Controller.class);
+            String bundleId = controllerAnnotation.bundleId()[0];
+            boolean withAuth = controllerAnnotation.auth();
             Method[] methods = v.getClass().getMethods();
             Arrays.stream(methods)
                     .filter(this.isMapperMethod)
                     .forEach(method -> {
                         Mapper mapper = this.getMethodMapper(bundleId, method);
-                        String mapperId = mapper.getBundleId() + mapper.getActionId();
+                        String mapperMapKey = mapper.getBundleId() + mapper.getActionId();
+                        String bundleMapKey = mapper.getServerId() + mapper.getBundleId();
                         try {
                             Auth auth = method.getAnnotation(Auth.class);
-                            String auhId = auth.value();
-                            Authority authority = PermissionFactory.get(serverId, auhId);
-                            if (authority != null) {
-                                if (!oldMapperMap.containsKey(mapperId)) {
-                                    session.save(mapper);
-                                } else {
-                                    mapper = oldMapperMap.get(mapperId);
-                                }
-                                AuthMapperRelation authMapper;
-                                if (!oldAuthMapperIdMap.containsKey(authority.getServerId() + "_" + authority.getId().toString() + "_" + mapperId)) {
-                                    authMapper = new AuthMapperRelation(serverId, authority.getUuid(), mapper.getUuid());
-                                    session.save(authMapper);
-                                }
+                            if (this.oldMapperMap.containsKey(mapperMapKey)) {
+                                mapper = this.oldMapperMap.get(mapperMapKey);
                             } else {
-                                throw new RuntimeException("serverId = " + serverId + " MapperId = " + mapperId + "   未找到对应权限");
+                                if (!this.bundleMap.containsKey(bundleMapKey)) {
+                                    Bundle bundle = new Bundle(mapper.getBundleId(), mapper.getServerId(), withAuth);
+                                    session.save(bundle);
+                                    this.bundleMap.put(bundleMapKey, bundle);
+                                }
+                                mapper.setBundleUuid(this.bundleMap.get(bundleMapKey).getUuid());
+                                session.save(mapper);
+                            }
+
+                            if (withAuth && auth != null) {
+                                String auhId = auth.value();
+                                Authority authority = PermissionFactory.get(serverId, auhId);
+                                if (authority != null) {
+                                    AuthMapperRelation authMapperRelation;
+                                    if (!this.oldAuthMapperRelationMap.containsKey(authority.getServerId() + "_" + authority.getId().toString() + "_" + mapperMapKey)) {
+                                        authMapperRelation = new AuthMapperRelation(serverId, authority.getUuid(), mapper.getUuid());
+                                        session.save(authMapperRelation);
+                                    }
+                                } else {
+                                    throw new RuntimeException("serverId = " + serverId + " MapperId = " + mapperMapKey + "   未找到对应权限");
+                                }
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -179,12 +217,30 @@ public class AuthLauncher implements CommandLineRunner {
     }
 
     /**
+     * 删除无用的bundle
+     *
+     * @param session session.
+     * @throws Exception e.
+     */
+    private void deleteUselessBundle(Session session) throws Exception {
+        Criteria mapperCriteria = session.creatCriteria(Mapper.class);
+        mapperCriteria.add(Restrictions.equ("serverId", this.serverId));
+        List<Mapper> newMapperList = mapperCriteria.list();
+        Map<String, Long> mapperMap = newMapperList.stream()
+                .collect(Collectors.groupingBy(mapper -> mapper.getServerId() + mapper.getBundleId(), Collectors.counting()));
+        this.bundleMap.forEach((k, v) -> {
+            if (mapperMap.get(k) == null) {
+                session.delete(v);
+            }
+        });
+    }
+
+    /**
      * 删除数据库多余的 Mapper
      *
-     * @param session      session
-     * @param oldMapperMap 数据库中查询所得的Mapper
+     * @param session session
      */
-    private void deleteUselessMapper(Session session, Map<String, Mapper> oldMapperMap) {
+    private void deleteUselessMapper(Session session) {
         Map<String, Mapper> modernMapperMap = controllerMap.entrySet().stream()
                 .map(entry -> {
                             String bundleId = entry.getValue().getClass().getAnnotation(Controller.class).bundleId()[0];
@@ -214,20 +270,21 @@ public class AuthLauncher implements CommandLineRunner {
     }
 
     private Predicate<Method> isMapperMethod = method -> method.getAnnotation(Action.class) != null;
+    private Predicate<Method> isAuthMethod = method -> method.getAnnotation(Auth.class) != null;
 
     /**
      * 删除数据库多余的 AuthMapperRelation
      *
-     * @param session                  session
-     * @param oldAuthMapperRelationMap 数据库查询出的 AuthMapperRelation
+     * @param session session
      */
-    private void deleteUselessAuthMapper(Session session, Map<String, AuthMapperRelation> oldAuthMapperRelationMap) {
+    private void deleteUselessAuthMapper(Session session) {
         String modernAuthMapperRelationMapKeys = controllerMap.entrySet().stream()
                 .map(entry -> {
                             String bundleId = entry.getValue().getClass().getAnnotation(Controller.class).bundleId()[0];
                             Method[] methods = entry.getValue().getClass().getMethods();
                             return Arrays.stream(methods)
                                     .filter(this.isMapperMethod)
+                                    .filter(this.isAuthMethod)
                                     .map(method -> {
                                         Mapper mapper = this.getMethodMapper(bundleId, method);
                                         Auth auth = method.getAnnotation(Auth.class);
