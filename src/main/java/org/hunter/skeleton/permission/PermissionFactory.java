@@ -18,22 +18,22 @@ public class PermissionFactory {
         PermissionFactory.permissionMap = permissionMap;
     }
 
-    public static void register(String serverName, String id, String name, String common) {
-        if (!permissionMap.containsKey(serverName + "_" + id)) {
+    static void register(String serverId, String id, String name, String common) {
+        if (!permissionMap.containsKey(serverId + "_" + id)) {
             try {
-                Authority authority = new Authority(serverName, id, name, common);
+                Authority authority = new Authority(serverId, id, name, common);
                 Session session = SessionFactory.getSession("skeleton");
                 session.open();
                 session.save(authority);
                 session.close();
-                permissionMap.put(serverName + "_" + id, authority);
+                permissionMap.put(serverId + "_" + id, authority);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public static Authority get(String serverName, String id) {
-        return permissionMap.getOrDefault(serverName + "_" + id, null);
+    public static Authority get(String serverId, String id) {
+        return permissionMap.getOrDefault(serverId + "_" + id, null);
     }
 }

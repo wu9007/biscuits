@@ -9,6 +9,7 @@ import org.hunter.skeleton.annotation.Action;
 import org.hunter.skeleton.annotation.Auth;
 import org.hunter.skeleton.annotation.Controller;
 import org.hunter.skeleton.controller.AbstractController;
+import org.hunter.skeleton.permission.AbstractPermission;
 import org.hunter.skeleton.spine.model.AuthMapperRelation;
 import org.hunter.skeleton.spine.model.Authority;
 import org.hunter.skeleton.spine.model.Bundle;
@@ -42,7 +43,7 @@ public class AuthLauncher implements CommandLineRunner {
     Map<String, AbstractController> controllerMap;
 
     private final
-    List<Permission> permissionList;
+    List<AbstractPermission> permissionList;
 
     private String serverId;
     private Map<String, Mapper> oldMapperMap;
@@ -50,7 +51,7 @@ public class AuthLauncher implements CommandLineRunner {
     private Map<String, Bundle> bundleMap;
 
     @Autowired
-    public AuthLauncher(Map<String, AbstractController> controllerMap, @Nullable List<Permission> permissionList, ApplicationContext context) {
+    public AuthLauncher(Map<String, AbstractController> controllerMap, @Nullable List<AbstractPermission> permissionList, ApplicationContext context) {
         this.controllerMap = controllerMap.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         this.permissionList = permissionList;
@@ -72,7 +73,10 @@ public class AuthLauncher implements CommandLineRunner {
         //把数据库中的权限放入到工厂缓存起来
         PermissionFactory.init(this.getPermissionMap(session));
         //将新赠的权限放入到工程缓存中
-        this.permissionList.forEach(Permission::init);
+        this.permissionList.forEach(permission -> {
+            permission.setServerId(this.serverId);
+            permission.init();
+        });
 
         //获取数据库中的bundle对象，以键值对的方式返回，key-> serverId + bundleId
         this.bundleMap = this.getBundleMap(session);
