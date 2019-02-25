@@ -31,4 +31,12 @@ public interface UserService {
      * @return token.
      */
     User register(User user);
+
+    /**
+     * 验证信息是否可注册
+     *
+     * @param user 用户信息
+     * @return 是否可注册
+     */
+    boolean verify(User user);
 }

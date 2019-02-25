@@ -8,7 +8,7 @@ import org.hunter.skeleton.spine.model.Role;
  */
 public interface RoleRepository extends Repository {
 
-    Role findOne(Long uuid);
+    Role findOne(long uuid);
 
     Role findById(String id);
 }

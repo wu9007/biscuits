@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class RoleRepositoryImpl extends AbstractRepository implements RoleRepository {
     @Override
-    public Role findOne(Long uuid) {
+    public Role findOne(long uuid) {
         return (Role) this.session.findOne(Role.class, uuid);
     }
 

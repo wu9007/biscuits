@@ -3,7 +3,7 @@ package org.hunter.skeleton.spine.model;
 import org.hunter.pocket.annotation.Column;
 import org.hunter.pocket.annotation.Entity;
 import org.hunter.pocket.annotation.OneToMany;
-import org.hunter.pocket.model.BaseEntity;
+import org.hunter.pocket.model.AbstractEntity;
 
 import java.util.Date;
 import java.util.List;
@@ -12,17 +12,23 @@ import java.util.List;
  * @author wujianchuan 2019/1/30
  */
 @Entity(table = "TBL_USER", tableId = 106, businessName = "人员")
-public class User extends BaseEntity {
-    @Column(name = "AVATAR", businessName = "昵称")
+public class User extends AbstractEntity {
+    @Column(name = "CODE", businessName = "昵称")
     private String avatar;
-    @Column(name = "PASSWORD", businessName = "密码")
-    private String password;
     @Column(name = "NAME", businessName = "姓名")
     private String name;
-    @Column(name = "DEPARTMENT_UUID", businessName = "部门")
+    @Column(name = "PHONE", businessName = "手机号")
+    private String phone;
+    @Column(name = "PASSWORD", businessName = "密码")
+    private String password;
+    @Column(name = "DEPT_UUID", businessName = "部门")
     private Long departmentUuid;
-    @OneToMany(clazz = UserRoleRelation.class, name = "USER_UUID")
-    private List<UserRoleRelation> userRoleRelations;
+    @Column(name = "MEMO", businessName = "备注")
+    private String memo;
+    @Column(name = "STATE", businessName = "状态")
+    private Boolean state;
+    @Column(name = "SORT", businessName = "排序码")
+    private Integer sort;
     @Column(name = "LAST_PASSWORD_RESET_DATE", businessName = "密码最后更新时间")
     private Date lastPasswordResetDate;
     /**
@@ -30,6 +36,9 @@ public class User extends BaseEntity {
      */
     @Column(name = "LAST_ROLE_MODIFY_DATE", businessName = "角色最后更新时间")
     private Date lastRoleModifyDate;
+
+    @OneToMany(clazz = UserRoleRelation.class, name = "USER_UUID")
+    private List<UserRoleRelation> userRoleRelations;
 
     public String getAvatar() {
         return avatar;
@@ -55,6 +64,14 @@ public class User extends BaseEntity {
         this.name = name;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     public Long getDepartmentUuid() {
         return departmentUuid;
     }
@@ -63,12 +80,28 @@ public class User extends BaseEntity {
         this.departmentUuid = departmentUuid;
     }
 
-    public List<UserRoleRelation> getUserRoleRelations() {
-        return userRoleRelations;
+    public String getMemo() {
+        return memo;
     }
 
-    public void setUserRoleRelations(List<UserRoleRelation> userRoleRelations) {
-        this.userRoleRelations = userRoleRelations;
+    public void setMemo(String memo) {
+        this.memo = memo;
+    }
+
+    public Boolean getState() {
+        return state;
+    }
+
+    public void setState(Boolean state) {
+        this.state = state;
+    }
+
+    public Integer getSort() {
+        return sort;
+    }
+
+    public void setSort(Integer sort) {
+        this.sort = sort;
     }
 
     public Date getLastPasswordResetDate() {
@@ -86,4 +119,13 @@ public class User extends BaseEntity {
     public void setLastRoleModifyDate(Date lastRoleModifyDate) {
         this.lastRoleModifyDate = lastRoleModifyDate;
     }
+
+    public List<UserRoleRelation> getUserRoleRelations() {
+        return userRoleRelations;
+    }
+
+    public void setUserRoleRelations(List<UserRoleRelation> userRoleRelations) {
+        this.userRoleRelations = userRoleRelations;
+    }
+
 }

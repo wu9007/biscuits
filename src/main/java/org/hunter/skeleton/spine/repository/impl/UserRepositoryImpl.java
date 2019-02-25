@@ -7,6 +7,8 @@ import org.hunter.skeleton.spine.model.User;
 import org.hunter.skeleton.spine.repository.UserRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
+
 /**
  * @author wujianchuan 2019/1/30
  */
@@ -15,6 +17,9 @@ public class UserRepositoryImpl extends AbstractRepository implements UserReposi
 
     @Override
     public int saveUser(User user) {
+        user.setLastPasswordResetDate(new Date());
+        user.setLastRoleModifyDate(new Date());
+        user.setState(true);
         return this.session.save(user);
     }
 

@@ -27,7 +27,7 @@ public class UserServiceImpl extends AbstractService implements UserService {
     }
 
     @Override
-    public User loadUser(String avatar){
+    public User loadUser(String avatar) {
         return this.userRepository.findByAvatar(avatar);
     }
 
@@ -43,12 +43,21 @@ public class UserServiceImpl extends AbstractService implements UserService {
 
     @Override
     public User register(User user) {
-        user.setPassword(encodeUtil.encoderByMd5(user.getPassword()));
-        int effectRowNum = this.userRepository.saveUser(user);
-        if (effectRowNum == 1) {
-            return user;
+        if (user != null && user.getAvatar() != null && user.getPassword() != null) {
+            user.setPassword(encodeUtil.encoderByMd5(user.getPassword()));
+            int effectRowNum = this.userRepository.saveUser(user);
+            if (effectRowNum == 1) {
+                return user;
+            } else {
+                return null;
+            }
         } else {
             return null;
         }
+    }
+
+    @Override
+    public boolean verify(User user) {
+        return this.userRepository.findByAvatar(user.getAvatar()) == null;
     }
 }
