@@ -77,11 +77,15 @@ public class AuthLauncher implements CommandLineRunner {
     private void execute(Session session) throws Exception {
         //把数据库中的权限放入到工厂缓存起来
         PermissionFactory.init(this.getPermissionMap(session));
-        //将权限放入到缓存中
+        //保存新增权限并放入到缓存中
         this.permissionList.forEach(permission -> {
             permission.setServerId(this.serverId);
+            permission.setSession(session);
             permission.init();
         });
+
+        //删除多余的permission
+        PermissionFactory.removeUselessPermission(session);
 
         //将Bundle放入到缓存中
         this.bundleList.forEach(bundle -> {
@@ -89,11 +93,12 @@ public class AuthLauncher implements CommandLineRunner {
             bundle.init();
         });
 
-        //获取数据库中的bundle对象，以键值对的方式返回，key-> serverId + bundleId
+        //获取数据库中的bundle对象，以键值对的方式返回，key-> serverId + "_" + bundleId
         this.bundleMap = this.getBundleMap(session);
 
         //获取数据库中的Mapper对象，以键值对的方式返回，key-> bundleId + actionId
         this.oldMapperMap = this.getMapperMap(session);
+
         if (this.oldMapperMap != null && this.oldMapperMap.size() > 0) {
             //删除无用的mapper
             this.deleteUselessMapper(session);
@@ -101,6 +106,7 @@ public class AuthLauncher implements CommandLineRunner {
 
         //获取数据库中权限和路由关联表对象，以键值对的方式返回，key->serverId + authorityId + bundleId + actionId
         this.oldAuthMapperRelationMap = this.getAuthMapperRelationMap(session);
+
         if (this.oldAuthMapperRelationMap != null && this.oldAuthMapperRelationMap.size() > 0) {
             //删除多余的权限和路由的关联对象
             this.deleteUselessAuthMapper(session);
@@ -206,9 +212,14 @@ public class AuthLauncher implements CommandLineRunner {
                                 mapper = this.oldMapperMap.get(mapperMapKey);
                             } else {
                                 if (!this.bundleMap.containsKey(bundleMapKey)) {
-                                    Bundle bundle = new Bundle(mapper.getBundleId(), BundleFactory.getBundleName(mapper.getServerId(), mapper.getBundleId()), mapper.getServerId(), withAuth);
-                                    session.save(bundle);
-                                    this.bundleMap.put(bundleMapKey, bundle);
+                                    String bundleName = BundleFactory.getBundleName(mapper.getServerId(), mapper.getBundleId());
+                                    if (bundleName != null && bundleName.length() > 0) {
+                                        Bundle bundle = new Bundle(mapper.getBundleId(), BundleFactory.getBundleName(mapper.getServerId(), mapper.getBundleId()), mapper.getServerId(), withAuth);
+                                        session.save(bundle);
+                                        this.bundleMap.put(bundleMapKey, bundle);
+                                    } else {
+                                        throw new RuntimeException("请正确注册bundle, id: " + mapper.getBundleId());
+                                    }
                                 }
                                 mapper.setBundleUuid(this.bundleMap.get(bundleMapKey).getUuid());
                                 session.save(mapper);

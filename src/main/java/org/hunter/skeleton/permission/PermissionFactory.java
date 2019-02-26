@@ -13,24 +13,27 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PermissionFactory {
 
     private static Map<String, Authority> permissionMap = new ConcurrentHashMap<>(10);
+    private static Map<String, Boolean> necessaryKeyMap = new ConcurrentHashMap<>(10);
 
     public static void init(Map<String, Authority> permissionMap) {
         PermissionFactory.permissionMap = permissionMap;
     }
 
-    static void register(String serverId, String id, String name, String common) {
+    static void register(Session session, String serverId, String id, String name, String common) {
+        necessaryKeyMap.putIfAbsent(serverId + "_" + id, true);
         if (!permissionMap.containsKey(serverId + "_" + id)) {
-            try {
-                Authority authority = new Authority(serverId, id, name, common);
-                Session session = SessionFactory.getSession("skeleton");
-                session.open();
-                session.save(authority);
-                session.close();
-                permissionMap.putIfAbsent(serverId + "_" + id, authority);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            Authority authority = new Authority(serverId, id, name, common);
+            session.save(authority);
+            permissionMap.putIfAbsent(serverId + "_" + id, authority);
         }
+    }
+
+    public static void removeUselessPermission(Session session) {
+        permissionMap.forEach((k, v) -> {
+            if (!necessaryKeyMap.containsKey(k)) {
+                session.delete(v);
+            }
+        });
     }
 
     public static Authority get(String serverId, String id) {
