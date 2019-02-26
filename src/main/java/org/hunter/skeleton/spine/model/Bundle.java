@@ -31,8 +31,9 @@ public class Bundle extends BaseEntity {
     public Bundle() {
     }
 
-    public Bundle(String bundleId, String serverId, Boolean withAuth) {
+    public Bundle(String bundleId, String bundleName, String serverId, Boolean withAuth) {
         this.bundleId = bundleId;
+        this.bundleName = bundleName;
         this.serverId = serverId;
         this.withAuth = withAuth;
     }

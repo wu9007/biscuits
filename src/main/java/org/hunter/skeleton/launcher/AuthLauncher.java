@@ -8,13 +8,14 @@ import org.hunter.pocket.session.Transaction;
 import org.hunter.skeleton.annotation.Action;
 import org.hunter.skeleton.annotation.Auth;
 import org.hunter.skeleton.annotation.Controller;
+import org.hunter.skeleton.bundle.AbstractBundle;
+import org.hunter.skeleton.bundle.BundleFactory;
 import org.hunter.skeleton.controller.AbstractController;
 import org.hunter.skeleton.permission.AbstractPermission;
 import org.hunter.skeleton.spine.model.AuthMapperRelation;
 import org.hunter.skeleton.spine.model.Authority;
 import org.hunter.skeleton.spine.model.Bundle;
 import org.hunter.skeleton.spine.model.Mapper;
-import org.hunter.skeleton.permission.Permission;
 import org.hunter.skeleton.permission.PermissionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -45,16 +46,20 @@ public class AuthLauncher implements CommandLineRunner {
     private final
     List<AbstractPermission> permissionList;
 
+    private final
+    List<AbstractBundle> bundleList;
+
     private String serverId;
     private Map<String, Mapper> oldMapperMap;
     private Map<String, AuthMapperRelation> oldAuthMapperRelationMap;
     private Map<String, Bundle> bundleMap;
 
     @Autowired
-    public AuthLauncher(Map<String, AbstractController> controllerMap, @Nullable List<AbstractPermission> permissionList, ApplicationContext context) {
+    public AuthLauncher(Map<String, AbstractController> controllerMap, @Nullable List<AbstractPermission> permissionList, @Nullable List<AbstractBundle> bundleList, ApplicationContext context) {
         this.controllerMap = controllerMap.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         this.permissionList = permissionList;
+        this.bundleList = bundleList;
         this.serverId = Objects.requireNonNull(context.getEnvironment().getProperty("spring.application.name")).toUpperCase();
     }
 
@@ -72,10 +77,16 @@ public class AuthLauncher implements CommandLineRunner {
     private void execute(Session session) throws Exception {
         //把数据库中的权限放入到工厂缓存起来
         PermissionFactory.init(this.getPermissionMap(session));
-        //将新赠的权限放入到工程缓存中
+        //将权限放入到缓存中
         this.permissionList.forEach(permission -> {
             permission.setServerId(this.serverId);
             permission.init();
+        });
+
+        //将Bundle放入到缓存中
+        this.bundleList.forEach(bundle -> {
+            bundle.setServerId(this.serverId);
+            bundle.init();
         });
 
         //获取数据库中的bundle对象，以键值对的方式返回，key-> serverId + bundleId
@@ -100,6 +111,9 @@ public class AuthLauncher implements CommandLineRunner {
 
         //删除多余的bundle
         this.deleteUselessBundle(session);
+
+        //将Bundle注册到工厂中
+        this.registerBundleToFactory();
     }
 
     /**
@@ -128,7 +142,7 @@ public class AuthLauncher implements CommandLineRunner {
         criteria.add(Restrictions.equ("serverId", serverId));
         List<Bundle> bundles = criteria.list();
         return bundles.stream()
-                .collect(Collectors.toMap(item -> item.getServerId() + item.getBundleId(), item -> item));
+                .collect(Collectors.toMap(item -> item.getServerId() + "_" + item.getBundleId(), item -> item));
     }
 
     /**
@@ -185,14 +199,14 @@ public class AuthLauncher implements CommandLineRunner {
                     .forEach(method -> {
                         Mapper mapper = this.getMethodMapper(bundleId, method);
                         String mapperMapKey = mapper.getBundleId() + mapper.getActionId();
-                        String bundleMapKey = mapper.getServerId() + mapper.getBundleId();
+                        String bundleMapKey = mapper.getServerId() + "_" + mapper.getBundleId();
                         try {
                             Auth auth = method.getAnnotation(Auth.class);
                             if (this.oldMapperMap.containsKey(mapperMapKey)) {
                                 mapper = this.oldMapperMap.get(mapperMapKey);
                             } else {
                                 if (!this.bundleMap.containsKey(bundleMapKey)) {
-                                    Bundle bundle = new Bundle(mapper.getBundleId(), mapper.getServerId(), withAuth);
+                                    Bundle bundle = new Bundle(mapper.getBundleId(), BundleFactory.getBundleName(mapper.getServerId(), mapper.getBundleId()), mapper.getServerId(), withAuth);
                                     session.save(bundle);
                                     this.bundleMap.put(bundleMapKey, bundle);
                                 }
@@ -205,7 +219,7 @@ public class AuthLauncher implements CommandLineRunner {
                                 Authority authority = PermissionFactory.get(serverId, auhId);
                                 if (authority != null) {
                                     AuthMapperRelation authMapperRelation;
-                                    if (!this.oldAuthMapperRelationMap.containsKey(authority.getServerId() + "_" + authority.getId().toString() + "_" + mapperMapKey)) {
+                                    if (!this.oldAuthMapperRelationMap.containsKey(authority.getServerId() + "_" + authority.getId() + "_" + mapperMapKey)) {
                                         authMapperRelation = new AuthMapperRelation(serverId, authority.getUuid(), mapper.getUuid());
                                         session.save(authMapperRelation);
                                     }
@@ -231,12 +245,20 @@ public class AuthLauncher implements CommandLineRunner {
         mapperCriteria.add(Restrictions.equ("serverId", this.serverId));
         List<Mapper> newMapperList = mapperCriteria.list();
         Map<String, Long> mapperMap = newMapperList.stream()
-                .collect(Collectors.groupingBy(mapper -> mapper.getServerId() + mapper.getBundleId(), Collectors.counting()));
+                .collect(Collectors.groupingBy(mapper -> mapper.getServerId() + "_" + mapper.getBundleId(), Collectors.counting()));
         this.bundleMap.forEach((k, v) -> {
             if (mapperMap.get(k) == null) {
+                this.bundleMap.remove(k);
                 session.delete(v);
             }
         });
+    }
+
+    /**
+     * 将Bundle注册到工厂中
+     */
+    private void registerBundleToFactory() {
+        this.bundleMap.values().forEach(BundleFactory::registerBundle);
     }
 
     /**

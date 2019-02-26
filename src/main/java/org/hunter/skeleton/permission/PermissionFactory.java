@@ -26,7 +26,7 @@ public class PermissionFactory {
                 session.open();
                 session.save(authority);
                 session.close();
-                permissionMap.put(serverId + "_" + id, authority);
+                permissionMap.putIfAbsent(serverId + "_" + id, authority);
             } catch (Exception e) {
                 e.printStackTrace();
             }
