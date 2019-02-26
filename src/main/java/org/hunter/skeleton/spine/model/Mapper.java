@@ -3,6 +3,7 @@ package org.hunter.skeleton.spine.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hunter.pocket.annotation.Column;
 import org.hunter.pocket.annotation.Entity;
+import org.hunter.pocket.annotation.ManyToOne;
 import org.hunter.pocket.model.BaseEntity;
 
 /**
@@ -12,11 +13,14 @@ import org.hunter.pocket.model.BaseEntity;
  */
 @Entity(table = "TBL_MAPPER", tableId = 103)
 public class Mapper extends BaseEntity {
-    @Column(name = "SERVER_ID", businessName = "服务名")
-    private String serverId;
+    private static final long serialVersionUID = -2091601211891427181L;
     @Column(name = "REQUEST_METHOD", businessName = "请求方式")
     private String requestMethod;
-    @Column(name = "BUNDLE_ID", businessName = "绑定菜单")
+    @ManyToOne(name = "BUNDLE_UUID")
+    private Long bundleUuid;
+    @Column(name = "SERVER_ID")
+    private String serverId;
+    @Column(name = "BUNDLE_ID")
     private String bundleId;
     @Column(name = "ACTION_ID", businessName = "映射")
     private String actionId;
@@ -31,14 +35,6 @@ public class Mapper extends BaseEntity {
         this.actionId = actionId;
     }
 
-    public String getServerId() {
-        return serverId;
-    }
-
-    public void setServerId(String serverId) {
-        this.serverId = serverId;
-    }
-
     public String getRequestMethod() {
         return requestMethod;
     }
@@ -47,20 +43,36 @@ public class Mapper extends BaseEntity {
         this.requestMethod = requestMethod;
     }
 
-    public String getBundleId() {
-        return bundleId;
-    }
-
-    public void setBundleId(String bundleId) {
-        this.bundleId = bundleId;
-    }
-
     public String getActionId() {
         return actionId;
     }
 
     public void setActionId(String actionId) {
         this.actionId = actionId;
+    }
+
+    public Long getBundleUuid() {
+        return bundleUuid;
+    }
+
+    public void setBundleUuid(Long bundleUuid) {
+        this.bundleUuid = bundleUuid;
+    }
+
+    public String getServerId() {
+        return serverId;
+    }
+
+    public void setServerId(String serverId) {
+        this.serverId = serverId;
+    }
+
+    public String getBundleId() {
+        return bundleId;
+    }
+
+    public void setBundleId(String bundleId) {
+        this.bundleId = bundleId;
     }
 
     @JsonIgnore

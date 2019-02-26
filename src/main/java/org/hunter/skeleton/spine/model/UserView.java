@@ -10,7 +10,7 @@ public class UserView {
     private String memo;
     private Integer sort;
 
-    public UserView(String avatar, String name, String phone, String memo, Integer sort) {
+    UserView(String avatar, String name, String phone, String memo, Integer sort) {
         this.avatar = avatar;
         this.name = name;
         this.phone = phone;

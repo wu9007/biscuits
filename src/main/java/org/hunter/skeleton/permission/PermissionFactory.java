@@ -13,27 +13,30 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PermissionFactory {
 
     private static Map<String, Authority> permissionMap = new ConcurrentHashMap<>(10);
+    private static Map<String, Boolean> necessaryKeyMap = new ConcurrentHashMap<>(10);
 
     public static void init(Map<String, Authority> permissionMap) {
         PermissionFactory.permissionMap = permissionMap;
     }
 
-    public static void register(String serverName, String id, String name, String common) {
-        if (!permissionMap.containsKey(serverName + "_" + id)) {
-            try {
-                Authority authority = new Authority(serverName, id, name, common);
-                Session session = SessionFactory.getSession("skeleton");
-                session.open();
-                session.save(authority);
-                session.close();
-                permissionMap.put(serverName + "_" + id, authority);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    static void register(Session session, String serverId, String id, String name, String common) {
+        necessaryKeyMap.putIfAbsent(serverId + "_" + id, true);
+        if (!permissionMap.containsKey(serverId + "_" + id)) {
+            Authority authority = new Authority(serverId, id, name, common);
+            session.save(authority);
+            permissionMap.putIfAbsent(serverId + "_" + id, authority);
         }
     }
 
-    public static Authority get(String serverName, String id) {
-        return permissionMap.getOrDefault(serverName + "_" + id, null);
+    public static void removeUselessPermission(Session session) {
+        permissionMap.forEach((k, v) -> {
+            if (!necessaryKeyMap.containsKey(k)) {
+                session.delete(v);
+            }
+        });
+    }
+
+    public static Authority get(String serverId, String id) {
+        return permissionMap.getOrDefault(serverId + "_" + id, null);
     }
 }

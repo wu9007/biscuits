@@ -90,6 +90,7 @@ public class RoleServiceImpl extends AbstractService implements RoleService {
     public String loadAccessiblePathByRoleIds(String roleIds) {
         return Arrays.stream(roleIds.split(","))
                 .map(this.roleRepository::findById)
+                .filter(Objects::nonNull)
                 .map(this.authorityService::loadByRole)
                 .flatMap(Collection::parallelStream)
                 .map(this.mapperService::loadByAuthority)
