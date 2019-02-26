@@ -77,21 +77,26 @@ public class AuthLauncher implements CommandLineRunner {
     private void execute(Session session) throws Exception {
         //把数据库中的权限放入到工厂缓存起来
         PermissionFactory.init(this.getPermissionMap(session));
+
         //保存新增权限并放入到缓存中
-        this.permissionList.forEach(permission -> {
-            permission.setServerId(this.serverId);
-            permission.setSession(session);
-            permission.init();
-        });
+        if (this.permissionList != null) {
+            this.permissionList.forEach(permission -> {
+                permission.setServerId(this.serverId);
+                permission.setSession(session);
+                permission.init();
+            });
+        }
 
         //删除多余的permission
         PermissionFactory.removeUselessPermission(session);
 
         //将Bundle放入到缓存中
-        this.bundleList.forEach(bundle -> {
-            bundle.setServerId(this.serverId);
-            bundle.init();
-        });
+        if (this.bundleList != null) {
+            this.bundleList.forEach(bundle -> {
+                bundle.setServerId(this.serverId);
+                bundle.init();
+            });
+        }
 
         //获取数据库中的bundle对象，以键值对的方式返回，key-> serverId + "_" + bundleId
         this.bundleMap = this.getBundleMap(session);
@@ -200,27 +205,29 @@ public class AuthLauncher implements CommandLineRunner {
             String bundleId = controllerAnnotation.bundleId()[0];
             boolean withAuth = controllerAnnotation.auth();
             Method[] methods = v.getClass().getMethods();
+
+            String bundleMapKey = serverId + "_" + bundleId;
+            if (!this.bundleMap.containsKey(bundleMapKey)) {
+                String bundleName = BundleFactory.getBundleName(serverId, bundleId);
+                if (bundleName != null && bundleName.length() > 0) {
+                    Bundle bundle = new Bundle(bundleId, BundleFactory.getBundleName(serverId, bundleId), serverId, withAuth);
+                    session.save(bundle);
+                    this.bundleMap.put(bundleMapKey, bundle);
+                } else {
+                    throw new RuntimeException("请正确注册bundle, id: " + bundleId);
+                }
+            }
+
             Arrays.stream(methods)
                     .filter(this.isMapperMethod)
                     .forEach(method -> {
                         Mapper mapper = this.getMethodMapper(bundleId, method);
                         String mapperMapKey = mapper.getBundleId() + mapper.getActionId();
-                        String bundleMapKey = mapper.getServerId() + "_" + mapper.getBundleId();
                         try {
                             Auth auth = method.getAnnotation(Auth.class);
                             if (this.oldMapperMap.containsKey(mapperMapKey)) {
                                 mapper = this.oldMapperMap.get(mapperMapKey);
                             } else {
-                                if (!this.bundleMap.containsKey(bundleMapKey)) {
-                                    String bundleName = BundleFactory.getBundleName(mapper.getServerId(), mapper.getBundleId());
-                                    if (bundleName != null && bundleName.length() > 0) {
-                                        Bundle bundle = new Bundle(mapper.getBundleId(), BundleFactory.getBundleName(mapper.getServerId(), mapper.getBundleId()), mapper.getServerId(), withAuth);
-                                        session.save(bundle);
-                                        this.bundleMap.put(bundleMapKey, bundle);
-                                    } else {
-                                        throw new RuntimeException("请正确注册bundle, id: " + mapper.getBundleId());
-                                    }
-                                }
                                 mapper.setBundleUuid(this.bundleMap.get(bundleMapKey).getUuid());
                                 session.save(mapper);
                             }
