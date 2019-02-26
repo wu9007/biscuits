@@ -27,35 +27,10 @@ public interface RoleService {
     Role loadById(String id);
 
     /**
-     * get accessible services.
-     *
-     * @param roles roles.
-     * @return get accessible services.
-     */
-    String getServers(String roles);
-
-    /**
-     * get accessible bundles.
-     *
-     * @param serverId serverId.
-     * @param roles    roles.
-     * @return get accessible bundles.
-     */
-    String getBundles(String serverId, String roles);
-
-    /**
      * load user roles.
      *
      * @param user user.
      * @return roles.
      */
     List<Role> loadByUser(User user);
-
-    /**
-     * load accessible path by role ids.
-     *
-     * @param roleIds role ids (String)
-     * @return all accessible path (String).
-     */
-    String loadAccessiblePathByRoleIds(String roleIds);
 }

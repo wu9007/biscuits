@@ -39,4 +39,9 @@ public class MapperServiceImpl extends AbstractService implements MapperService 
         }
         return mappers;
     }
+
+    @Override
+    public List<Mapper> loadByBundle(Long uuid) {
+        return this.mapperRepository.findByBundle(uuid);
+    }
 }
