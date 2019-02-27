@@ -8,6 +8,7 @@ import org.hunter.skeleton.spine.service.BundleService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author wujianchuan 2019/2/26
@@ -32,5 +33,12 @@ public class BundleServiceImpl extends AbstractService implements BundleService 
     @Override
     public Bundle findOne(Long uuid) {
         return (Bundle) this.session.findOne(Bundle.class, uuid);
+    }
+
+    @Override
+    public List<Bundle> findNoGrouping() {
+        return this.repository.findAll().stream()
+                .filter(bundle -> bundle.getBundleGroupRelations() == null || bundle.getBundleGroupRelations().size() <= 0)
+                .collect(Collectors.toList());
     }
 }

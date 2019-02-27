@@ -21,6 +21,8 @@ public class BundleGroup extends BaseEntity {
     @OneToMany(clazz = BundleGroupRelation.class, name = "GROUP_UUID")
     private List<BundleGroupRelation> bundleGroupRelations;
 
+    private List<Bundle> bundles;
+
     public String getGroupId() {
         return groupId;
     }
@@ -35,6 +37,14 @@ public class BundleGroup extends BaseEntity {
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
+    }
+
+    public List<Bundle> getBundles() {
+        return bundles;
+    }
+
+    public void setBundles(List<Bundle> bundles) {
+        this.bundles = bundles;
     }
 
     public List<BundleGroupRelation> getBundleGroupRelations() {

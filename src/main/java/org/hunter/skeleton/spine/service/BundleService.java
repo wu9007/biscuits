@@ -13,4 +13,6 @@ public interface BundleService {
     List<Bundle> getNoAuthBundle();
 
     Bundle findOne(Long uuid);
+
+    List<Bundle> findNoGrouping();
 }

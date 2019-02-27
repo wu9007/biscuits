@@ -21,4 +21,15 @@ public class BundleRepositoryImpl extends AbstractRepository implements BundleRe
         criteria.add(Restrictions.equ("withAuth", false));
         return criteria.list();
     }
+
+    @Override
+    public List<Bundle> findOne(Long uuid) {
+        return (List<Bundle>) this.session.findOne(Bundle.class, uuid);
+    }
+
+    @Override
+    public List<Bundle> findAll() {
+        Criteria criteria = this.session.creatCriteria(Bundle.class);
+        return criteria.list(true);
+    }
 }

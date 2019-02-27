@@ -12,4 +12,8 @@ import java.util.List;
 public interface BundleRepository extends Repository {
 
     List<Bundle> findByAuthIf(Boolean auth);
+
+    List<Bundle> findOne(Long uuid);
+
+    List<Bundle> findAll();
 }
