@@ -19,4 +19,9 @@ public class BundleGroupRepositoryImpl extends AbstractRepository implements Bun
         Criteria criteria = this.session.creatCriteria(BundleGroup.class);
         return criteria.list();
     }
+
+    @Override
+    public void save(BundleGroup bundleGroup) {
+        this.session.save(bundleGroup);
+    }
 }

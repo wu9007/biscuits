@@ -27,4 +27,9 @@ public class BundleGroupServiceImpl extends AbstractService implements BundleGro
     public List<BundleGroup> loadGroups() {
         return this.repository.findAll();
     }
+
+    @Override
+    public void saveGroup(BundleGroup bundleGroup) {
+        this.repository.save(bundleGroup);
+    }
 }

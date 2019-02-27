@@ -11,4 +11,6 @@ import java.util.List;
 public interface BundleGroupService {
 
     List<BundleGroup> loadGroups();
+
+    void saveGroup(BundleGroup bundleGroup);
 }

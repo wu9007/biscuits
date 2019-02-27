@@ -12,4 +12,6 @@ import java.util.List;
 public interface BundleGroupRepository extends Repository {
 
     List<BundleGroup> findAll();
+
+    void save(BundleGroup bundleGroup);
 }
