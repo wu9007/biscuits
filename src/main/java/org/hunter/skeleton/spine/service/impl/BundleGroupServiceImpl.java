@@ -29,7 +29,7 @@ public class BundleGroupServiceImpl extends AbstractService implements BundleGro
     }
 
     @Override
-    public void saveGroup(BundleGroup bundleGroup) {
-        this.repository.save(bundleGroup);
+    public int saveGroup(BundleGroup bundleGroup) {
+        return this.repository.save(bundleGroup);
     }
 }

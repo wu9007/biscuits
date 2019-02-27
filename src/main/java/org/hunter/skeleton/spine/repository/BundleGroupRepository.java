@@ -13,5 +13,5 @@ public interface BundleGroupRepository extends Repository {
 
     List<BundleGroup> findAll();
 
-    void save(BundleGroup bundleGroup);
+    int save(BundleGroup bundleGroup);
 }

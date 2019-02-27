@@ -12,5 +12,5 @@ public interface BundleGroupService {
 
     List<BundleGroup> loadGroups();
 
-    void saveGroup(BundleGroup bundleGroup);
+    int saveGroup(BundleGroup bundleGroup);
 }
