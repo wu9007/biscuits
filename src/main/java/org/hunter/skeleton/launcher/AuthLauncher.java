@@ -308,7 +308,8 @@ public class AuthLauncher implements CommandLineRunner {
                         Mapper mapper = item.getValue();
                         Criteria criteria = session.creatCriteria(AuthMapperRelation.class);
                         criteria.add(Restrictions.equ("mapperUuid", mapper.getUuid()));
-                        criteria.delete();
+                        List<AuthMapperRelation> authMapperRelations = criteria.list();
+                        authMapperRelations.forEach(session::delete);
                         session.delete(mapper);
                     } catch (Exception e) {
                         e.printStackTrace();
