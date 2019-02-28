@@ -10,7 +10,7 @@ public interface Repository {
     /**
      * 注入session
      *
-     * @param session session
+     * @param sessionLocal session thread local.
      */
-    void setSession(Session session);
+    void construct(ThreadLocal<Session> sessionLocal);
 }

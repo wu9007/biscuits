@@ -16,12 +16,12 @@ import java.util.List;
 public class MapperRepositoryImpl extends AbstractRepository implements MapperRepository {
     @Override
     public Mapper findOne(long uuid) {
-        return (Mapper) this.session.findOne(Mapper.class, uuid);
+        return (Mapper) this.getSession().findOne(Mapper.class, uuid);
     }
 
     @Override
     public List<Mapper> findByBundle(Long bundleUuid) {
-        Criteria criteria = this.session.creatCriteria(Mapper.class);
+        Criteria criteria = this.getSession().creatCriteria(Mapper.class);
         criteria.add(Restrictions.equ("bundleUuid", bundleUuid));
         return criteria.list();
     }

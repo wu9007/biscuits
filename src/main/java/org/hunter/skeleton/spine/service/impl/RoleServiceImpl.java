@@ -25,7 +25,7 @@ public class RoleServiceImpl extends AbstractService implements RoleService {
     @Autowired
     public RoleServiceImpl(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
-        this.roleRepository.setSession(this.session);
+        this.roleRepository.construct(this.sessionLocal);
     }
 
     @Override

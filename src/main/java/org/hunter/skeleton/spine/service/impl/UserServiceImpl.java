@@ -23,7 +23,7 @@ public class UserServiceImpl extends AbstractService implements UserService {
     public UserServiceImpl(UserRepository userRepository, EncodeUtil encodeUtil) {
         this.userRepository = userRepository;
         this.encodeUtil = encodeUtil;
-        this.userRepository.setSession(this.session);
+        this.userRepository.construct(this.sessionLocal);
     }
 
     @Override

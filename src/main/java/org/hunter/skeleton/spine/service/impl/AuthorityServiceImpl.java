@@ -24,7 +24,7 @@ public class AuthorityServiceImpl extends AbstractService implements AuthoritySe
     @Autowired
     public AuthorityServiceImpl(AuthorityRepository authorityRepository) {
         this.authorityRepository = authorityRepository;
-        this.authorityRepository.setSession(this.session);
+        this.authorityRepository.construct(this.sessionLocal);
     }
 
     @Override

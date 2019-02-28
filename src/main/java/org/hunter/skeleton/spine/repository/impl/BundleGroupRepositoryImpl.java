@@ -16,12 +16,12 @@ import java.util.List;
 public class BundleGroupRepositoryImpl extends AbstractRepository implements BundleGroupRepository {
     @Override
     public List<BundleGroup> findAll() {
-        Criteria criteria = this.session.creatCriteria(BundleGroup.class);
+        Criteria criteria = this.getSession().creatCriteria(BundleGroup.class);
         return criteria.list();
     }
 
     @Override
     public int save(BundleGroup bundleGroup) {
-        return this.session.save(bundleGroup);
+        return this.getSession().save(bundleGroup);
     }
 }

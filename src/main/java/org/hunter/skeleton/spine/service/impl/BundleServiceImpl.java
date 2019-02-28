@@ -22,7 +22,7 @@ public class BundleServiceImpl extends AbstractService implements BundleService 
     @Autowired
     public BundleServiceImpl(BundleRepository repository) {
         this.repository = repository;
-        this.repository.setSession(this.session);
+        this.repository.construct(this.sessionLocal);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class BundleServiceImpl extends AbstractService implements BundleService 
 
     @Override
     public Bundle findOne(Long uuid) {
-        return (Bundle) this.session.findOne(Bundle.class, uuid);
+        return (Bundle) this.repository.findOne(uuid);
     }
 
     @Override

@@ -20,7 +20,7 @@ public class BundleGroupServiceImpl extends AbstractService implements BundleGro
     @Autowired
     public BundleGroupServiceImpl(BundleGroupRepository repository) {
         this.repository = repository;
-        this.repository.setSession(this.session);
+        this.repository.construct(this.sessionLocal);
     }
 
     @Override

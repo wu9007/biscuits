@@ -33,7 +33,7 @@ public class ServiceAspect {
     private static final Logger log = LoggerFactory.getLogger(ServiceAspect.class);
 
     private ThreadLocal<Long> startTimeLocal = new ThreadLocal<>();
-    private ThreadLocal<Session> sessionThreadLocal = new ThreadLocal<>();
+    private ThreadLocal<ThreadLocal<Session>> sessionThreadLocal = new ThreadLocal<>();
     private ThreadLocal<Boolean> transOn = new ThreadLocal<>();
     private ThreadLocal<LinkedList<Method>> methodThreadLocal = new ThreadLocal<>();
     private ThreadLocal<Integer> transOnIndex = new ThreadLocal<>();
@@ -59,12 +59,12 @@ public class ServiceAspect {
 
     @After("point()")
     public void after() {
-        Session session = getSession();
-        if (session != null && !session.getClosed()) {
+        ThreadLocal<Session> sessionLocal = this.getSessionLocal();
+        if (sessionLocal.get() != null && !sessionLocal.get().getClosed()) {
             //锁定开启事务的方法，提交事务
             if (this.getTransOnIndex() != null && this.getMethodLocal().size() == this.getTransOnIndex() && this.getTransOn()) {
                 try {
-                    session.getTransaction().commit();
+                    sessionLocal.get().getTransaction().commit();
                     this.setTransOn(false);
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -72,7 +72,7 @@ public class ServiceAspect {
             }
             //关闭最外层session
             if (this.getMethodLocal().size() == 1) {
-                session.close();
+                sessionLocal.get().close();
             }
         }
         Method method = this.popMethod();
@@ -89,17 +89,17 @@ public class ServiceAspect {
 
     @AfterThrowing(pointcut = "point()", throwing = "exception")
     public void afterThrowing(Exception exception) {
-        Session session = this.getSession();
-        if (session != null && !session.getClosed()) {
+        ThreadLocal<Session> sessionLocal = this.getSessionLocal();
+        if (sessionLocal.get() != null && !sessionLocal.get().getClosed()) {
             if (this.getTransOn()) {
                 try {
-                    session.getTransaction().rollBack();
+                    sessionLocal.get().getTransaction().rollBack();
                     this.setTransOn(false);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
             }
-            session.close();
+            sessionLocal.get().close();
         }
         this.remove();
         exception.printStackTrace();
@@ -125,18 +125,18 @@ public class ServiceAspect {
         Affairs affairs = method.getDeclaredAnnotation(Affairs.class);
         Service service = target.getClass().getAnnotation(Service.class);
         try {
-            Field sessionField = target.getClass().getSuperclass().getDeclaredField("session");
-            sessionField.setAccessible(true);
-            Session session = (Session) sessionField.get(target);
-            if (this.getSession() == null) {
-                SessionFactory.sideEffect(session, service.session());
-                this.setSession(session);
+            Field sessionLocalField = target.getClass().getSuperclass().getDeclaredField("sessionLocal");
+            sessionLocalField.setAccessible(true);
+            ThreadLocal<Session> sessionLocal = (ThreadLocal<Session>) sessionLocalField.get(target);
+            if (this.getSessionLocal() == null) {
+                sessionLocal.set(SessionFactory.getSession(service.session()));
+                this.setSessionLocal(sessionLocal);
 
-                if (session.getClosed()) {
-                    session.open();
+                if (sessionLocal.get().getClosed()) {
+                    sessionLocal.get().open();
                     // 事务嵌到时只开启最外层事务
                     if (!this.getTransOn() && affairs != null && affairs.on()) {
-                        Transaction transaction = session.getTransaction();
+                        Transaction transaction = sessionLocal.get().getTransaction();
                         transaction.begin();
                         this.setTransOn(true);
                         //标记开启事务的方法所在下标
@@ -146,7 +146,7 @@ public class ServiceAspect {
                     throw new RuntimeException("the session has been opened.");
                 }
             } else {
-                session.setUpperStorySession(this.getSession());
+                sessionLocal.set(this.getSessionLocal().get());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -154,14 +154,15 @@ public class ServiceAspect {
     }
 
     private void removeSessionLocal() {
+        this.sessionThreadLocal.get().remove();
         this.sessionThreadLocal.remove();
     }
 
-    private void setSession(Session session) {
-        this.sessionThreadLocal.set(session);
+    private void setSessionLocal(ThreadLocal<Session> sessionLocal) {
+        this.sessionThreadLocal.set(sessionLocal);
     }
 
-    private Session getSession() {
+    private ThreadLocal<Session> getSessionLocal() {
         return this.sessionThreadLocal.get();
     }
 
