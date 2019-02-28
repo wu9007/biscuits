@@ -25,6 +25,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -264,12 +265,14 @@ public class AuthLauncher implements CommandLineRunner {
         List<Mapper> newMapperList = mapperCriteria.list();
         Map<String, Long> mapperMap = newMapperList.stream()
                 .collect(Collectors.groupingBy(mapper -> mapper.getServerId() + "_" + mapper.getBundleId(), Collectors.counting()));
+        List<String> uselessKey = new ArrayList<>();
         this.bundleMap.forEach((k, v) -> {
             if (mapperMap.get(k) == null) {
-                this.bundleMap.remove(k);
                 session.delete(v);
+                uselessKey.add(k);
             }
         });
+        uselessKey.forEach(key -> this.bundleMap.remove(key));
     }
 
     /**
@@ -305,7 +308,8 @@ public class AuthLauncher implements CommandLineRunner {
                         Mapper mapper = item.getValue();
                         Criteria criteria = session.creatCriteria(AuthMapperRelation.class);
                         criteria.add(Restrictions.equ("mapperUuid", mapper.getUuid()));
-                        criteria.delete();
+                        List<AuthMapperRelation> authMapperRelations = criteria.list();
+                        authMapperRelations.forEach(session::delete);
                         session.delete(mapper);
                     } catch (Exception e) {
                         e.printStackTrace();

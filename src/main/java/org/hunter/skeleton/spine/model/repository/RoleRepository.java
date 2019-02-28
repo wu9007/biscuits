@@ -1,4 +1,4 @@
-package org.hunter.skeleton.spine.repository;
+package org.hunter.skeleton.spine.model.repository;
 
 import org.hunter.skeleton.repository.Repository;
 import org.hunter.skeleton.spine.model.Role;

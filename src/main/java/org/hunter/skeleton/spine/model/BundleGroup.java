@@ -18,7 +18,11 @@ public class BundleGroup extends BaseEntity {
     private String groupId;
     @Column(name = "GROUP_NAME")
     private String groupName;
-    @OneToMany(clazz = Bundle.class, name = "GROUP_UUID")
+    @Column(name = "SORT")
+    private Double sort;
+    @OneToMany(clazz = BundleGroupRelation.class, name = "GROUP_UUID")
+    private List<BundleGroupRelation> bundleGroupRelations;
+
     private List<Bundle> bundles;
 
     public String getGroupId() {
@@ -37,11 +41,27 @@ public class BundleGroup extends BaseEntity {
         this.groupName = groupName;
     }
 
+    public Double getSort() {
+        return sort;
+    }
+
+    public void setSort(Double sort) {
+        this.sort = sort;
+    }
+
     public List<Bundle> getBundles() {
         return bundles;
     }
 
     public void setBundles(List<Bundle> bundles) {
         this.bundles = bundles;
+    }
+
+    public List<BundleGroupRelation> getBundleGroupRelations() {
+        return bundleGroupRelations;
+    }
+
+    public void setBundleGroupRelations(List<BundleGroupRelation> bundleGroupRelations) {
+        this.bundleGroupRelations = bundleGroupRelations;
     }
 }

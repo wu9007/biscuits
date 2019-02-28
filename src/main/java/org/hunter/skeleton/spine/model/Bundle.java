@@ -23,8 +23,8 @@ public class Bundle extends BaseEntity {
     private String serverId;
     @Column(name = "WITH_AUTH")
     private Boolean withAuth;
-    @ManyToOne(name = "GROUP_UUID")
-    private Long groupUuid;
+    @OneToMany(clazz = BundleGroupRelation.class, name = "BUNDLE_UUID")
+    private List<BundleGroupRelation> bundleGroupRelations;
     @OneToMany(clazz = Mapper.class, name = "BUNDLE_UUID")
     private List<Mapper> mappers;
 
@@ -70,12 +70,12 @@ public class Bundle extends BaseEntity {
         this.withAuth = withAuth;
     }
 
-    public Long getGroupUuid() {
-        return groupUuid;
+    public List<BundleGroupRelation> getBundleGroupRelations() {
+        return bundleGroupRelations;
     }
 
-    public void setGroupUuid(Long groupUuid) {
-        this.groupUuid = groupUuid;
+    public void setBundleGroupRelations(List<BundleGroupRelation> bundleGroupRelations) {
+        this.bundleGroupRelations = bundleGroupRelations;
     }
 
     public List<Mapper> getMappers() {
