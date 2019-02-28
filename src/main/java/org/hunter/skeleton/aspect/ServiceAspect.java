@@ -14,6 +14,7 @@ import org.hunter.pocket.session.SessionFactory;
 import org.hunter.pocket.session.Transaction;
 import org.hunter.skeleton.annotation.Affairs;
 import org.hunter.skeleton.annotation.Service;
+import org.hunter.skeleton.repository.Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -36,6 +37,7 @@ public class ServiceAspect {
     private ThreadLocal<ThreadLocal<Session>> sessionThreadLocal = new ThreadLocal<>();
     private ThreadLocal<Boolean> transOn = new ThreadLocal<>();
     private ThreadLocal<LinkedList<Method>> methodThreadLocal = new ThreadLocal<>();
+    private ThreadLocal<LinkedList<Object>> targetThreadLocal = new ThreadLocal<>();
     private ThreadLocal<Integer> transOnIndex = new ThreadLocal<>();
 
     @Pointcut("execution(public * org.hunter..*.service.*.*(..))")
@@ -47,10 +49,14 @@ public class ServiceAspect {
         if (this.methodThreadLocal.get() == null) {
             this.methodThreadLocal.set(new LinkedList<>());
         }
+        if (this.targetThreadLocal.get() == null) {
+            this.targetThreadLocal.set(new LinkedList<>());
+        }
 
         this.startTimeLocal.set(System.currentTimeMillis());
         Object target = joinPoint.getTarget();
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
+        this.pushTarget(target);
         this.pushMethod(method);
         log.info("<Before> Call method: {}({})", method.getName(), StringUtils.join(joinPoint.getArgs(), ","));
         // session 嵌套时只开启最外层session
@@ -75,16 +81,26 @@ public class ServiceAspect {
                 sessionLocal.get().close();
             }
         }
-        Method method = this.popMethod();
-        log.info("<After> Call method: {}", method.getName());
+        log.info("<After> Call method: {}===>{}", this.getLastTarget().getClass().getSimpleName(), this.getLastMethod().getName());
     }
 
     @AfterReturning(pointcut = "point()", returning = "object")
     public void getAfterReturn(Object object) {
-        log.info("<AfterReturning> Consuming time is: {}ms     return value is: {}", System.currentTimeMillis() - this.startTimeLocal.get(), object != null ? object.toString() : null);
-        if (this.getMethodLocal().size() == 0) {
-            this.remove();
+        Object target = this.popTarget();
+        Method method = this.popMethod();
+        log.info("<AfterReturning> Call method: {}     Consuming time is: {}ms     return value is: {}", method.getName(), System.currentTimeMillis() - this.startTimeLocal.get(), object != null ? object.toString() : null);
+        if (this.getMethodLocal().size() > 0) {
+            throw new RuntimeException("Method thread local not empty.");
         }
+        if (this.getTargetLocal().size() > 0) {
+            throw new RuntimeException("Target thread local not empty.");
+        }
+
+        //清空service下repository们的thread local.
+        this.getRepositoryList(target).forEach(Repository::pourSession);
+
+        //清空切面中的thread local.
+        this.remove();
     }
 
     @AfterThrowing(pointcut = "point()", throwing = "exception")
@@ -113,6 +129,7 @@ public class ServiceAspect {
         this.removeTransOnLocal();
         this.removeSessionLocal();
         this.removeMethodLocal();
+        this.removeTargetLocal();
     }
 
     /**
@@ -128,6 +145,7 @@ public class ServiceAspect {
             Field sessionLocalField = target.getClass().getSuperclass().getDeclaredField("sessionLocal");
             sessionLocalField.setAccessible(true);
             ThreadLocal<Session> sessionLocal = (ThreadLocal<Session>) sessionLocalField.get(target);
+
             if (this.getSessionLocal() == null) {
                 sessionLocal.set(SessionFactory.getSession(service.session()));
                 this.setSessionLocal(sessionLocal);
@@ -148,6 +166,9 @@ public class ServiceAspect {
             } else {
                 sessionLocal.set(this.getSessionLocal().get());
             }
+
+            //给service下的所有repository注入session
+            this.getRepositoryList(target).forEach(repository -> repository.injectSession(sessionLocal.get()));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -156,6 +177,17 @@ public class ServiceAspect {
     private void removeSessionLocal() {
         this.sessionThreadLocal.get().remove();
         this.sessionThreadLocal.remove();
+    }
+
+    private List<Repository> getRepositoryList(Object target) {
+        try {
+            Field repositoryListField = target.getClass().getSuperclass().getDeclaredField("repositoryList");
+            repositoryListField.setAccessible(true);
+            return (List<Repository>) repositoryListField.get(target);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     private void setSessionLocal(ThreadLocal<Session> sessionLocal) {
@@ -178,6 +210,16 @@ public class ServiceAspect {
         this.transOn.set(transOn);
     }
 
+    private void setTransOnIndex(int index) {
+        this.transOnIndex.set(index);
+    }
+
+    private Integer getTransOnIndex() {
+        return this.transOnIndex.get();
+    }
+
+    //======== 方法站操作 ========
+
     private List<Method> getMethodLocal() {
         return this.methodThreadLocal.get();
     }
@@ -194,11 +236,29 @@ public class ServiceAspect {
         return this.methodThreadLocal.get().pop();
     }
 
-    private void setTransOnIndex(int index) {
-        this.transOnIndex.set(index);
+    private Method getLastMethod() {
+        return this.methodThreadLocal.get().getLast();
     }
 
-    private Integer getTransOnIndex() {
-        return this.transOnIndex.get();
+    //======== 对象栈操作 ========
+
+    private List<Object> getTargetLocal() {
+        return this.targetThreadLocal.get();
+    }
+
+    private void removeTargetLocal() {
+        this.targetThreadLocal.remove();
+    }
+
+    private void pushTarget(Object object) {
+        this.targetThreadLocal.get().push(object);
+    }
+
+    private Object popTarget() {
+        return this.targetThreadLocal.get().pop();
+    }
+
+    private Object getLastTarget() {
+        return this.targetThreadLocal.get().getLast();
     }
 }
