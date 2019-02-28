@@ -1,10 +1,10 @@
-package org.hunter.skeleton.spine.repository.impl;
+package org.hunter.skeleton.spine.model.repository.impl;
 
 import org.hunter.pocket.criteria.Criteria;
 import org.hunter.pocket.criteria.Restrictions;
 import org.hunter.skeleton.repository.AbstractRepository;
 import org.hunter.skeleton.spine.model.Bundle;
-import org.hunter.skeleton.spine.repository.BundleRepository;
+import org.hunter.skeleton.spine.model.repository.BundleRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

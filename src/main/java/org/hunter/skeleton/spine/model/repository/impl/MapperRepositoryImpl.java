@@ -1,11 +1,11 @@
-package org.hunter.skeleton.spine.repository.impl;
+package org.hunter.skeleton.spine.model.repository.impl;
 
 import org.hunter.pocket.criteria.Criteria;
 import org.hunter.pocket.criteria.Restrictions;
 import org.hunter.skeleton.annotation.Service;
 import org.hunter.skeleton.repository.AbstractRepository;
 import org.hunter.skeleton.spine.model.Mapper;
-import org.hunter.skeleton.spine.repository.MapperRepository;
+import org.hunter.skeleton.spine.model.repository.MapperRepository;
 
 import java.util.List;
 
