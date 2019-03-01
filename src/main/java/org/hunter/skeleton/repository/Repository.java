@@ -8,9 +8,21 @@ import org.hunter.pocket.session.Session;
 public interface Repository {
 
     /**
-     * 注入session
+     * 注入 session
      *
-     * @param sessionLocal session thread local.
+     * @param session session.
      */
-    void construct(ThreadLocal<Session> sessionLocal);
+    void injectSession(Session session);
+
+    /**
+     * 移除 session
+     */
+    void pourSession();
+
+    /**
+     * 获取 session
+     *
+     * @return session.
+     */
+    Session getSession();
 }
