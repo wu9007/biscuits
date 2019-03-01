@@ -23,8 +23,8 @@ public class BundleRepositoryImpl extends AbstractRepository implements BundleRe
     }
 
     @Override
-    public List<Bundle> findOne(Long uuid) {
-        return (List<Bundle>) this.getSession().findOne(Bundle.class, uuid);
+    public Bundle findOne(long uuid) {
+        return (Bundle) this.getSession().findOne(Bundle.class, uuid);
     }
 
     @Override

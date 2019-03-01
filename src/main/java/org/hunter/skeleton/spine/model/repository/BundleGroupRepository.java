@@ -1,5 +1,6 @@
 package org.hunter.skeleton.spine.model.repository;
 
+import org.hunter.skeleton.controller.FilterView;
 import org.hunter.skeleton.repository.Repository;
 import org.hunter.skeleton.spine.model.BundleGroup;
 
@@ -11,7 +12,13 @@ import java.util.List;
  */
 public interface BundleGroupRepository extends Repository {
 
-    List<BundleGroup> findAll();
+    BundleGroup findOne(long uuid);
+
+    List<BundleGroup> findAll(FilterView filterView);
 
     int save(BundleGroup bundleGroup);
+
+    int delete(BundleGroup bundleGroup);
+
+    int update(BundleGroup bundleGroup);
 }

@@ -12,6 +12,6 @@ import org.springframework.stereotype.Repository;
 public class AuthorityRepositoryImpl extends AbstractRepository implements AuthorityRepository {
     @Override
     public Authority findOne(long uuid) {
-        return (Authority) this.getSession().findOne(Authority.class, uuid);
+        return (Authority) this.getSession().findDirect(Authority.class, uuid);
     }
 }

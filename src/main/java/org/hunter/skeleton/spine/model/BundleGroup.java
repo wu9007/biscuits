@@ -4,8 +4,12 @@ import org.hunter.pocket.annotation.Column;
 import org.hunter.pocket.annotation.Entity;
 import org.hunter.pocket.annotation.OneToMany;
 import org.hunter.pocket.model.BaseEntity;
+import org.hunter.skeleton.spine.model.repository.BundleRepository;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author wujianchuan 2019/2/25
@@ -63,5 +67,17 @@ public class BundleGroup extends BaseEntity {
 
     public void setBundleGroupRelations(List<BundleGroupRelation> bundleGroupRelations) {
         this.bundleGroupRelations = bundleGroupRelations;
+    }
+
+    public List<Bundle> getBundles(BundleRepository bundleRepository) {
+        List<Bundle> bundles = new ArrayList<>();
+        List<BundleGroupRelation> bundleGroupRelations = this.getBundleGroupRelations();
+        if (bundleGroupRelations != null && bundleGroupRelations.size() > 0) {
+            bundles = bundleGroupRelations.stream()
+                    .map(bundleGroupRelation -> bundleRepository.findOne(bundleGroupRelation.getBundleUuid()))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+        }
+        return bundles;
     }
 }
