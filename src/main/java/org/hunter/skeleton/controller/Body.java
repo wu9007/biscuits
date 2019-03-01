@@ -1,9 +1,12 @@
 package org.hunter.skeleton.controller;
 
+import java.io.Serializable;
+
 /**
  * @author wujianchuan 2019/2/20
  */
-public class Body {
+public class Body implements Serializable {
+    private static final long serialVersionUID = -7606557226712921098L;
     private Boolean success;
     private String category;
     private String title;
