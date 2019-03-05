@@ -1,5 +1,5 @@
 # *Skeleton*
-这是一个需配合 [Pocket](https://github.com/leyan95/pocket) 使用的 `Spring` 小模板
+`Spring` 小模板
 
 ## 使用方式
 ### Gradle 依赖
