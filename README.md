@@ -1,5 +1,8 @@
 # *Skeleton*
-`Spring` 小模板
+
+a little scaffold of spring
+
+If you have an improvement, I will be happy to get a pull request from you!
 
 ## 使用方式
 ### Gradle 依赖
