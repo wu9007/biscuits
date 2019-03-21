@@ -33,12 +33,12 @@ import java.util.List;
 public class ServiceAspect {
     private static final Logger log = LoggerFactory.getLogger(ServiceAspect.class);
 
-    private ThreadLocal<Long> startTimeLocal = new ThreadLocal<>();
-    private ThreadLocal<ThreadLocal<Session>> sessionThreadLocal = new ThreadLocal<>();
-    private ThreadLocal<Boolean> transOn = new ThreadLocal<>();
-    private ThreadLocal<LinkedList<Method>> methodThreadLocal = new ThreadLocal<>();
-    private ThreadLocal<LinkedList<Object>> targetThreadLocal = new ThreadLocal<>();
-    private ThreadLocal<Integer> transOnIndex = new ThreadLocal<>();
+    private final ThreadLocal<Long> startTimeLocal = new ThreadLocal<>();
+    private final ThreadLocal<ThreadLocal<Session>> sessionThreadLocal = new ThreadLocal<>();
+    private final ThreadLocal<Boolean> transOn = new ThreadLocal<>();
+    private final ThreadLocal<LinkedList<Method>> methodThreadLocal = new ThreadLocal<>();
+    private final ThreadLocal<LinkedList<Object>> targetThreadLocal = new ThreadLocal<>();
+    private final ThreadLocal<Integer> transOnIndex = new ThreadLocal<>();
 
     @Pointcut("execution(public * org.hunter..*.service.*.*(..))")
     public void point() {

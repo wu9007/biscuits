@@ -14,7 +14,7 @@ public class AbstractService {
 
     private ThreadLocal<Session> sessionLocal = new ThreadLocal<>();
 
-    private List<Repository> repositoryList = new ArrayList<>();
+    private final List<Repository> repositoryList = new ArrayList<>();
 
     protected void injectRepository(Repository... repositories) {
         this.repositoryList.addAll(Arrays.asList(repositories));

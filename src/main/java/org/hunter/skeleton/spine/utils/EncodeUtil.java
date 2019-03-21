@@ -14,7 +14,7 @@ import java.security.NoSuchAlgorithmException;
 @Component
 public class EncodeUtil {
     public String encoderByMd5(String code) {
-        MessageDigest md5 = null;
+        MessageDigest md5;
         try {
             md5 = MessageDigest.getInstance("MD5");
             BASE64Encoder base64en = new BASE64Encoder();
@@ -25,7 +25,7 @@ public class EncodeUtil {
         }
     }
 
-    public boolean checkCodeByMd5(String modernCode, String oldCode) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    public boolean checkCodeByMd5(String modernCode, String oldCode) {
         return this.encoderByMd5(modernCode).equals(oldCode);
     }
 }
