@@ -3,7 +3,6 @@ package org.hunter.skeleton.spine.utils;
 import org.springframework.stereotype.Component;
 import sun.misc.BASE64Encoder;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

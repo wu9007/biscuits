@@ -3,6 +3,7 @@ package org.hunter.skeleton.spine.model;
 import org.hunter.pocket.annotation.Column;
 import org.hunter.pocket.annotation.Entity;
 import org.hunter.pocket.annotation.OneToMany;
+import org.hunter.pocket.model.AbstractEntity;
 
 import java.util.Date;
 import java.util.List;
