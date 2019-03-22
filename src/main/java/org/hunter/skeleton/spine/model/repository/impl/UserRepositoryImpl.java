@@ -16,7 +16,7 @@ import java.util.Date;
 public class UserRepositoryImpl extends AbstractRepository implements UserRepository {
 
     @Override
-    public int saveUser(User user) {
+    public int save(User user, String avatar) {
         user.setLastPasswordResetDate(new Date());
         user.setLastRoleModifyDate(new Date());
         user.setState(true);

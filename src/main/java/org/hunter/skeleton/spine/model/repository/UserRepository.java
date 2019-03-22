@@ -12,9 +12,10 @@ public interface UserRepository extends Repository {
      * save user.
      *
      * @param user user.
+     * @param avatar avatar.
      * @return effect row number.
      */
-    int saveUser(User user);
+    int save(User user, String avatar);
 
     /**
      * find user by avatar.

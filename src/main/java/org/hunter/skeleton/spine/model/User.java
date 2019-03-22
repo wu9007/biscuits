@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author wujianchuan 2019/1/30
  */
-@Entity(table = "TBL_USER", tableId = 106, businessName = "人员")
+@Entity(table = "TBL_USER", tableId = 106, businessName = "人员", uuidGenerator = "str_increment")
 public class User extends AbstractEntity {
     private static final long serialVersionUID = 9034066443646846844L;
     @Column(name = "CODE", businessName = "昵称")
