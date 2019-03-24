@@ -6,7 +6,7 @@ apply plugin: 'build-dashboard'
 apply plugin: 'maven-publish'
 
 group = 'org.hunter'
-version = '0.0.1-PRE'
+version = '0.1.0-PRE'
 sourceCompatibility = 1.8
 
 compileJava {
@@ -40,31 +40,20 @@ publishing {
             }
         }
     }
-
-    repositories {
-        maven {
-            credentials {
-                username "${upload_username}"
-                password "${upload_password}"
-            }
-            url "${upload_url}"
-        }
-    }
 }
 
 repositories {
     mavenLocal()
-    maven {
-        url "${download_url}"
-        credentials {
-            username "${download_username}"
-            password "${download_password}"
-        }
-    }
     mavenCentral()
 }
 
 compileJava.dependsOn(processResources)
+
+allprojects {
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
+}
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web:2.1.1.RELEASE'
@@ -72,7 +61,7 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-cache:2.1.1.RELEASE'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.1.1.RELEASE'
-    implementation 'org.hunter:pocket:0.0.1-PRE-RELEASE'
+    implementation 'com.github.leyan95:pocket:0.1.0-PRE'
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
     implementation 'mysql:mysql-connector-java:8.0.13'
 
