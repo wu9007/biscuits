@@ -50,7 +50,7 @@ public class AuthLauncher implements CommandLineRunner {
     private final
     List<AbstractBundle> bundleList;
 
-    private String serverId;
+    private final String serverId;
     private Map<String, Mapper> oldMapperMap;
     private Map<String, AuthMapperRelation> oldAuthMapperRelationMap;
     private Map<String, Bundle> bundleMap;
@@ -317,8 +317,8 @@ public class AuthLauncher implements CommandLineRunner {
                 });
     }
 
-    private Predicate<Method> isMapperMethod = method -> method.getAnnotation(Action.class) != null;
-    private Predicate<Method> isAuthMethod = method -> method.getAnnotation(Auth.class) != null;
+    private final Predicate<Method> isMapperMethod = method -> method.getAnnotation(Action.class) != null;
+    private final Predicate<Method> isAuthMethod = method -> method.getAnnotation(Auth.class) != null;
 
     /**
      * 删除数据库多余的 AuthMapperRelation

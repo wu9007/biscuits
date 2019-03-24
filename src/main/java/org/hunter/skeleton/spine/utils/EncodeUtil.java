@@ -3,7 +3,6 @@ package org.hunter.skeleton.spine.utils;
 import org.springframework.stereotype.Component;
 import sun.misc.BASE64Encoder;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -14,7 +13,7 @@ import java.security.NoSuchAlgorithmException;
 @Component
 public class EncodeUtil {
     public String encoderByMd5(String code) {
-        MessageDigest md5 = null;
+        MessageDigest md5;
         try {
             md5 = MessageDigest.getInstance("MD5");
             BASE64Encoder base64en = new BASE64Encoder();
@@ -25,7 +24,7 @@ public class EncodeUtil {
         }
     }
 
-    public boolean checkCodeByMd5(String modernCode, String oldCode) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    public boolean checkCodeByMd5(String modernCode, String oldCode) {
         return this.encoderByMd5(modernCode).equals(oldCode);
     }
 }

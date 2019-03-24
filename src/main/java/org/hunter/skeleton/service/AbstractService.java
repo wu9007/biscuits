@@ -11,10 +11,12 @@ import java.util.List;
  * @author wujianchuan 2019/1/31
  */
 public class AbstractService {
-
+    /**
+     * 在切面中进行了赋值操作，而后将 session 注入到所以来的 repository 中。
+     */
     private ThreadLocal<Session> sessionLocal = new ThreadLocal<>();
 
-    private List<Repository> repositoryList = new ArrayList<>();
+    private final List<Repository> repositoryList = new ArrayList<>();
 
     protected void injectRepository(Repository... repositories) {
         this.repositoryList.addAll(Arrays.asList(repositories));

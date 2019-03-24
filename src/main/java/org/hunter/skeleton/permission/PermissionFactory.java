@@ -1,7 +1,6 @@
 package org.hunter.skeleton.permission;
 
 import org.hunter.pocket.session.Session;
-import org.hunter.pocket.session.SessionFactory;
 import org.hunter.skeleton.spine.model.Authority;
 
 import java.util.Map;
@@ -13,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PermissionFactory {
 
     private static Map<String, Authority> permissionMap = new ConcurrentHashMap<>(10);
-    private static Map<String, Boolean> necessaryKeyMap = new ConcurrentHashMap<>(10);
+    private static final Map<String, Boolean> necessaryKeyMap = new ConcurrentHashMap<>(10);
 
     public static void init(Map<String, Authority> permissionMap) {
         PermissionFactory.permissionMap = permissionMap;

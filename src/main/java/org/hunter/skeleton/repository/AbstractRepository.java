@@ -7,7 +7,7 @@ import org.hunter.pocket.session.Session;
  */
 public abstract class AbstractRepository implements Repository {
 
-    private ThreadLocal<Session> sessionLocal = new ThreadLocal<>();
+    private final ThreadLocal<Session> sessionLocal = new ThreadLocal<>();
 
     @Override
     public void injectSession(Session session) {
