@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/leyan95/skeleton.svg?branch=master)](https://travis-ci.org/leyan95/skeleton) 
 [![](https://jitpack.io/v/leyan95/skeleton.svg)](https://jitpack.io/#leyan95/skeleton)
-### [Document](https://www.yuque.com/shusheng/suibqb)
+### [Document](https://www.yuque.com/shusheng/suibqb/rxi3sd)
 
 Add it in your root build.gradle at the end of repositories:
 ```groovy
