@@ -10,7 +10,7 @@ import java.util.Date;
  * @author wujianchuan 2019/3/23
  * @version 1.0
  */
-@Entity(table = "TBL_HISTORY", tableId = 110, uuidGenerator = "str_increment")
+@Entity(table = "TBL_HISTORY", tableId = 111, uuidGenerator = "str_increment")
 public class History extends AbstractEntity {
     private static final long serialVersionUID = 1783568186627352468L;
 
@@ -22,6 +22,16 @@ public class History extends AbstractEntity {
     private String operator;
     @Column(name = "OPERATE_CONTENT")
     private String operateContent;
+
+    public History() {
+    }
+
+    public History(String operate, Date operateTime, String operator, String operateContent) {
+        this.operate = operate;
+        this.operateTime = operateTime;
+        this.operator = operator;
+        this.operateContent = operateContent;
+    }
 
     public String getOperate() {
         return operate;
