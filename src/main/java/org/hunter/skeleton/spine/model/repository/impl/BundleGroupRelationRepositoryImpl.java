@@ -21,7 +21,7 @@ public class BundleGroupRelationRepositoryImpl extends AbstractRepository implem
 
     @Override
     public BundleGroupRelation findByGroupUuidAndBundleUuid(long groupUuid, long bundleUuid) {
-        Criteria criteria = this.getSession().creatCriteria(BundleGroupRelation.class)
+        Criteria criteria = this.getSession().createCriteria(BundleGroupRelation.class)
                 .add(Restrictions.equ("groupUuid", groupUuid))
                 .add(Restrictions.equ("bundleUuid", bundleUuid));
         return (BundleGroupRelation) criteria.unique();
@@ -34,7 +34,7 @@ public class BundleGroupRelationRepositoryImpl extends AbstractRepository implem
 
     @Override
     public int updateSort(long groupUuid, long bundleUuid, double sort) {
-        Criteria criteria = this.getSession().creatCriteria(BundleGroupRelation.class);
+        Criteria criteria = this.getSession().createCriteria(BundleGroupRelation.class);
         criteria.add(Modern.set("sort", sort))
                 .add(Restrictions.equ("groupUuid", groupUuid))
                 .add(Restrictions.equ("bundleUuid", bundleUuid));
@@ -43,7 +43,7 @@ public class BundleGroupRelationRepositoryImpl extends AbstractRepository implem
 
     @Override
     public int deleteByGroupUuidAndBundleUuid(long groupUuid, long bundleUuid) {
-        return (int) this.getSession().creatCriteria(BundleGroupRelation.class)
+        return (int) this.getSession().createCriteria(BundleGroupRelation.class)
                 .add(Restrictions.equ("groupUuid", groupUuid))
                 .add(Restrictions.equ("bundleUuid", bundleUuid))
                 .delete();

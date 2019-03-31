@@ -24,7 +24,7 @@ public class BundleGroupRepositoryImpl extends AbstractRepository implements Bun
 
     @Override
     public List<BundleGroup> findAll(FilterView filterView) {
-        Criteria criteria = this.getSession().creatCriteria(BundleGroup.class)
+        Criteria criteria = this.getSession().createCriteria(BundleGroup.class)
                 .add(Sort.asc("sort"));
         if (filterView != null && filterView.getFilter() != null && filterView.getKeyWord() != null) {
             criteria.add(Restrictions.or(

@@ -17,7 +17,7 @@ import java.util.List;
 public class BundleRepositoryImpl extends AbstractRepository implements BundleRepository {
     @Override
     public List<Bundle> findByAuthIf(Boolean auth) {
-        Criteria criteria = this.getSession().creatCriteria(Bundle.class);
+        Criteria criteria = this.getSession().createCriteria(Bundle.class);
         criteria.add(Restrictions.equ("withAuth", false));
         return criteria.list();
     }
@@ -29,7 +29,7 @@ public class BundleRepositoryImpl extends AbstractRepository implements BundleRe
 
     @Override
     public List<Bundle> findAll() {
-        Criteria criteria = this.getSession().creatCriteria(Bundle.class);
+        Criteria criteria = this.getSession().createCriteria(Bundle.class);
         return criteria.list(true);
     }
 }
