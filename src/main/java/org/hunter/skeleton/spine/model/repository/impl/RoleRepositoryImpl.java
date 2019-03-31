@@ -19,7 +19,7 @@ public class RoleRepositoryImpl extends AbstractRepository implements RoleReposi
 
     @Override
     public Role findById(String id) {
-        Criteria criteria = this.getSession().creatCriteria(Role.class);
+        Criteria criteria = this.getSession().createCriteria(Role.class);
         criteria.add(Restrictions.equ("id", id));
         return (Role) criteria.unique(true);
     }

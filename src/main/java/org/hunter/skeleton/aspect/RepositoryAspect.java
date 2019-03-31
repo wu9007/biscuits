@@ -2,10 +2,9 @@ package org.hunter.skeleton.aspect;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.hunter.pocket.annotation.Column;
 import org.hunter.pocket.annotation.Entity;
@@ -13,11 +12,19 @@ import org.hunter.pocket.annotation.OneToMany;
 import org.hunter.pocket.model.PocketEntity;
 import org.hunter.pocket.session.Session;
 import org.hunter.pocket.utils.ReflectUtils;
+import org.hunter.skeleton.annotation.Track;
 import org.hunter.skeleton.spine.model.History;
+import org.springframework.core.DefaultParameterNameDiscoverer;
+import org.springframework.expression.EvaluationContext;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
@@ -60,42 +67,60 @@ public class RepositoryAspect {
         }
     });
 
-    @Pointcut("execution(public * org.hunter..*.repository.*.save(..)) || execution(public * org.hunter..*.repository.*.update(..)) || execution(public * org.hunter..*.repository.*.delete(..))")
-    public void point() {
-    }
+    @Around("@annotation(org.hunter.skeleton.annotation.Track)")
+    public Object before(ProceedingJoinPoint joinPoint) throws Throwable {
+        Object result = joinPoint.proceed();
+        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
+        Track track = method.getAnnotation(Track.class);
+        String dataKey = track.data();
+        String operatorKey = track.operator();
+        String operate = track.operate();
 
-    @Before("point()")
-    public void before(JoinPoint joinPoint) {
-        Object[] args = joinPoint.getArgs();
-        String operate = ((MethodSignature) joinPoint.getSignature()).getMethod().getName();
-        PocketEntity entity = ((PocketEntity) args[0]);
-        Class clazz = entity.getClass();
-        Entity entityAnnotation = (Entity) clazz.getAnnotation(Entity.class);
-        Serializable uuid = null;
-        Session session = null;
-        try {
-            Field uuidField = clazz.getSuperclass().getDeclaredField("uuid");
-            Objects.requireNonNull(uuidField).setAccessible(true);
-            uuid = (Serializable) uuidField.get(entity);
-            Object target = joinPoint.getTarget();
-            Field sessionLocalField = target.getClass().getSuperclass().getDeclaredField("sessionLocal");
-            sessionLocalField.setAccessible(true);
-            ThreadLocal<Session> sessionLocal = (ThreadLocal<Session>) sessionLocalField.get(target);
-            session = sessionLocal.get();
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
+        ExpressionParser parser = new SpelExpressionParser();
+        Expression dataExpression = parser.parseExpression(dataKey);
+        Expression operatorExpression = parser.parseExpression(operatorKey);
+        EvaluationContext context = new StandardEvaluationContext();
+        DefaultParameterNameDiscoverer discoverer = new DefaultParameterNameDiscoverer();
+        String[] argsName = discoverer.getParameterNames(method);
+        Object[] argsValue = joinPoint.getArgs();
+        if (argsName != null) {
+            for (int index = 0; index < argsName.length; index++) {
+                context.setVariable(argsName[index], argsValue[index]);
+            }
+        } else {
+            throw new RuntimeException("can not found any arg.");
+        }
+        Object operateValue = operatorExpression.getValue(context);
+        Object dataValue = dataExpression.getValue(context);
+        String operator;
+        PocketEntity entity;
+        if (operateValue != null && dataValue != null) {
+            operator = operateValue.toString();
+            entity = (PocketEntity) dataValue;
+        } else {
+            throw new RuntimeException("can not found data and operator.");
         }
 
-        if (entityAnnotation != null && entityAnnotation.history()) {
+        Class clazz = entity.getClass();
+        Entity entityAnnotation = (Entity) clazz.getAnnotation(Entity.class);
+        Field uuidField = clazz.getSuperclass().getDeclaredField("uuid");
+        Objects.requireNonNull(uuidField).setAccessible(true);
+        Serializable uuid = (Serializable) uuidField.get(entity);
+        Object target = joinPoint.getTarget();
+        Field sessionLocalField = target.getClass().getSuperclass().getDeclaredField("sessionLocal");
+        sessionLocalField.setAccessible(true);
+        ThreadLocal<Session> sessionLocal = (ThreadLocal<Session>) sessionLocalField.get(target);
+        Session session = sessionLocal.get();
+
+        if (entityAnnotation != null) {
             String tableBusinessName = entityAnnotation.businessName();
-            String operator = (String) args[1];
 
             Map<String, Object> operateContent = new LinkedHashMap<>(4);
             operateContent.put("业务名称", tableBusinessName);
 
             switch (operate) {
                 case SAVE:
-                    Map<String, Object> fieldBusinessData = Arrays.stream(ReflectUtils.getInstance().getMappingField(clazz))
+                    Map<String, Object> fieldBusinessData = Arrays.stream(ReflectUtils.getInstance().getMappingFields(clazz))
                             .filter(businessPredicate)
                             .map(field -> new EntityData(entity, field))
                             .collect(businessCollector);
@@ -127,6 +152,7 @@ public class RepositoryAspect {
                 e.printStackTrace();
             }
         }
+        return result;
     }
 
     private class EntityData {

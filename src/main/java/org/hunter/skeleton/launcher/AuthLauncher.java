@@ -136,7 +136,7 @@ public class AuthLauncher implements CommandLineRunner {
      * @throws Exception e
      */
     private Map<String, Authority> getPermissionMap(Session session) throws Exception {
-        Criteria criteria = session.creatCriteria(Authority.class);
+        Criteria criteria = session.createCriteria(Authority.class);
         criteria.add(Restrictions.equ("serverId", serverId));
         List<Authority> authorityList = criteria.list();
         return authorityList.stream().collect(Collectors.toMap(item -> item.getServerId() + "_" + item.getId(), item -> item));
@@ -150,7 +150,7 @@ public class AuthLauncher implements CommandLineRunner {
      * @throws Exception e
      */
     private Map<String, Bundle> getBundleMap(Session session) throws Exception {
-        Criteria criteria = session.creatCriteria(Bundle.class);
+        Criteria criteria = session.createCriteria(Bundle.class);
         criteria.add(Restrictions.equ("serverId", serverId));
         List<Bundle> bundles = criteria.list();
         return bundles.stream()
@@ -165,7 +165,7 @@ public class AuthLauncher implements CommandLineRunner {
      * @throws Exception e
      */
     private Map<String, Mapper> getMapperMap(Session session) throws Exception {
-        Criteria mapperCriteria = session.creatCriteria(Mapper.class);
+        Criteria mapperCriteria = session.createCriteria(Mapper.class);
         mapperCriteria.add(Restrictions.equ("serverId", serverId));
         List<Mapper> mapperList = mapperCriteria.list();
         return mapperList.stream().collect(Collectors.toMap(item -> item.getBundleId() + item.getActionId(), item -> item));
@@ -179,7 +179,7 @@ public class AuthLauncher implements CommandLineRunner {
      * @throws Exception e
      */
     private Map<String, AuthMapperRelation> getAuthMapperRelationMap(Session session) throws Exception {
-        Criteria criteria = session.creatCriteria(AuthMapperRelation.class);
+        Criteria criteria = session.createCriteria(AuthMapperRelation.class);
         criteria.add(Restrictions.equ("serverId", serverId));
         List<AuthMapperRelation> authMapperList = criteria.list();
         return authMapperList.stream()
@@ -260,7 +260,7 @@ public class AuthLauncher implements CommandLineRunner {
      * @throws Exception e.
      */
     private void deleteUselessBundle(Session session) throws Exception {
-        Criteria mapperCriteria = session.creatCriteria(Mapper.class);
+        Criteria mapperCriteria = session.createCriteria(Mapper.class);
         mapperCriteria.add(Restrictions.equ("serverId", this.serverId));
         List<Mapper> newMapperList = mapperCriteria.list();
         Map<String, Long> mapperMap = newMapperList.stream()
@@ -306,7 +306,7 @@ public class AuthLauncher implements CommandLineRunner {
                 .forEach(item -> {
                     try {
                         Mapper mapper = item.getValue();
-                        Criteria criteria = session.creatCriteria(AuthMapperRelation.class);
+                        Criteria criteria = session.createCriteria(AuthMapperRelation.class);
                         criteria.add(Restrictions.equ("mapperUuid", mapper.getUuid()));
                         List<AuthMapperRelation> authMapperRelations = criteria.list();
                         authMapperRelations.forEach(session::delete);
