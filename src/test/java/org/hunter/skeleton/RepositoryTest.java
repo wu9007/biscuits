@@ -39,7 +39,6 @@ public class RepositoryTest {
         user.setName("托尼");
         user.setPassword("123456");
         user.setState(true);
-        user.setSort(100);
         this.userRepository.save(user, "admin");
         session.close();
     }
