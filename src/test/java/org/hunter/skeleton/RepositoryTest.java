@@ -38,7 +38,7 @@ public class RepositoryTest {
         user.setAvatar("Tony");
         user.setName("托尼");
         user.setPassword("123456");
-        user.setState(true);
+        user.setEnable(true);
         this.userRepository.save(user, "admin");
         session.close();
     }
