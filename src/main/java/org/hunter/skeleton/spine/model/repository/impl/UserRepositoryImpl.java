@@ -2,6 +2,7 @@ package org.hunter.skeleton.spine.model.repository.impl;
 
 import org.hunter.pocket.criteria.Criteria;
 import org.hunter.pocket.criteria.Restrictions;
+import org.hunter.skeleton.annotation.Track;
 import org.hunter.skeleton.repository.AbstractRepository;
 import org.hunter.skeleton.spine.model.User;
 import org.hunter.skeleton.spine.model.repository.UserRepository;
@@ -16,6 +17,7 @@ import java.util.Date;
 public class UserRepositoryImpl extends AbstractRepository implements UserRepository {
 
     @Override
+    @Track(data = "#user", operator = "#avatar", operate = "save")
     public int save(User user, String avatar) {
         user.setLastPasswordResetDate(new Date());
         user.setLastRoleModifyDate(new Date());
