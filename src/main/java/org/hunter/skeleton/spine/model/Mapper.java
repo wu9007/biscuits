@@ -11,7 +11,7 @@ import org.hunter.pocket.model.BaseEntity;
  *
  * @author wujianchuan 2019/2/3
  */
-@Entity(table = "TBL_MAPPER", tableId = 103)
+@Entity(table = "TBL_MAPPER", tableId = 103, history = false)
 public class Mapper extends BaseEntity {
     private static final long serialVersionUID = -2091601211891427181L;
     @Column(name = "REQUEST_METHOD", businessName = "请求方式")

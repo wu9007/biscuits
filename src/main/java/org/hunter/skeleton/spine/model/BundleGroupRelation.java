@@ -9,7 +9,7 @@ import org.hunter.pocket.model.BaseEntity;
  * @author wujianchuan 2019/2/26
  * @version 1.0
  */
-@Entity(table = "TBL_BUNDLE_GROUP_RELATION", tableId = 110)
+@Entity(table = "TBL_BUNDLE_GROUP_RELATION", tableId = 110, history = false)
 public class BundleGroupRelation extends BaseEntity {
     private static final long serialVersionUID = 1870767494450334886L;
 

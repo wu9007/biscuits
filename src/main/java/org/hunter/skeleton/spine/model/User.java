@@ -26,8 +26,8 @@ public class User extends AbstractEntity {
     private Long departmentUuid;
     @Column(name = "MEMO", businessName = "备注")
     private String memo;
-    @Column(name = "STATE", businessName = "状态")
-    private Boolean state;
+    @Column(name = "ENABLE", businessName = "状态")
+    private Boolean enable;
     @Column(name = "SORT", businessName = "排序码")
     private Integer sort;
     @Column(name = "LAST_PASSWORD_RESET_DATE", businessName = "密码最后更新时间")
@@ -35,7 +35,7 @@ public class User extends AbstractEntity {
     /**
      * TODO 调整角色时需要将 token 置为过期，谢谢
      */
-    @Column(name = "LAST_ROLE_MODIFY_DATE", businessName = "角色最后更新时间")
+    @Column(name = "LAST_ROLE_MODIFY_DATE", businessName = "角色最后分配时间")
     private Date lastRoleModifyDate;
 
     @OneToMany(clazz = UserRoleRelation.class, name = "USER_UUID")
@@ -89,12 +89,12 @@ public class User extends AbstractEntity {
         this.memo = memo;
     }
 
-    public Boolean getState() {
-        return state;
+    public Boolean getEnable() {
+        return enable;
     }
 
-    public void setState(Boolean state) {
-        this.state = state;
+    public void setEnable(Boolean enable) {
+        this.enable = enable;
     }
 
     public Integer getSort() {

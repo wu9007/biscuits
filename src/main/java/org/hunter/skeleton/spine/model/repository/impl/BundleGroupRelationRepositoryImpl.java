@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class BundleGroupRelationRepositoryImpl extends AbstractRepository implements BundleGroupRelationRepository {
     @Override
-    public int save(BundleGroupRelation bundleGroupRelation) {
+    public int save(BundleGroupRelation bundleGroupRelation, String avatar) {
         return this.getSession().save(bundleGroupRelation);
     }
 
@@ -28,7 +28,7 @@ public class BundleGroupRelationRepositoryImpl extends AbstractRepository implem
     }
 
     @Override
-    public int delete(BundleGroupRelation bundleGroupRelation) {
+    public int delete(BundleGroupRelation bundleGroupRelation, String avatar) {
         return this.getSession().delete(bundleGroupRelation);
     }
 

@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 /**
  * @author wujianchuan 2019/2/25
  */
-@Entity(table = "TBL_BUNDLE_GROUP", tableId = 109, businessName = "菜单分组")
+@Entity(table = "TBL_BUNDLE_GROUP", tableId = 109, businessName = "菜单分组", history = false)
 public class BundleGroup extends BaseEntity {
     private static final long serialVersionUID = 4032798805062223157L;
 

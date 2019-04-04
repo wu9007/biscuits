@@ -3,7 +3,7 @@ package org.hunter.skeleton.spine.model;
 import org.hunter.pocket.annotation.Column;
 import org.hunter.pocket.annotation.Entity;
 import org.hunter.pocket.annotation.OneToMany;
-import org.hunter.pocket.model.BaseEntity;
+import org.hunter.pocket.model.AbstractEntity;
 import org.hunter.skeleton.spine.model.repository.AuthorityRepository;
 
 import java.util.ArrayList;
@@ -14,13 +14,19 @@ import java.util.stream.Collectors;
 /**
  * @author wujianchuan 2019/1/30
  */
-@Entity(table = "TBL_ROLE", tableId = 104)
-public class Role extends BaseEntity {
+@Entity(table = "TBL_ROLE", tableId = 104, uuidGenerator = "str_increment")
+public class Role extends AbstractEntity {
     private static final long serialVersionUID = -1762486150168555776L;
-    @Column(name = "ID")
+    @Column(name = "SPELL", businessName = "标识")
     private String id;
-    @Column(name = "NAME")
+    @Column(name = "NAME", businessName = "名称")
     private String name;
+    @Column(name = "SORT", businessName = "排序")
+    private Double sort;
+    @Column(name = "ENABLE", businessName = "是否可用")
+    private Boolean enable;
+    @Column(name = "MEMO", businessName = "备注")
+    private String memo;
     @OneToMany(clazz = UserRoleRelation.class, name = "ROLE_UUID")
     private List<UserRoleRelation> userRoleRelations;
     @OneToMany(clazz = RoleAuthRelation.class, name = "ROLE_UUID")
@@ -40,6 +46,30 @@ public class Role extends BaseEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Double getSort() {
+        return sort;
+    }
+
+    public void setSort(Double sort) {
+        this.sort = sort;
+    }
+
+    public Boolean getEnable() {
+        return enable;
+    }
+
+    public void setEnable(Boolean enable) {
+        this.enable = enable;
+    }
+
+    public String getMemo() {
+        return memo;
+    }
+
+    public void setMemo(String memo) {
+        this.memo = memo;
     }
 
     public List<UserRoleRelation> getUserRoleRelations() {

@@ -16,9 +16,9 @@ public interface BundleGroupRepository extends Repository {
 
     List<BundleGroup> findAll(FilterView filterView);
 
-    int save(BundleGroup bundleGroup);
+    int save(BundleGroup bundleGroup, String avatar);
 
-    int delete(BundleGroup bundleGroup);
+    int delete(BundleGroup bundleGroup, String avatar);
 
-    int update(BundleGroup bundleGroup);
+    int update(BundleGroup bundleGroup, String avatar);
 }

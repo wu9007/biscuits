@@ -36,17 +36,17 @@ public class BundleGroupRepositoryImpl extends AbstractRepository implements Bun
     }
 
     @Override
-    public int save(BundleGroup bundleGroup) {
+    public int save(BundleGroup bundleGroup, String avatar) {
         return this.getSession().save(bundleGroup);
     }
 
     @Override
-    public int delete(BundleGroup bundleGroup) {
+    public int delete(BundleGroup bundleGroup, String avatar) {
         return this.getSession().delete(bundleGroup);
     }
 
     @Override
-    public int update(BundleGroup bundleGroup) {
+    public int update(BundleGroup bundleGroup, String avatar) {
         return this.getSession().update(bundleGroup);
     }
 }
