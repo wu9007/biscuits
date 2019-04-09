@@ -40,7 +40,7 @@ public class ServiceAspect {
     private final ThreadLocal<LinkedList<Object>> targetThreadLocal = new ThreadLocal<>();
     private final ThreadLocal<Integer> transOnIndex = new ThreadLocal<>();
 
-    @Pointcut("execution(public * org.hunter..*.service.*.*(..))")
+    @Pointcut("execution(public * *..*.service.*.*(..))")
     public void point() {
     }
 
