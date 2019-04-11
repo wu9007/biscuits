@@ -13,7 +13,7 @@ public class RoleAuthRelation extends BaseEntity {
     @ManyToOne(name = "ROLE_UUID")
     private String roleUuid;
     @ManyToOne(name = "AUTH_UUID")
-    private Long authUuid;
+    private String authUuid;
 
     public RoleAuthRelation() {
     }
@@ -26,11 +26,11 @@ public class RoleAuthRelation extends BaseEntity {
         this.roleUuid = roleUuid;
     }
 
-    public Long getAuthUuid() {
+    public String getAuthUuid() {
         return authUuid;
     }
 
-    public void setAuthUuid(Long authUuid) {
+    public void setAuthUuid(String authUuid) {
         this.authUuid = authUuid;
     }
 }

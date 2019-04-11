@@ -3,15 +3,15 @@
 
  Source Server         : 104
  Source Server Type    : MySQL
- Source Server Version : 50619
+ Source Server Version : 50725
  Source Host           : 172.0.66.104:3306
  Source Schema         : lsphunter
 
  Target Server Type    : MySQL
- Target Server Version : 50619
+ Target Server Version : 50725
  File Encoding         : 65001
 
- Date: 09/04/2019 18:39:46
+ Date: 11/04/2019 19:10:28
 */
 
 SET NAMES utf8mb4;
@@ -22,84 +22,84 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `tbl_auth_mapper`;
 CREATE TABLE `tbl_auth_mapper`  (
-  `uuid` int(11) NOT NULL,
+  `uuid` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `server_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
-  `auth_uuid` int(11) NULL DEFAULT NULL,
-  `mapper_uuid` int(11) NULL DEFAULT NULL,
+  `auth_uuid` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
+  `mapper_uuid` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
   PRIMARY KEY (`uuid`) USING BTREE,
   UNIQUE INDEX `auth_mapper_key`(`auth_uuid`, `mapper_uuid`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Compact;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tbl_authority
 -- ----------------------------
 DROP TABLE IF EXISTS `tbl_authority`;
 CREATE TABLE `tbl_authority`  (
-  `uuid` int(32) NOT NULL,
+  `uuid` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `server_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
   `id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '',
   `name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `comment` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
   PRIMARY KEY (`uuid`) USING BTREE,
   UNIQUE INDEX `key_server_id`(`id`, `server_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Compact;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tbl_bundle
 -- ----------------------------
 DROP TABLE IF EXISTS `tbl_bundle`;
 CREATE TABLE `tbl_bundle`  (
-  `uuid` int(32) NOT NULL,
+  `uuid` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `bundle_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
   `bundle_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
   `server_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
   `with_auth` int(1) NULL DEFAULT NULL,
   PRIMARY KEY (`uuid`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Compact;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tbl_bundle_group
 -- ----------------------------
 DROP TABLE IF EXISTS `tbl_bundle_group`;
 CREATE TABLE `tbl_bundle_group`  (
-  `uuid` int(32) NOT NULL,
+  `uuid` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `group_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
   `group_name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
   `sort` int(11) NULL DEFAULT NULL,
   PRIMARY KEY (`uuid`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Compact;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tbl_bundle_group_relation
 -- ----------------------------
 DROP TABLE IF EXISTS `tbl_bundle_group_relation`;
 CREATE TABLE `tbl_bundle_group_relation`  (
-  `uuid` int(32) NOT NULL,
-  `bundle_uuid` int(32) NULL DEFAULT NULL,
-  `group_uuid` int(32) NULL DEFAULT NULL,
+  `uuid` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `bundle_uuid` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
+  `group_uuid` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
   `sort` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`uuid`) USING BTREE,
   UNIQUE INDEX `key_sort`(`sort`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 54 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 56 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tbl_commodity
 -- ----------------------------
 DROP TABLE IF EXISTS `tbl_commodity`;
 CREATE TABLE `tbl_commodity`  (
-  `uuid` int(32) NOT NULL,
+  `uuid` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
   `price` decimal(10, 2) NULL DEFAULT 0.00,
   `order_uuid` int(32) NULL DEFAULT NULL,
   PRIMARY KEY (`uuid`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Compact;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tbl_department
 -- ----------------------------
 DROP TABLE IF EXISTS `tbl_department`;
 CREATE TABLE `tbl_department`  (
-  `UUID` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '唯一标识',
+  `UUID` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '唯一标识',
   `PARENT_UUID` char(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '父节点标识',
   `NAME` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '名称',
   `SPELL` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '拼音码',
@@ -141,7 +141,7 @@ CREATE TABLE `tbl_json_data`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `tbl_mapper`;
 CREATE TABLE `tbl_mapper`  (
-  `uuid` int(11) NOT NULL,
+  `uuid` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `bundle_uuid` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
   `request_method` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
   `action_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
@@ -149,7 +149,7 @@ CREATE TABLE `tbl_mapper`  (
   `bundle_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
   PRIMARY KEY (`uuid`) USING BTREE,
   UNIQUE INDEX `key_mapper`(`action_id`, `server_id`, `bundle_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Compact;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tbl_news_setting_receiving_crowd
@@ -169,14 +169,14 @@ CREATE TABLE `tbl_news_setting_receiving_crowd`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `tbl_order`;
 CREATE TABLE `tbl_order`  (
-  `uuid` int(32) NOT NULL,
+  `uuid` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
   `price` decimal(10, 2) NULL DEFAULT NULL,
   `day` date NULL DEFAULT NULL,
   `time` datetime(0) NULL DEFAULT NULL,
   `state` int(1) NULL DEFAULT NULL,
   PRIMARY KEY (`uuid`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Compact;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tbl_role
@@ -197,12 +197,12 @@ CREATE TABLE `tbl_role`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `tbl_role_auth`;
 CREATE TABLE `tbl_role_auth`  (
-  `uuid` int(32) NOT NULL,
+  `uuid` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `role_uuid` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
-  `auth_uuid` int(32) NULL DEFAULT NULL,
+  `auth_uuid` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
   PRIMARY KEY (`uuid`) USING BTREE,
   UNIQUE INDEX `key_role_auth`(`role_uuid`, `auth_uuid`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Compact;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tbl_user

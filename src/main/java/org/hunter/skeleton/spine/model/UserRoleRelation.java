@@ -2,13 +2,13 @@ package org.hunter.skeleton.spine.model;
 
 import org.hunter.pocket.annotation.Entity;
 import org.hunter.pocket.annotation.ManyToOne;
-import org.hunter.pocket.model.AbstractEntity;
+import org.hunter.pocket.model.BaseEntity;
 
 /**
  * @author wujianchuan 2019/1/30
  */
-@Entity(table = "TBL_USER_ROLE", tableId = 107, uuidGenerator = "str_increment")
-public class UserRoleRelation extends AbstractEntity {
+@Entity(table = "TBL_USER_ROLE", tableId = 107)
+public class UserRoleRelation extends BaseEntity {
     private static final long serialVersionUID = 509835395399250891L;
     @ManyToOne(name = "USER_UUID")
     private String userUuid;

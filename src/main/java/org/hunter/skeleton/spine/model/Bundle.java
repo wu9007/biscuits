@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * @author wujianchuan 2019/2/25
  */
-@Entity(table = "TBL_BUNDLE", tableId = 108, businessName = "菜单", history = false)
+@Entity(table = "TBL_BUNDLE", tableId = 108, businessName = "菜单")
 public class Bundle extends BaseEntity {
     private static final long serialVersionUID = -5562305365699924057L;
 

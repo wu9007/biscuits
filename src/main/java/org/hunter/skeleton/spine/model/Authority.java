@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 /**
  * @author wujianchuan 2019/1/30
  */
-@Entity(table = "TBL_AUTHORITY", tableId = 102, history = false)
+@Entity(table = "TBL_AUTHORITY", tableId = 102)
 public class Authority extends BaseEntity {
     private static final long serialVersionUID = 8811730322368476299L;
     @Column(name = "SERVER_ID")

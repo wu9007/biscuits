@@ -3,7 +3,7 @@ package org.hunter.skeleton.spine.model;
 import org.hunter.pocket.annotation.Column;
 import org.hunter.pocket.annotation.Entity;
 import org.hunter.pocket.annotation.OneToMany;
-import org.hunter.pocket.model.AbstractEntity;
+import org.hunter.pocket.model.BaseEntity;
 import org.hunter.skeleton.spine.model.repository.AuthorityRepository;
 
 import java.util.ArrayList;
@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 /**
  * @author wujianchuan 2019/1/30
  */
-@Entity(table = "TBL_ROLE", tableId = 104, uuidGenerator = "str_increment")
-public class Role extends AbstractEntity {
+@Entity(table = "TBL_ROLE", tableId = 104)
+public class Role extends BaseEntity {
     private static final long serialVersionUID = -1762486150168555776L;
     @Column(name = "SPELL", businessName = "标识")
     private String id;

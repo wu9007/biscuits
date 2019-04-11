@@ -9,7 +9,7 @@ import java.util.List;
  * @author wujianchuan 2019/2/21
  */
 public interface MapperRepository extends Repository {
-    Mapper findOne(long uuid);
+    Mapper findOne(String uuid);
 
     List<Mapper> findByBundle(Long bundleUuid);
 }

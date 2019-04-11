@@ -7,20 +7,20 @@ import org.hunter.pocket.model.BaseEntity;
 /**
  * @author wujianchuan 2019/2/3
  */
-@Entity(table = "TBL_AUTH_MAPPER", tableId = 101, history = false)
+@Entity(table = "TBL_AUTH_MAPPER", tableId = 101)
 public class AuthMapperRelation extends BaseEntity {
     private static final long serialVersionUID = 3635488973894838870L;
     @Column(name = "SERVER_ID")
     private String serverId;
     @Column(name = "AUTH_UUID")
-    private Long authUuid;
+    private String authUuid;
     @Column(name = "MAPPER_UUID")
-    private Long mapperUuid;
+    private String mapperUuid;
 
     public AuthMapperRelation() {
     }
 
-    public AuthMapperRelation(String serverId, Long authUuid, Long mapperUuid) {
+    public AuthMapperRelation(String serverId, String authUuid, String mapperUuid) {
         this.serverId = serverId;
         this.authUuid = authUuid;
         this.mapperUuid = mapperUuid;
@@ -34,19 +34,19 @@ public class AuthMapperRelation extends BaseEntity {
         this.serverId = serverId;
     }
 
-    public Long getAuthUuid() {
+    public String getAuthUuid() {
         return authUuid;
     }
 
-    public void setAuthUuid(Long authUuid) {
+    public void setAuthUuid(String authUuid) {
         this.authUuid = authUuid;
     }
 
-    public Long getMapperUuid() {
+    public String getMapperUuid() {
         return mapperUuid;
     }
 
-    public void setMapperUuid(Long mapperUuid) {
+    public void setMapperUuid(String mapperUuid) {
         this.mapperUuid = mapperUuid;
     }
 }

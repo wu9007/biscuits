@@ -2,13 +2,13 @@ package org.hunter.skeleton.spine.model;
 
 import org.hunter.pocket.annotation.Column;
 import org.hunter.pocket.annotation.Entity;
-import org.hunter.pocket.model.AbstractEntity;
+import org.hunter.pocket.model.BaseEntity;
 
 /**
  * @author wujianchuan
  */
-@Entity(table = "TBL_DEPARTMENT", tableId = 112, businessName = "部门", uuidGenerator = "str_increment")
-public class Department extends AbstractEntity {
+@Entity(table = "TBL_DEPARTMENT", tableId = 112, businessName = "部门")
+public class Department extends BaseEntity {
     private static final long serialVersionUID = -893404050854935292L;
     @Column(name = "PARENT_UUID", businessName = "父节点标识")
     private String parentUuid;

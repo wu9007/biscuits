@@ -2,7 +2,7 @@ package org.hunter.skeleton.spine.model;
 
 import org.hunter.pocket.annotation.Column;
 import org.hunter.pocket.annotation.Entity;
-import org.hunter.pocket.model.AbstractEntity;
+import org.hunter.pocket.model.BaseEntity;
 
 import java.util.Date;
 
@@ -10,8 +10,8 @@ import java.util.Date;
  * @author wujianchuan 2019/3/23
  * @version 1.0
  */
-@Entity(table = "TBL_HISTORY", tableId = 111, uuidGenerator = "str_increment")
-public class History extends AbstractEntity {
+@Entity(table = "TBL_HISTORY", tableId = 111)
+public class History extends BaseEntity {
     private static final long serialVersionUID = 1783568186627352468L;
 
     @Column(name = "OPERATE")

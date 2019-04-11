@@ -7,6 +7,6 @@ import org.hunter.skeleton.spine.model.Authority;
  * @author wujianchuan 2019/2/21
  */
 public interface AuthorityRepository extends Repository {
-    Authority findOne(long uuid);
+    Authority findOne(String uuid);
 
 }

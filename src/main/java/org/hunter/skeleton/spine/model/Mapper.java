@@ -11,13 +11,13 @@ import org.hunter.pocket.model.BaseEntity;
  *
  * @author wujianchuan 2019/2/3
  */
-@Entity(table = "TBL_MAPPER", tableId = 103, history = false)
+@Entity(table = "TBL_MAPPER", tableId = 103)
 public class Mapper extends BaseEntity {
     private static final long serialVersionUID = -2091601211891427181L;
     @Column(name = "REQUEST_METHOD", businessName = "请求方式")
     private String requestMethod;
     @ManyToOne(name = "BUNDLE_UUID")
-    private Long bundleUuid;
+    private String bundleUuid;
     @Column(name = "SERVER_ID")
     private String serverId;
     @Column(name = "BUNDLE_ID")
@@ -51,11 +51,11 @@ public class Mapper extends BaseEntity {
         this.actionId = actionId;
     }
 
-    public Long getBundleUuid() {
+    public String getBundleUuid() {
         return bundleUuid;
     }
 
-    public void setBundleUuid(Long bundleUuid) {
+    public void setBundleUuid(String bundleUuid) {
         this.bundleUuid = bundleUuid;
     }
 

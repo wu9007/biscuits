@@ -15,7 +15,7 @@ import java.util.List;
 @Service(session = "skeleton")
 public class MapperRepositoryImpl extends AbstractRepository implements MapperRepository {
     @Override
-    public Mapper findOne(long uuid) {
+    public Mapper findOne(String uuid) {
         return (Mapper) this.getSession().findOne(Mapper.class, uuid);
     }
 
