@@ -11,5 +11,5 @@ import java.util.List;
 public interface MapperRepository extends Repository {
     Mapper findOne(String uuid);
 
-    List<Mapper> findByBundle(Long bundleUuid);
+    List<Mapper> findByBundle(String bundleUuid);
 }

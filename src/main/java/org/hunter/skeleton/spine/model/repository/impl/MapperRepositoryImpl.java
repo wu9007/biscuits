@@ -20,7 +20,7 @@ public class MapperRepositoryImpl extends AbstractRepository implements MapperRe
     }
 
     @Override
-    public List<Mapper> findByBundle(Long bundleUuid) {
+    public List<Mapper> findByBundle(String bundleUuid) {
         Criteria criteria = this.getSession().createCriteria(Mapper.class);
         criteria.add(Restrictions.equ("bundleUuid", bundleUuid));
         return criteria.list();
