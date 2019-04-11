@@ -10,11 +10,11 @@ import org.hunter.skeleton.spine.model.BundleGroupRelation;
 public interface BundleGroupRelationRepository extends Repository {
     int save(BundleGroupRelation bundleGroupRelation);
 
-    BundleGroupRelation findByGroupUuidAndBundleUuid(long groupUuid, long bundleUuid);
+    BundleGroupRelation findByGroupUuidAndBundleUuid(String groupUuid, String bundleUuid);
 
     int delete(BundleGroupRelation bundleGroupRelation);
 
-    int updateSort(long groupUuid, long bundleUuid, double sort);
+    int updateSort(String groupUuid, String bundleUuid, double sort);
 
-    int deleteByGroupUuidAndBundleUuid(long groupUuid, long bundleUuid);
+    int deleteByGroupUuidAndBundleUuid(String groupUuid, String bundleUuid);
 }

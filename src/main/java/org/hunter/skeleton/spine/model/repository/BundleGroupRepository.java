@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface BundleGroupRepository extends Repository {
 
-    BundleGroup findOne(long uuid);
+    BundleGroup findOne(String uuid);
 
     List<BundleGroup> findAll(FilterView filterView);
 

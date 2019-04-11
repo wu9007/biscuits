@@ -18,7 +18,7 @@ import java.util.List;
 @Repository
 public class BundleGroupRepositoryImpl extends AbstractRepository implements BundleGroupRepository {
     @Override
-    public BundleGroup findOne(long uuid) {
+    public BundleGroup findOne(String uuid) {
         return (BundleGroup) this.getSession().findDirect(BundleGroup.class, uuid);
     }
 

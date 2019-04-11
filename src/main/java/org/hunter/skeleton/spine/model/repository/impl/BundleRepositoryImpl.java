@@ -23,7 +23,7 @@ public class BundleRepositoryImpl extends AbstractRepository implements BundleRe
     }
 
     @Override
-    public Bundle findOne(long uuid) {
+    public Bundle findOne(String uuid) {
         return (Bundle) this.getSession().findOne(Bundle.class, uuid);
     }
 

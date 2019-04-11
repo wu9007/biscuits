@@ -23,7 +23,7 @@ public class User extends BaseEntity {
     @Column(name = "PASSWORD", businessName = "密码")
     private String password;
     @Column(name = "DEPT_UUID", businessName = "部门")
-    private Long departmentUuid;
+    private String departmentUuid;
     @Column(name = "MEMO", businessName = "备注")
     private String memo;
     @Column(name = "ENABLE", businessName = "状态")
@@ -73,11 +73,11 @@ public class User extends BaseEntity {
         this.phone = phone;
     }
 
-    public Long getDepartmentUuid() {
+    public String getDepartmentUuid() {
         return departmentUuid;
     }
 
-    public void setDepartmentUuid(Long departmentUuid) {
+    public void setDepartmentUuid(String departmentUuid) {
         this.departmentUuid = departmentUuid;
     }
 

@@ -14,7 +14,7 @@ public class BundleGroupRelation extends BaseEntity {
     private static final long serialVersionUID = 1870767494450334886L;
 
     @ManyToOne(name = "BUNDLE_UUID")
-    private Long bundleUuid;
+    private String bundleUuid;
     @ManyToOne(name = "GROUP_UUID")
     private String groupUuid;
     @Column(name = "SORT")
@@ -23,11 +23,11 @@ public class BundleGroupRelation extends BaseEntity {
     public BundleGroupRelation() {
     }
 
-    public Long getBundleUuid() {
+    public String getBundleUuid() {
         return bundleUuid;
     }
 
-    public void setBundleUuid(Long bundleUuid) {
+    public void setBundleUuid(String bundleUuid) {
         this.bundleUuid = bundleUuid;
     }
 

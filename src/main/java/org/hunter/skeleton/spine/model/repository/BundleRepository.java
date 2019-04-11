@@ -13,7 +13,7 @@ public interface BundleRepository extends Repository {
 
     List<Bundle> findByAuthIf(Boolean auth);
 
-    Bundle findOne(long uuid);
+    Bundle findOne(String uuid);
 
     List<Bundle> findAll();
 }
