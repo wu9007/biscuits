@@ -4,6 +4,7 @@ import org.hunter.pocket.criteria.Restrictions;
 import org.hunter.pocket.session.Session;
 import org.hunter.pocket.session.SessionFactory;
 import org.hunter.skeleton.spine.model.Department;
+import org.hunter.skeleton.spine.model.Role;
 import org.hunter.skeleton.spine.model.User;
 import org.hunter.skeleton.spine.model.repository.UserRepository;
 import org.junit.After;
@@ -21,7 +22,7 @@ import java.util.List;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
-public class RepositoryTest {
+public class SkeletonTest {
     @Autowired
     UserRepository userRepository;
 
@@ -34,12 +35,23 @@ public class RepositoryTest {
     }
 
     @Test
-    public void test5() {
+    public void test1() {
         Session session = SessionFactory.getSession("skeleton");
         session.open();
         this.userRepository.injectSession(session);
         List<Department> departments = session.createCriteria(Department.class).add(Restrictions.equ("enable", true)).list();
         departments.forEach(department -> System.out.println(department.getName()));
+        session.close();
+    }
+
+    @Test
+    public void test2() {
+        Session session = SessionFactory.getSession("skeleton");
+        session.open();
+        this.userRepository.injectSession(session);
+        List<Role> roles = this.userRepository.findByAvatar("ADMIN")
+                .getRoles(session);
+        roles.forEach(role -> System.out.println(role.getName()));
         session.close();
     }
 }

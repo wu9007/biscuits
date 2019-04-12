@@ -4,9 +4,14 @@ import org.hunter.pocket.annotation.Column;
 import org.hunter.pocket.annotation.Entity;
 import org.hunter.pocket.annotation.OneToMany;
 import org.hunter.pocket.model.BaseEntity;
+import org.hunter.skeleton.spine.model.repository.AuthorityRepository;
+import org.hunter.skeleton.spine.model.repository.RoleRepository;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author wujianchuan 2019/1/30
@@ -127,5 +132,20 @@ public class User extends BaseEntity {
 
     public void setUserRoleRelations(List<UserRoleRelation> userRoleRelations) {
         this.userRoleRelations = userRoleRelations;
+    }
+
+    /**
+     * TODO 暂时这么查，后续改为sql
+     */
+    public List<Role> getRoles(RoleRepository roleRepository) {
+        List<Role> roles = new ArrayList<>();
+        List<UserRoleRelation> userRoleRelations = this.getUserRoleRelations();
+        if (userRoleRelations != null && userRoleRelations.size() > 0) {
+            roles = userRoleRelations.stream()
+                    .map(userRoleRelation -> roleRepository.findOne(userRoleRelation.getRoleUuid()))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+        }
+        return roles;
     }
 }

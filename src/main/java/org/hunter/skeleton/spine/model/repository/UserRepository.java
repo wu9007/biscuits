@@ -9,9 +9,17 @@ import org.hunter.skeleton.spine.model.User;
 public interface UserRepository extends Repository {
 
     /**
+     * find user by uuid.
+     *
+     * @param uuid uuid.
+     * @return user.
+     */
+    User findOne(String uuid);
+
+    /**
      * save user.
      *
-     * @param user user.
+     * @param user   user.
      * @param avatar avatar.
      * @return effect row number.
      */
@@ -21,7 +29,7 @@ public interface UserRepository extends Repository {
      * find user by avatar.
      *
      * @param avatar user avatar.
-     * @return user model.
+     * @return user.
      */
     User findByAvatar(String avatar);
 

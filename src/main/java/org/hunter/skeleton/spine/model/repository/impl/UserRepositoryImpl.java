@@ -17,6 +17,11 @@ import java.util.Date;
 public class UserRepositoryImpl extends AbstractRepository implements UserRepository {
 
     @Override
+    public User findOne(String uuid) {
+        return (User) this.getSession().findOne(User.class, uuid);
+    }
+
+    @Override
     @Track(data = "#user", operator = "#avatar", operate = "save")
     public int save(User user, String avatar) {
         user.setLastPasswordResetDate(new Date());

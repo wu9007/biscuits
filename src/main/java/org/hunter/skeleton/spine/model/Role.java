@@ -5,6 +5,7 @@ import org.hunter.pocket.annotation.Entity;
 import org.hunter.pocket.annotation.OneToMany;
 import org.hunter.pocket.model.BaseEntity;
 import org.hunter.skeleton.spine.model.repository.AuthorityRepository;
+import org.hunter.skeleton.spine.model.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,5 +99,17 @@ public class Role extends BaseEntity {
                     .collect(Collectors.toList());
         }
         return authorities;
+    }
+
+    public List<User> getUsers(UserRepository userRepository) {
+        List<User> users = new ArrayList<>();
+        List<UserRoleRelation> userRoleRelations = this.getUserRoleRelations();
+        if (userRoleRelations != null && userRoleRelations.size() > 0) {
+            users = userRoleRelations.stream()
+                    .map(roleAuthRelation -> userRepository.findOne(roleAuthRelation.getUserUuid()))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+        }
+        return users;
     }
 }
