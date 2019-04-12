@@ -54,4 +54,15 @@ public class SkeletonTest {
         roles.forEach(role -> System.out.println(role.getName()));
         session.close();
     }
+
+    @Test
+    public void test3() {
+        Session session = SessionFactory.getSession("skeleton");
+        session.open();
+        List<Role> roles = session.createSQLQuery("SELECT T1.UUID AS uuid,T1.NAME AS name,T1.SPELL AS id,T1.SORT AS sort,T1.`ENABLE` AS enable,T1.MEMO AS memo FROM TBL_ROLE T1 LEFT JOIN TBL_USER_ROLE T2 ON T1.UUID = T2.ROLE_UUID LEFT JOIN TBL_USER T3 ON T2.USER_UUID = T3.UUID WHERE T3.CODE = :CODE", Role.class)
+                .setParameter("CODE", "ADMIN")
+                .list();
+        System.out.println(roles.size());
+        session.close();
+    }
 }

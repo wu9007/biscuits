@@ -4,6 +4,7 @@ import org.hunter.pocket.annotation.Column;
 import org.hunter.pocket.annotation.Entity;
 import org.hunter.pocket.annotation.OneToMany;
 import org.hunter.pocket.model.BaseEntity;
+import org.hunter.pocket.session.Session;
 import org.hunter.skeleton.spine.model.repository.AuthorityRepository;
 import org.hunter.skeleton.spine.model.repository.RoleRepository;
 
@@ -134,18 +135,9 @@ public class User extends BaseEntity {
         this.userRoleRelations = userRoleRelations;
     }
 
-    /**
-     * TODO 暂时这么查，后续改为sql
-     */
-    public List<Role> getRoles(RoleRepository roleRepository) {
-        List<Role> roles = new ArrayList<>();
-        List<UserRoleRelation> userRoleRelations = this.getUserRoleRelations();
-        if (userRoleRelations != null && userRoleRelations.size() > 0) {
-            roles = userRoleRelations.stream()
-                    .map(userRoleRelation -> roleRepository.findOne(userRoleRelation.getRoleUuid()))
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-        }
-        return roles;
+    public List<Role> getRoles(Session session) {
+        return session.createSQLQuery("SELECT T1.UUID AS uuid,T1.NAME AS name,T1.SPELL AS id,T1.SORT AS sort,T1.`ENABLE` AS enable,T1.MEMO AS memo FROM TBL_ROLE T1 LEFT JOIN TBL_USER_ROLE T2 ON T1.UUID = T2.ROLE_UUID LEFT JOIN TBL_USER T3 ON T2.USER_UUID = T3.UUID WHERE T3.UUID = :UUID", Role.class)
+                .setParameter("UUID", this.getUuid())
+                .list();
     }
 }
