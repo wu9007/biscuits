@@ -5,7 +5,6 @@ import org.hunter.pocket.session.Session;
 import org.hunter.pocket.session.SessionFactory;
 import org.hunter.skeleton.spine.model.Department;
 import org.hunter.skeleton.spine.model.Role;
-import org.hunter.skeleton.spine.model.User;
 import org.hunter.skeleton.spine.model.repository.UserRepository;
 import org.junit.After;
 import org.junit.Before;
