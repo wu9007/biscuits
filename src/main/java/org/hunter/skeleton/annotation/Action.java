@@ -24,4 +24,7 @@ public @interface Action {
 
     @AliasFor(annotation = RequestMapping.class)
     RequestMethod[] method() default {};
+
+    @AliasFor(annotation = RequestMapping.class)
+    String[] produces() default {};
 }
