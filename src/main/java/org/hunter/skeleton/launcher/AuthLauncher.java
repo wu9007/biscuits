@@ -15,6 +15,7 @@ import org.hunter.skeleton.permission.AbstractPermission;
 import org.hunter.skeleton.spine.model.AuthMapperRelation;
 import org.hunter.skeleton.spine.model.Authority;
 import org.hunter.skeleton.spine.model.Bundle;
+import org.hunter.skeleton.spine.model.BundleGroupRelation;
 import org.hunter.skeleton.spine.model.Mapper;
 import org.hunter.skeleton.permission.PermissionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +89,7 @@ public class AuthLauncher implements CommandLineRunner {
             });
         }
 
-        //删除多余的permission
+        //删除多余的 permission 及相关数据
         PermissionFactory.removeUselessPermission(session);
 
         //将Bundle放入到缓存中
@@ -106,7 +107,7 @@ public class AuthLauncher implements CommandLineRunner {
         this.oldMapperMap = this.getMapperMap(session);
 
         if (this.oldMapperMap != null && this.oldMapperMap.size() > 0) {
-            //删除无用的mapper
+            //删除无用的 mapper 及相关数据
             this.deleteUselessMapper(session);
         }
 
@@ -266,9 +267,12 @@ public class AuthLauncher implements CommandLineRunner {
         Map<String, Long> mapperMap = newMapperList.stream()
                 .collect(Collectors.groupingBy(mapper -> mapper.getServerId() + "_" + mapper.getBundleId(), Collectors.counting()));
         List<String> uselessKey = new ArrayList<>();
-        this.bundleMap.forEach((k, v) -> {
+        this.bundleMap.forEach((k, bundle) -> {
             if (mapperMap.get(k) == null) {
-                session.delete(v);
+                session.createCriteria(BundleGroupRelation.class)
+                        .add(Restrictions.equ("bundleUuid", bundle.getUuid()))
+                        .delete();
+                session.delete(bundle);
                 uselessKey.add(k);
             }
         });
@@ -306,10 +310,9 @@ public class AuthLauncher implements CommandLineRunner {
                 .forEach(item -> {
                     try {
                         Mapper mapper = item.getValue();
-                        Criteria criteria = session.createCriteria(AuthMapperRelation.class);
-                        criteria.add(Restrictions.equ("mapperUuid", mapper.getUuid()));
-                        List<AuthMapperRelation> authMapperRelations = criteria.list();
-                        authMapperRelations.forEach(session::delete);
+                        session.createCriteria(AuthMapperRelation.class)
+                                .add(Restrictions.equ("mapperUuid", mapper.getUuid()))
+                                .delete();
                         session.delete(mapper);
                     } catch (Exception e) {
                         e.printStackTrace();
