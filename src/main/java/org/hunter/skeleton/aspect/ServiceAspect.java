@@ -3,7 +3,6 @@ package org.hunter.skeleton.aspect;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
-import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -58,14 +57,17 @@ public class ServiceAspect {
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         this.pushTarget(target);
         this.pushMethod(method);
-        log.info("<Before> Call method: {}({})", method.getName(), StringUtils.join(joinPoint.getArgs(), ","));
         // session 嵌套时只开启最外层session
         this.sessionOpen(method, target);
+        log.info("<<==Before==>> Call method: {}({})", method.getName(), StringUtils.join(joinPoint.getArgs(), ","));
     }
 
     @After("point()")
     public void after() {
         ThreadLocal<Session> sessionLocal = this.getSessionLocal();
+        Method method = this.popMethod();
+        Object target = this.popTarget();
+        log.info("<<==After==>> Call method: {}.{}(-)", target.getClass().getSimpleName(), method.getName());
         if (sessionLocal.get() != null && !sessionLocal.get().getClosed()) {
             //锁定开启事务的方法，提交事务
             if (this.getTransOnIndex() != null && this.getMethodLocal().size() == this.getTransOnIndex() && this.getTransOn()) {
@@ -77,30 +79,15 @@ public class ServiceAspect {
                 }
             }
             //关闭最外层session
-            if (this.getMethodLocal().size() == 1) {
+            if (this.getMethodLocal().size() == 0) {
                 sessionLocal.get().close();
+                //清空切面中的thread local.
+                this.remove();
+            } else {
+                //清空service下repository们的thread local.
+                this.getRepositoryList(target).forEach(Repository::pourSession);
             }
         }
-        log.info("<After> Call method: {}===>{}", this.getLastTarget().getClass().getSimpleName(), this.getLastMethod().getName());
-    }
-
-    @AfterReturning(pointcut = "point()", returning = "object")
-    public void getAfterReturn(Object object) {
-        Object target = this.popTarget();
-        Method method = this.popMethod();
-        log.info("<AfterReturning> Call method: {}     Consuming time is: {}ms     return value is: {}", method.getName(), System.currentTimeMillis() - this.startTimeLocal.get(), object != null ? object.toString() : null);
-        if (this.getMethodLocal().size() > 0) {
-            throw new RuntimeException("Method thread local not empty.");
-        }
-        if (this.getTargetLocal().size() > 0) {
-            throw new RuntimeException("Target thread local not empty.");
-        }
-
-        //清空service下repository们的thread local.
-        this.getRepositoryList(target).forEach(Repository::pourSession);
-
-        //清空切面中的thread local.
-        this.remove();
     }
 
     @AfterThrowing(pointcut = "point()", throwing = "exception")
@@ -158,7 +145,7 @@ public class ServiceAspect {
                         transaction.begin();
                         this.setTransOn(true);
                         //标记开启事务的方法所在下标
-                        this.setTransOnIndex(this.getMethodLocal().size());
+                        this.setTransOnIndex(this.getMethodLocal().size() - 1);
                     }
                 } else {
                     throw new RuntimeException("the session has been opened.");
@@ -218,7 +205,7 @@ public class ServiceAspect {
         return this.transOnIndex.get();
     }
 
-    //======== 方法站操作 ========
+    //======== 方法栈操作 ========
 
     private List<Method> getMethodLocal() {
         return this.methodThreadLocal.get();
