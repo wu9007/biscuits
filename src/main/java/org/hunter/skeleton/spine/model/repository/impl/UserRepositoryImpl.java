@@ -3,6 +3,7 @@ package org.hunter.skeleton.spine.model.repository.impl;
 import org.hunter.pocket.criteria.Criteria;
 import org.hunter.pocket.criteria.Restrictions;
 import org.hunter.skeleton.annotation.Track;
+import org.hunter.skeleton.constant.OperateEnum;
 import org.hunter.skeleton.repository.AbstractRepository;
 import org.hunter.skeleton.spine.model.User;
 import org.hunter.skeleton.spine.model.repository.UserRepository;
@@ -22,7 +23,7 @@ public class UserRepositoryImpl extends AbstractRepository implements UserReposi
     }
 
     @Override
-    @Track(data = "#user", operator = "#avatar", operate = "save")
+    @Track(data = "#user", operator = "#avatar", operate = OperateEnum.ADD)
     public int save(User user, String avatar) {
         user.setLastPasswordResetDate(new Date());
         user.setLastRoleModifyDate(new Date());

@@ -25,10 +25,18 @@ import org.springframework.stereotype.Component;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+
+import static org.hunter.skeleton.constant.Operate.DELETE;
+import static org.hunter.skeleton.constant.Operate.EDIT;
+import static org.hunter.skeleton.constant.Operate.SAVE;
 
 /**
  * @author wujianchuan 2019/3/22
@@ -38,9 +46,6 @@ import java.util.stream.Collectors;
 @Component
 public class RepositoryAspect {
 
-    private static final String SAVE = "save";
-    private static final String UPDATE = "update";
-    private static final String DELETE = "delete";
     private final Predicate<Field> businessPredicate = field -> {
         Column column = field.getAnnotation(Column.class);
         OneToMany oneToMany = field.getAnnotation(OneToMany.class);
@@ -74,7 +79,7 @@ public class RepositoryAspect {
         Track track = method.getAnnotation(Track.class);
         String dataKey = track.data();
         String operatorKey = track.operator();
-        String operate = track.operate();
+        String operate = track.operate().getId();
 
         ExpressionParser parser = new SpelExpressionParser();
         Expression dataExpression = parser.parseExpression(dataKey);
@@ -127,10 +132,9 @@ public class RepositoryAspect {
                     operateContent.put("操作方式", "新增数据");
                     operateContent.put("操作数据", fieldBusinessData);
                     break;
-                case UPDATE:
-                    Map<String, Object> dirtyFieldBusinessData = new HashMap<>(20);
+                case EDIT:
                     PocketEntity dirtyEntity = (PocketEntity) session.findOne(clazz, uuid);
-                    dirtyFieldBusinessData = Arrays.stream(ReflectUtils.getInstance().dirtyFieldFilter(entity, dirtyEntity))
+                    Map<String, Object> dirtyFieldBusinessData = Arrays.stream(ReflectUtils.getInstance().dirtyFieldFilter(entity, dirtyEntity))
                             .filter(businessPredicate)
                             .map(field -> new EntityData(entity, field))
                             .collect(businessCollector);
