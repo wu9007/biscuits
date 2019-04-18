@@ -9,12 +9,11 @@ import java.util.Map;
  */
 public class FilterView implements Serializable {
     private static final long serialVersionUID = 8598653671877785474L;
-    private static final String KEY_WORD = "keyWord";
     private Map<String, Object> filter;
+    private Map<String, Object> sort;
     private Integer limit;
     private Integer page;
     private Integer start;
-    private Integer total;
 
     public Map<String, Object> getFilter() {
         return filter;
@@ -48,15 +47,11 @@ public class FilterView implements Serializable {
         this.start = start;
     }
 
-    public Integer getTotal() {
-        return total;
+    public Map<String, Object> getSort() {
+        return sort;
     }
 
-    public void setTotal(Integer total) {
-        this.total = total;
-    }
-
-    public String getKeyWord(){
-        return (String) this.getFilter().get(KEY_WORD);
+    public void setSort(Map<String, Object> sort) {
+        this.sort = sort;
     }
 }
