@@ -27,10 +27,13 @@ public class BundleGroupRepositoryImpl extends AbstractRepository implements Bun
         Criteria criteria = this.getSession().createCriteria(BundleGroup.class)
                 .add(Sort.asc("sort"));
         if (filterView != null && filterView.getFilter() != null) {
-            criteria.add(Restrictions.or(
-                    Restrictions.like("groupName", "%" + filterView.getFilter().get("keyWord") + "%"),
-                    Restrictions.like("groupId", "%" + filterView.getFilter().get("keyWord") + "%"))
-            );
+            String keyWorld = (String) filterView.getFilter().get("keyWorld");
+            if (keyWorld != null && keyWorld.length() > 0) {
+                criteria.add(Restrictions.or(
+                        Restrictions.like("groupName", "%" + filterView.getFilter().get("keyWord") + "%"),
+                        Restrictions.like("groupId", "%" + filterView.getFilter().get("keyWord") + "%"))
+                );
+            }
         }
         return criteria.list(true);
     }
