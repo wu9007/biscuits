@@ -48,7 +48,7 @@ public class UserRepositoryImpl extends AbstractRepository implements UserReposi
     @Override
     public boolean canPass(String userCode, String serverId, String bundleId, String actionId) {
         String sql = "SELECT  " +
-                "    COUNT( 0 )   " +
+                "    T1.UUID   " +
                 "FROM  " +
                 "    TBL_MAPPER T1  " +
                 "    LEFT JOIN tbl_auth_mapper T2 ON T1.UUID = T2.mapper_uuid  " +
@@ -64,7 +64,7 @@ public class UserRepositoryImpl extends AbstractRepository implements UserReposi
         return this.getSession().createSQLQuery(sql)
                 .setParameter("SERVER_ID", serverId)
                 .setParameter("BUNDLE_ID", bundleId)
-                .setParameter("ACTION_ID", actionId)
+                .setParameter("ACTION_ID", "/" + actionId)
                 .setParameter("USER_CODE", userCode)
                 .unique() != null;
     }

@@ -3,6 +3,7 @@ package org.hunter.skeleton.aspect;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -61,8 +62,8 @@ public class ServiceAspect {
         log.info("<<==Before==>> Call method: {}({})", method.getName(), StringUtils.join(joinPoint.getArgs(), ","));
     }
 
-    @After("point()")
-    public void after() {
+    @AfterReturning("point()")
+    public void afterReturning() {
         ThreadLocal<Session> sessionLocal = this.getSessionLocal();
         Method method = this.popMethod();
         Object target = this.popTarget();
