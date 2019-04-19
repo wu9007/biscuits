@@ -41,4 +41,6 @@ public interface UserRepository extends Repository {
      * @return user.
      */
     User findByAvatarAndPassword(String avatar, String password);
+
+    boolean canPass(String userCode, String serverId, String bundleId, String actionId);
 }

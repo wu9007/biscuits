@@ -64,4 +64,13 @@ public class SkeletonTest {
         System.out.println(roles.size());
         session.close();
     }
+
+    @Test
+    public void test4() {
+        Session session = SessionFactory.getSession("skeleton");
+        session.open();
+        this.userRepository.injectSession(session);
+        System.out.println(this.userRepository.canPass("ADMIN", "ADMIN", "login", "/checkuser"));
+        session.close();
+    }
 }
