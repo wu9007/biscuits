@@ -22,9 +22,9 @@ public class Bundle extends BaseEntity {
     private String serverId;
     @Column(name = "WITH_AUTH")
     private Boolean withAuth;
-    @OneToMany(clazz = BundleGroupRelation.class, name = "BUNDLE_UUID")
+    @OneToMany(clazz = BundleGroupRelation.class, bridgeField = "bundleUuid")
     private List<BundleGroupRelation> bundleGroupRelations;
-    @OneToMany(clazz = Mapper.class, name = "BUNDLE_UUID")
+    @OneToMany(clazz = Mapper.class, bridgeField = "bundleUuid")
     private List<Mapper> mappers;
 
     public Bundle() {

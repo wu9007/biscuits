@@ -24,7 +24,7 @@ public class BundleGroup extends BaseEntity {
     private String groupName;
     @Column(name = "SORT")
     private Double sort;
-    @OneToMany(clazz = BundleGroupRelation.class, name = "GROUP_UUID")
+    @OneToMany(clazz = BundleGroupRelation.class, bridgeField = "groupUuid")
     private List<BundleGroupRelation> bundleGroupRelations;
 
     private List<Bundle> bundles;

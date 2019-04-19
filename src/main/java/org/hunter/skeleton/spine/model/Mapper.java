@@ -16,7 +16,7 @@ public class Mapper extends BaseEntity {
     private static final long serialVersionUID = -2091601211891427181L;
     @Column(name = "REQUEST_METHOD", businessName = "请求方式")
     private String requestMethod;
-    @ManyToOne(name = "BUNDLE_UUID")
+    @ManyToOne(columnName = "BUNDLE_UUID", clazz = Bundle.class, upBridgeField = "uuid")
     private String bundleUuid;
     @Column(name = "SERVER_ID")
     private String serverId;

@@ -28,9 +28,9 @@ public class Role extends BaseEntity {
     private Boolean enable;
     @Column(name = "MEMO", businessName = "备注")
     private String memo;
-    @OneToMany(clazz = UserRoleRelation.class, name = "ROLE_UUID")
+    @OneToMany(clazz = UserRoleRelation.class, bridgeField = "roleUuid")
     private List<UserRoleRelation> userRoleRelations;
-    @OneToMany(clazz = RoleAuthRelation.class, name = "ROLE_UUID")
+    @OneToMany(clazz = RoleAuthRelation.class, bridgeField = "roleUuid")
     private List<RoleAuthRelation> roleAuthRelationList;
 
     public String getId() {

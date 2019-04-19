@@ -10,9 +10,9 @@ import org.hunter.pocket.model.BaseEntity;
 @Entity(table = "TBL_ROLE_AUTH", tableId = 105)
 public class RoleAuthRelation extends BaseEntity {
     private static final long serialVersionUID = -3881819865492714900L;
-    @ManyToOne(name = "ROLE_UUID")
+    @ManyToOne(columnName = "ROLE_UUID", clazz = Role.class, upBridgeField = "uuid")
     private String roleUuid;
-    @ManyToOne(name = "AUTH_UUID")
+    @ManyToOne(columnName = "AUTH_UUID", clazz = Authority.class, upBridgeField = "uuid")
     private String authUuid;
 
     public RoleAuthRelation() {

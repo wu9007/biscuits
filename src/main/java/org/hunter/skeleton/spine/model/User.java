@@ -5,14 +5,9 @@ import org.hunter.pocket.annotation.Entity;
 import org.hunter.pocket.annotation.OneToMany;
 import org.hunter.pocket.model.BaseEntity;
 import org.hunter.pocket.session.Session;
-import org.hunter.skeleton.spine.model.repository.AuthorityRepository;
-import org.hunter.skeleton.spine.model.repository.RoleRepository;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * @author wujianchuan 2019/1/30
@@ -44,7 +39,7 @@ public class User extends BaseEntity {
     @Column(name = "LAST_ROLE_MODIFY_DATE", businessName = "角色最后分配时间")
     private Date lastRoleModifyDate;
 
-    @OneToMany(clazz = UserRoleRelation.class, name = "USER_UUID")
+    @OneToMany(clazz = UserRoleRelation.class, bridgeField = "userUuid")
     private List<UserRoleRelation> userRoleRelations;
 
     public String getAvatar() {

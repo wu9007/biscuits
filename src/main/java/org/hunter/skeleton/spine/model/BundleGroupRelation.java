@@ -13,9 +13,9 @@ import org.hunter.pocket.model.BaseEntity;
 public class BundleGroupRelation extends BaseEntity {
     private static final long serialVersionUID = 1870767494450334886L;
 
-    @ManyToOne(name = "BUNDLE_UUID")
+    @ManyToOne(columnName = "BUNDLE_UUID", clazz = Bundle.class, upBridgeField = "uuid")
     private String bundleUuid;
-    @ManyToOne(name = "GROUP_UUID")
+    @ManyToOne(columnName = "GROUP_UUID", clazz = BundleGroup.class, upBridgeField = "uuid")
     private String groupUuid;
     @Column(name = "SORT")
     private Double sort;

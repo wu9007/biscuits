@@ -20,7 +20,6 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -71,12 +70,8 @@ public class ServiceAspect {
         if (sessionLocal.get() != null && !sessionLocal.get().getClosed()) {
             //锁定开启事务的方法，提交事务
             if (this.getTransOnIndex() != null && this.getMethodLocal().size() == this.getTransOnIndex() && this.getTransOn()) {
-                try {
-                    sessionLocal.get().getTransaction().commit();
-                    this.setTransOn(false);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                sessionLocal.get().getTransaction().commit();
+                this.setTransOn(false);
             }
             //关闭最外层session
             if (this.getMethodLocal().size() == 0) {
@@ -95,12 +90,8 @@ public class ServiceAspect {
         ThreadLocal<Session> sessionLocal = this.getSessionLocal();
         if (sessionLocal.get() != null && !sessionLocal.get().getClosed()) {
             if (this.getTransOn()) {
-                try {
-                    sessionLocal.get().getTransaction().rollBack();
-                    this.setTransOn(false);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                sessionLocal.get().getTransaction().rollBack();
+                this.setTransOn(false);
             }
             sessionLocal.get().close();
         }

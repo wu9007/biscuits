@@ -25,9 +25,9 @@ public class Authority extends BaseEntity {
     private String name;
     @Column(name = "COMMENT")
     private String comment;
-    @OneToMany(clazz = AuthMapperRelation.class, name = "AUTH_UUID")
+    @OneToMany(clazz = AuthMapperRelation.class, bridgeField = "authUuid")
     private List<AuthMapperRelation> authMapperRelationList;
-    @OneToMany(clazz = RoleAuthRelation.class, name = "AUTH_UUID")
+    @OneToMany(clazz = RoleAuthRelation.class, bridgeField = "authUuid")
     private List<RoleAuthRelation> roleAuthRelationList;
 
     public Authority() {
