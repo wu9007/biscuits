@@ -15,8 +15,8 @@ public enum OperateEnum {
     AUDIT("audit", "审核"),
     REVOKE("revoke", "撤销审核"),
     ;
-    private String id;
-    private String name;
+    private final String id;
+    private final String name;
 
     OperateEnum(String id, String name) {
         this.id = id;
