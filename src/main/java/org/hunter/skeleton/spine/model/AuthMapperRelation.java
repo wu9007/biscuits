@@ -2,6 +2,7 @@ package org.hunter.skeleton.spine.model;
 
 import org.hunter.pocket.annotation.Column;
 import org.hunter.pocket.annotation.Entity;
+import org.hunter.pocket.annotation.ManyToOne;
 import org.hunter.pocket.model.BaseEntity;
 
 /**
@@ -12,9 +13,9 @@ public class AuthMapperRelation extends BaseEntity {
     private static final long serialVersionUID = 3635488973894838870L;
     @Column(name = "SERVER_ID")
     private String serverId;
-    @Column(name = "AUTH_UUID")
+    @ManyToOne(columnName = "AUTH_UUID", clazz = Authority.class, upBridgeField = "uuid")
     private String authUuid;
-    @Column(name = "MAPPER_UUID")
+    @ManyToOne(columnName = "MAPPER_UUID", clazz = Mapper.class, upBridgeField = "uuid")
     private String mapperUuid;
 
     public AuthMapperRelation() {
