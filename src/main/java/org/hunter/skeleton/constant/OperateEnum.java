@@ -8,12 +8,12 @@ public enum OperateEnum {
     /**
      * 对数据的操作类型
      */
-    ADD("add", "新建"),
-    EDIT("edit", "编辑"),
-    DELETE("delete", "删除"),
-    DETAIL("detail", "查看"),
-    AUDIT("audit", "审核"),
-    REVOKE("revoke", "撤销审核"),
+    ADD(Operate.ADD, "新建"),
+    EDIT(Operate.EDIT, "编辑"),
+    DELETE(Operate.DELETE, "删除"),
+    DETAIL(Operate.DETAIL, "查看"),
+    AUDIT(Operate.AUDIT, "审核"),
+    REVOKE(Operate.REVOKE, "撤销审核"),
     ;
     private final String id;
     private final String name;

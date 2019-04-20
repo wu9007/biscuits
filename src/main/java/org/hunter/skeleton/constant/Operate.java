@@ -2,7 +2,7 @@ package org.hunter.skeleton.constant;
 
 public interface Operate {
 
-    String SAVE = "save";
+    String ADD = "add";
     String EDIT = "edit";
     String DELETE = "delete";
     String DETAIL = "detail";

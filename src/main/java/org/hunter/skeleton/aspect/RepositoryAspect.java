@@ -8,6 +8,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.hunter.pocket.annotation.Column;
 import org.hunter.pocket.annotation.Entity;
+import org.hunter.pocket.annotation.Join;
 import org.hunter.pocket.annotation.OneToMany;
 import org.hunter.pocket.model.PocketEntity;
 import org.hunter.pocket.session.Session;
@@ -22,6 +23,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 
+import javax.management.ReflectionException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -34,9 +36,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import static org.hunter.skeleton.constant.Operate.ADD;
 import static org.hunter.skeleton.constant.Operate.DELETE;
 import static org.hunter.skeleton.constant.Operate.EDIT;
-import static org.hunter.skeleton.constant.Operate.SAVE;
 
 /**
  * @author wujianchuan 2019/3/22
@@ -49,17 +51,19 @@ public class RepositoryAspect {
     private final Predicate<Field> businessPredicate = field -> {
         Column column = field.getAnnotation(Column.class);
         OneToMany oneToMany = field.getAnnotation(OneToMany.class);
-        if (column != null && column.businessName().length() > 0) {
-            return true;
-        } else {
-            return oneToMany != null && oneToMany.businessName().length() > 0;
-        }
+        Join join = field.getAnnotation(Join.class);
+
+        boolean businessColumn = column != null && column.businessName().length() > 0;
+        boolean businessMany = oneToMany != null && oneToMany.businessName().length() > 0;
+        boolean businessJoin = join != null && join.businessName().length() > 0;
+        return businessColumn || businessMany || businessJoin;
     };
-    private final Collector<EntityData, ?, Map<String, Object>> businessCollector = Collectors.toMap(entityData -> {
+    private final Collector<HistoryData, ?, Map<String, Object>> businessCollector = Collectors.toMap(entityData -> {
         Field field = entityData.getField();
         Column column = field.getAnnotation(Column.class);
         OneToMany oneToMany = field.getAnnotation(OneToMany.class);
-        return column != null ? column.businessName() : oneToMany.businessName();
+        Join join = field.getAnnotation(Join.class);
+        return column != null ? column.businessName() : oneToMany != null ? oneToMany.businessName() : join.businessName();
     }, entityData -> {
         try {
             Field field = entityData.getField();
@@ -74,7 +78,6 @@ public class RepositoryAspect {
 
     @Around("@annotation(org.hunter.skeleton.annotation.Track)")
     public Object before(ProceedingJoinPoint joinPoint) throws Throwable {
-        Object result = joinPoint.proceed();
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         Track track = method.getAnnotation(Track.class);
         String dataKey = track.data();
@@ -105,17 +108,20 @@ public class RepositoryAspect {
         } else {
             throw new RuntimeException("can not found data and operator.");
         }
-
-        Class clazz = entity.getClass();
-        Entity entityAnnotation = (Entity) clazz.getAnnotation(Entity.class);
-        Field uuidField = clazz.getSuperclass().getDeclaredField("uuid");
-        Objects.requireNonNull(uuidField).setAccessible(true);
-        Serializable uuid = (Serializable) uuidField.get(entity);
         Object target = joinPoint.getTarget();
         Field sessionLocalField = target.getClass().getSuperclass().getDeclaredField("sessionLocal");
         sessionLocalField.setAccessible(true);
         ThreadLocal<Session> sessionLocal = (ThreadLocal<Session>) sessionLocalField.get(target);
         Session session = sessionLocal.get();
+
+        this.saveHistory(entity, session, operate, operator);
+
+        return joinPoint.proceed();
+    }
+
+    private void saveHistory(PocketEntity entity, Session session, String operate, String operator) {
+        Class clazz = entity.getClass();
+        Entity entityAnnotation = (Entity) clazz.getAnnotation(Entity.class);
 
         if (entityAnnotation != null) {
             String tableBusinessName = entityAnnotation.businessName();
@@ -124,29 +130,30 @@ public class RepositoryAspect {
             operateContent.put("业务名称", tableBusinessName);
 
             switch (operate) {
-                case SAVE:
-                    Map<String, Object> fieldBusinessData = Arrays.stream(ReflectUtils.getInstance().getMappingFields(clazz))
+                case ADD:
+                    Map<String, Object> fieldBusinessData = Arrays.stream(clazz.getDeclaredFields())
                             .filter(businessPredicate)
-                            .map(field -> new EntityData(entity, field))
+                            .map(field -> new HistoryData(entity, field))
                             .collect(businessCollector);
                     operateContent.put("操作方式", "新增数据");
                     operateContent.put("操作数据", fieldBusinessData);
                     break;
                 case EDIT:
-                    PocketEntity dirtyEntity = (PocketEntity) session.findOne(clazz, uuid);
-                    Map<String, Object> dirtyFieldBusinessData = Arrays.stream(ReflectUtils.getInstance().dirtyFieldFilter(entity, dirtyEntity))
+                    PocketEntity dirtyEntity = (PocketEntity) session.findOne(clazz, this.getUuid(entity));
+                    Map<String, Object> dirtyFieldBusinessData = Arrays.stream(clazz.getDeclaredFields())
                             .filter(businessPredicate)
-                            .map(field -> new EntityData(entity, field))
+                            .filter(field -> this.dirtyFieldFilter(entity, dirtyEntity, field))
+                            .map(field -> new HistoryData(entity, field))
                             .collect(businessCollector);
                     operateContent.put("操作方式", "编辑数据");
                     operateContent.put("操作数据", dirtyFieldBusinessData);
                     break;
                 case DELETE:
                     operateContent.put("操作方式", "删除数据");
-                    operateContent.put("操作数据", uuid);
+                    operateContent.put("操作数据", this.getUuid(entity));
                     break;
                 default:
-                    break;
+                    throw new NullPointerException(String.format("%s - 该操作不产生历史数据。", operate));
             }
 
             try {
@@ -156,14 +163,34 @@ public class RepositoryAspect {
                 e.printStackTrace();
             }
         }
-        return result;
     }
 
-    private class EntityData {
+    private Serializable getUuid(PocketEntity entity) {
+        try {
+            Field uuidField = entity.getClass().getSuperclass().getDeclaredField("uuid");
+            Objects.requireNonNull(uuidField).setAccessible(true);
+            return (Serializable) uuidField.get(entity);
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            throw new NullPointerException("未找到uuid");
+        }
+    }
+
+    private boolean dirtyFieldFilter(Object modern, Object older, Field field) {
+        field.setAccessible(true);
+        try {
+            Object modernValue = field.get(modern);
+            Object olderValue = field.get(older);
+            return modernValue == null && olderValue != null || olderValue == null && modernValue != null || modernValue != null && !modernValue.equals(olderValue);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("获取属性值失败。");
+        }
+    }
+
+    private class HistoryData {
         private PocketEntity entity;
         private Field field;
 
-        EntityData(PocketEntity entity, Field field) {
+        HistoryData(PocketEntity entity, Field field) {
             this.entity = entity;
             this.field = field;
         }

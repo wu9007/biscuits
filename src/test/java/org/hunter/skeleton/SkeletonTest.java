@@ -5,6 +5,7 @@ import org.hunter.pocket.session.Session;
 import org.hunter.pocket.session.SessionFactory;
 import org.hunter.skeleton.spine.model.Department;
 import org.hunter.skeleton.spine.model.Role;
+import org.hunter.skeleton.spine.model.repository.BundleRepository;
 import org.hunter.skeleton.spine.model.repository.UserRepository;
 import org.junit.After;
 import org.junit.Before;
@@ -24,34 +25,39 @@ import java.util.List;
 public class SkeletonTest {
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    BundleRepository bundleRepository;
+
+    Session session;
 
     @Before
     public void setup() {
+        session = SessionFactory.getSession("skeleton");
+        session.open();
+        this.userRepository.injectSession(session);
+        this.bundleRepository.injectSession(session);
     }
 
     @After
     public void destroy() {
+        session.close();
     }
 
     @Test
     public void test1() {
-        Session session = SessionFactory.getSession("skeleton");
-        session.open();
-        this.userRepository.injectSession(session);
         List<Department> departments = session.createCriteria(Department.class).add(Restrictions.equ("enable", true)).list();
         departments.forEach(department -> System.out.println(department.getName()));
-        session.close();
+
     }
 
     @Test
     public void test2() {
         Session session = SessionFactory.getSession("skeleton");
         session.open();
-        this.userRepository.injectSession(session);
+
         List<Role> roles = this.userRepository.findByAvatar("ADMIN")
                 .getRoles(session);
         roles.forEach(role -> System.out.println(role.getName()));
-        session.close();
     }
 
     @Test
@@ -62,15 +68,14 @@ public class SkeletonTest {
                 .setParameter("CODE", "ADMIN")
                 .list();
         System.out.println(roles.size());
-        session.close();
+
     }
 
     @Test
     public void test4() {
         Session session = SessionFactory.getSession("skeleton");
         session.open();
-        this.userRepository.injectSession(session);
+
         System.out.println(this.userRepository.canPass("ADMIN", "ADMIN", "login", "/checkuser"));
-        session.close();
     }
 }
