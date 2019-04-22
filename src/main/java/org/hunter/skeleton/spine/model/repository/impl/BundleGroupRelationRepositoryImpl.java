@@ -8,6 +8,8 @@ import org.hunter.skeleton.spine.model.BundleGroupRelation;
 import org.hunter.skeleton.spine.model.repository.BundleGroupRelationRepository;
 import org.springframework.stereotype.Repository;
 
+import java.sql.SQLException;
+
 /**
  * @author wujianchuan 2019/3/1
  * @version 1.0
@@ -15,7 +17,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class BundleGroupRelationRepositoryImpl extends AbstractRepository implements BundleGroupRelationRepository {
     @Override
-    public int save(BundleGroupRelation bundleGroupRelation) {
+    public int save(BundleGroupRelation bundleGroupRelation) throws SQLException {
         return this.getSession().save(bundleGroupRelation);
     }
 
@@ -28,7 +30,7 @@ public class BundleGroupRelationRepositoryImpl extends AbstractRepository implem
     }
 
     @Override
-    public int delete(BundleGroupRelation bundleGroupRelation) {
+    public int delete(BundleGroupRelation bundleGroupRelation) throws SQLException {
         return this.getSession().delete(bundleGroupRelation);
     }
 

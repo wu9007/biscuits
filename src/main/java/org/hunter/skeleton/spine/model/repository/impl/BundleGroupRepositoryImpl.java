@@ -9,6 +9,7 @@ import org.hunter.skeleton.spine.model.BundleGroup;
 import org.hunter.skeleton.spine.model.repository.BundleGroupRepository;
 import org.springframework.stereotype.Repository;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -39,17 +40,17 @@ public class BundleGroupRepositoryImpl extends AbstractRepository implements Bun
     }
 
     @Override
-    public int save(BundleGroup bundleGroup) {
+    public int save(BundleGroup bundleGroup) throws SQLException {
         return this.getSession().save(bundleGroup);
     }
 
     @Override
-    public int delete(BundleGroup bundleGroup) {
+    public int delete(BundleGroup bundleGroup) throws SQLException {
         return this.getSession().delete(bundleGroup);
     }
 
     @Override
-    public int update(BundleGroup bundleGroup) {
+    public int update(BundleGroup bundleGroup) throws SQLException {
         return this.getSession().update(bundleGroup);
     }
 }

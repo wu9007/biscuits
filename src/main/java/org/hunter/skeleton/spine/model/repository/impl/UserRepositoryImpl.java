@@ -9,6 +9,7 @@ import org.hunter.skeleton.spine.model.User;
 import org.hunter.skeleton.spine.model.repository.UserRepository;
 import org.springframework.stereotype.Repository;
 
+import java.sql.SQLException;
 import java.util.Date;
 
 /**
@@ -24,7 +25,7 @@ public class UserRepositoryImpl extends AbstractRepository implements UserReposi
 
     @Override
     @Track(data = "#user", operator = "#avatar", operate = OperateEnum.ADD)
-    public int save(User user, String avatar) {
+    public int save(User user, String avatar) throws SQLException {
         user.setLastPasswordResetDate(new Date());
         user.setLastRoleModifyDate(new Date());
         user.setEnable(true);
@@ -46,7 +47,7 @@ public class UserRepositoryImpl extends AbstractRepository implements UserReposi
     }
 
     @Override
-    public boolean canPass(String userCode, String serverId, String bundleId, String actionId) {
+    public boolean canPass(String userCode, String serverId, String bundleId, String actionId) throws SQLException {
         String sql = "SELECT  " +
                 "    T1.UUID   " +
                 "FROM  " +

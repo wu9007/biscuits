@@ -4,6 +4,7 @@ import org.hunter.skeleton.controller.FilterView;
 import org.hunter.skeleton.repository.Repository;
 import org.hunter.skeleton.spine.model.BundleGroup;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -16,9 +17,9 @@ public interface BundleGroupRepository extends Repository {
 
     List<BundleGroup> findAll(FilterView filterView);
 
-    int save(BundleGroup bundleGroup);
+    int save(BundleGroup bundleGroup) throws SQLException;
 
-    int delete(BundleGroup bundleGroup);
+    int delete(BundleGroup bundleGroup) throws SQLException;
 
-    int update(BundleGroup bundleGroup);
+    int update(BundleGroup bundleGroup) throws SQLException;
 }

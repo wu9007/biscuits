@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -51,7 +52,7 @@ public class SkeletonTest {
     }
 
     @Test
-    public void test2() {
+    public void test2() throws SQLException {
         Session session = SessionFactory.getSession("skeleton");
         session.open();
 
@@ -61,7 +62,7 @@ public class SkeletonTest {
     }
 
     @Test
-    public void test3() {
+    public void test3() throws SQLException {
         Session session = SessionFactory.getSession("skeleton");
         session.open();
         List<Role> roles = session.createSQLQuery("SELECT T1.UUID AS uuid,T1.NAME AS name,T1.SPELL AS id,T1.SORT AS sort,T1.`ENABLE` AS enable,T1.MEMO AS memo FROM TBL_ROLE T1 LEFT JOIN TBL_USER_ROLE T2 ON T1.UUID = T2.ROLE_UUID LEFT JOIN TBL_USER T3 ON T2.USER_UUID = T3.UUID WHERE T3.CODE = :CODE", Role.class)
@@ -72,7 +73,7 @@ public class SkeletonTest {
     }
 
     @Test
-    public void test4() {
+    public void test4() throws SQLException {
         Session session = SessionFactory.getSession("skeleton");
         session.open();
 

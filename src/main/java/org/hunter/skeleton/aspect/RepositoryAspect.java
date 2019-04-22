@@ -27,6 +27,7 @@ import javax.management.ReflectionException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -119,7 +120,7 @@ public class RepositoryAspect {
         return joinPoint.proceed();
     }
 
-    private void saveHistory(PocketEntity entity, Session session, String operate, String operator) {
+    private void saveHistory(PocketEntity entity, Session session, String operate, String operator) throws SQLException {
         Class clazz = entity.getClass();
         Entity entityAnnotation = (Entity) clazz.getAnnotation(Entity.class);
 

@@ -3,6 +3,8 @@ package org.hunter.skeleton.spine.model.repository;
 import org.hunter.skeleton.repository.Repository;
 import org.hunter.skeleton.spine.model.User;
 
+import java.sql.SQLException;
+
 /**
  * @author wujianchuan 2019/1/30
  */
@@ -23,7 +25,7 @@ public interface UserRepository extends Repository {
      * @param avatar avatar.
      * @return effect row number.
      */
-    int save(User user, String avatar);
+    int save(User user, String avatar) throws SQLException;
 
     /**
      * find user by avatar.
@@ -42,5 +44,5 @@ public interface UserRepository extends Repository {
      */
     User findByAvatarAndPassword(String avatar, String password);
 
-    boolean canPass(String userCode, String serverId, String bundleId, String actionId);
+    boolean canPass(String userCode, String serverId, String bundleId, String actionId) throws SQLException;
 }

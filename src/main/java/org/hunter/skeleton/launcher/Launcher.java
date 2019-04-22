@@ -24,6 +24,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -85,7 +86,11 @@ public class Launcher implements CommandLineRunner {
                 String bundleName = BundleFactory.getBundleName(bundleId);
                 if (bundleName != null) {
                     Bundle bundle = new Bundle(bundleId, BundleFactory.getBundleName(bundleId), serverId, controllerAnnotation.auth());
-                    session.save(bundle);
+                    try {
+                        session.save(bundle);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                     this.bundleMap.put(bundleId, bundle);
                 } else {
                     transaction.rollBack();
@@ -110,7 +115,11 @@ public class Launcher implements CommandLineRunner {
                 if (!permissionMap.containsKey(permissionId)) {
                     Authority authority = PermissionFactory.get(permissionId);
                     if (authority != null) {
-                        session.save(authority);
+                        try {
+                            session.save(authority);
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
                     } else {
                         transaction.rollBack();
                         throw new NullPointerException(String.format("缺少 Permission: %s", permissionId));
@@ -143,7 +152,11 @@ public class Launcher implements CommandLineRunner {
             if (!mapperMap.containsKey(mapperIdentification)) {
                 mapper = new Mapper(this.serverId, requestMethod, bundleId, actionId);
                 mapper.setBundleUuid(this.bundleMap.get(bundleId).getUuid());
-                session.save(mapper);
+                try {
+                    session.save(mapper);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             } else {
                 mapper = mapperMap.get(mapperIdentification);
             }
@@ -154,7 +167,11 @@ public class Launcher implements CommandLineRunner {
                 String mapperUuid = mapper.getUuid();
                 if (!authMapperRelationMap.containsKey(authUuid + "_" + mapperUuid)) {
                     AuthMapperRelation authMapperRelation = new AuthMapperRelation(this.serverId, authUuid, mapperUuid);
-                    session.save(authMapperRelation);
+                    try {
+                        session.save(authMapperRelation);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }));
