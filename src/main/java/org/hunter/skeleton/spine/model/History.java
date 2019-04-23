@@ -20,16 +20,19 @@ public class History extends BaseEntity {
     private Date operateTime;
     @Column(name = "OPERATOR")
     private String operator;
+    @Column(name = "BUSINESS_UUID")
+    private String businessUuid;
     @Column(name = "OPERATE_CONTENT")
     private String operateContent;
 
     public History() {
     }
 
-    public History(String operate, Date operateTime, String operator, String operateContent) {
+    public History(String operate, Date operateTime, String operator, String businessUuid, String operateContent) {
         this.operate = operate;
         this.operateTime = operateTime;
         this.operator = operator;
+        this.businessUuid = businessUuid;
         this.operateContent = operateContent;
     }
 
@@ -55,6 +58,14 @@ public class History extends BaseEntity {
 
     public void setOperator(String operator) {
         this.operator = operator;
+    }
+
+    public String getBusinessUuid() {
+        return businessUuid;
+    }
+
+    public void setBusinessUuid(String businessUuid) {
+        this.businessUuid = businessUuid;
     }
 
     public String getOperateContent() {

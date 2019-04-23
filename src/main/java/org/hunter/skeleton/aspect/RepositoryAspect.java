@@ -6,13 +6,10 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.hunter.pocket.annotation.Column;
 import org.hunter.pocket.annotation.Entity;
-import org.hunter.pocket.annotation.Join;
-import org.hunter.pocket.annotation.OneToMany;
-import org.hunter.pocket.model.PocketEntity;
+import org.hunter.pocket.model.BaseEntity;
+import org.hunter.pocket.model.MapperFactory;
 import org.hunter.pocket.session.Session;
-import org.hunter.pocket.utils.ReflectUtils;
 import org.hunter.skeleton.annotation.Track;
 import org.hunter.skeleton.spine.model.History;
 import org.springframework.core.DefaultParameterNameDiscoverer;
@@ -23,8 +20,6 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 
-import javax.management.ReflectionException;
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
@@ -33,7 +28,6 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -49,33 +43,19 @@ import static org.hunter.skeleton.constant.Operate.EDIT;
 @Component
 public class RepositoryAspect {
 
-    private final Predicate<Field> businessPredicate = field -> {
-        Column column = field.getAnnotation(Column.class);
-        OneToMany oneToMany = field.getAnnotation(OneToMany.class);
-        Join join = field.getAnnotation(Join.class);
-
-        boolean businessColumn = column != null && column.businessName().length() > 0;
-        boolean businessMany = oneToMany != null && oneToMany.businessName().length() > 0;
-        boolean businessJoin = join != null && join.businessName().length() > 0;
-        return businessColumn || businessMany || businessJoin;
-    };
-    private final Collector<HistoryData, ?, Map<String, Object>> businessCollector = Collectors.toMap(entityData -> {
-        Field field = entityData.getField();
-        Column column = field.getAnnotation(Column.class);
-        OneToMany oneToMany = field.getAnnotation(OneToMany.class);
-        Join join = field.getAnnotation(Join.class);
-        return column != null ? column.businessName() : oneToMany != null ? oneToMany.businessName() : join.businessName();
-    }, entityData -> {
-        try {
-            Field field = entityData.getField();
-            field.setAccessible(true);
-            Object value = field.get(entityData.getEntity());
-            return value != null ? value : "---";
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return "---";
-        }
-    });
+    private final Collector<HistoryData, ?, Map<String, Object>> businessCollector = Collectors.toMap(entityData ->
+                    MapperFactory.getBusinessName(entityData.entity.getClass().getName(), entityData.field.getName()),
+            entityData -> {
+                try {
+                    Field field = entityData.getField();
+                    field.setAccessible(true);
+                    Object value = field.get(entityData.getEntity());
+                    return value != null ? value : "---";
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                    return "---";
+                }
+            });
 
     @Around("@annotation(org.hunter.skeleton.annotation.Track)")
     public Object before(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -102,10 +82,10 @@ public class RepositoryAspect {
         Object operateValue = operatorExpression.getValue(context);
         Object dataValue = dataExpression.getValue(context);
         String operator;
-        PocketEntity entity;
+        BaseEntity entity;
         if (operateValue != null && dataValue != null) {
             operator = operateValue.toString();
-            entity = (PocketEntity) dataValue;
+            entity = (BaseEntity) dataValue;
         } else {
             throw new RuntimeException("can not found data and operator.");
         }
@@ -115,12 +95,12 @@ public class RepositoryAspect {
         ThreadLocal<Session> sessionLocal = (ThreadLocal<Session>) sessionLocalField.get(target);
         Session session = sessionLocal.get();
 
-        this.saveHistory(entity, session, operate, operator);
-
-        return joinPoint.proceed();
+        Object result = joinPoint.proceed();
+        this.saveHistory(entity, session, track.operateName(), operate, operator);
+        return result;
     }
 
-    private void saveHistory(PocketEntity entity, Session session, String operate, String operator) throws SQLException {
+    private void saveHistory(BaseEntity entity, Session session, String operateName, String operate, String operator) throws SQLException {
         Class clazz = entity.getClass();
         Entity entityAnnotation = (Entity) clazz.getAnnotation(Entity.class);
 
@@ -128,30 +108,41 @@ public class RepositoryAspect {
             String tableBusinessName = entityAnnotation.businessName();
 
             Map<String, Object> operateContent = new LinkedHashMap<>(4);
-            operateContent.put("业务名称", tableBusinessName);
-
+            operateContent.put("操作对象", tableBusinessName);
+            operateContent.put("业务", operateName);
+            Map<String, Object> keyBusinessData = Arrays.stream(MapperFactory.getKeyBusinessFields(clazz.getName()))
+                    .map(field -> new HistoryData(entity, field))
+                    .collect(businessCollector);
+            operateContent.put("关键数据", keyBusinessData);
             switch (operate) {
                 case ADD:
-                    Map<String, Object> fieldBusinessData = Arrays.stream(clazz.getDeclaredFields())
-                            .filter(businessPredicate)
+
+                    Map<String, Object> commonBusinessData = Arrays.stream(MapperFactory.getBusinessFields(clazz.getName()))
                             .map(field -> new HistoryData(entity, field))
                             .collect(businessCollector);
-                    operateContent.put("操作方式", "新增数据");
-                    operateContent.put("操作数据", fieldBusinessData);
+                    operateContent.put("操作数据", commonBusinessData);
                     break;
                 case EDIT:
-                    PocketEntity dirtyEntity = (PocketEntity) session.findOne(clazz, this.getUuid(entity));
-                    Map<String, Object> dirtyFieldBusinessData = Arrays.stream(clazz.getDeclaredFields())
-                            .filter(businessPredicate)
+                    BaseEntity dirtyEntity = (BaseEntity) session.findOne(clazz, entity.getUuid());
+                    Map<String, Object> dirtyCommonBusinessData = Arrays.stream(MapperFactory.getBusinessFields(clazz.getName()))
                             .filter(field -> this.dirtyFieldFilter(entity, dirtyEntity, field))
                             .map(field -> new HistoryData(entity, field))
                             .collect(businessCollector);
-                    operateContent.put("操作方式", "编辑数据");
-                    operateContent.put("操作数据", dirtyFieldBusinessData);
+                    operateContent.put("操作数据", dirtyCommonBusinessData);
                     break;
                 case DELETE:
-                    operateContent.put("操作方式", "删除数据");
-                    operateContent.put("操作数据", this.getUuid(entity));
+                    Map<String, Object> deleteData = Arrays.stream(MapperFactory.getRepositoryFields(clazz.getName()))
+                            .collect(Collectors.toMap(Field::getName, field -> {
+                                field.setAccessible(true);
+                                try {
+                                    return field.get(entity);
+                                } catch (IllegalAccessException e) {
+                                    e.printStackTrace();
+                                    throw new RuntimeException("反射异常");
+                                }
+                            }));
+
+                    operateContent.put("操作数据", deleteData);
                     break;
                 default:
                     throw new NullPointerException(String.format("%s - 该操作不产生历史数据。", operate));
@@ -159,20 +150,10 @@ public class RepositoryAspect {
 
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
-                Objects.requireNonNull(session).save(new History(operate, new Date(), operator, objectMapper.writeValueAsString(operateContent)));
+                Objects.requireNonNull(session).save(new History(operate, new Date(), operator, entity.getUuid(), objectMapper.writeValueAsString(operateContent)));
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    private Serializable getUuid(PocketEntity entity) {
-        try {
-            Field uuidField = entity.getClass().getSuperclass().getDeclaredField("uuid");
-            Objects.requireNonNull(uuidField).setAccessible(true);
-            return (Serializable) uuidField.get(entity);
-        } catch (IllegalAccessException | NoSuchFieldException e) {
-            throw new NullPointerException("未找到uuid");
         }
     }
 
@@ -188,19 +169,19 @@ public class RepositoryAspect {
     }
 
     private class HistoryData {
-        private PocketEntity entity;
+        private BaseEntity entity;
         private Field field;
 
-        HistoryData(PocketEntity entity, Field field) {
+        HistoryData(BaseEntity entity, Field field) {
             this.entity = entity;
             this.field = field;
         }
 
-        public PocketEntity getEntity() {
+        public BaseEntity getEntity() {
             return entity;
         }
 
-        public void setEntity(PocketEntity entity) {
+        public void setEntity(BaseEntity entity) {
             this.entity = entity;
         }
 

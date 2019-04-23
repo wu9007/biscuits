@@ -18,6 +18,13 @@ public @interface Track {
     String data();
 
     /**
+     * 操作的业务名称 例：修改 *** 动态字典
+     *
+     * @return operate name
+     */
+    String operateName();
+
+    /**
      * 操作人
      *
      * @return avatar
