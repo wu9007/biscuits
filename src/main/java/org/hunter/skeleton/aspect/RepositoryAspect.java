@@ -138,7 +138,7 @@ public class RepositoryAspect {
                                     return field.get(entity);
                                 } catch (IllegalAccessException e) {
                                     e.printStackTrace();
-                                    throw new RuntimeException("反射异常");
+                                    throw new RuntimeException("获取属性值失败");
                                 }
                             }));
 

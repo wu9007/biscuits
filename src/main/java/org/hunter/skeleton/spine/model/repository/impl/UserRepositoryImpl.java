@@ -24,7 +24,7 @@ public class UserRepositoryImpl extends AbstractRepository implements UserReposi
     }
 
     @Override
-    @Track(data = "#user", operator = "#avatar", operate = OperateEnum.ADD)
+    @Track(data = "#user", operateName = "保存用户", operator = "#avatar", operate = OperateEnum.ADD)
     public int save(User user, String avatar) throws SQLException {
         user.setLastPasswordResetDate(new Date());
         user.setLastRoleModifyDate(new Date());
