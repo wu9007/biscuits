@@ -15,10 +15,28 @@ import java.sql.SQLIntegrityConstraintViolationException;
 public class ControllerExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
+    private static final String UNIQUE_KEY = "UK_";
+    private static final String FOREIGN_KEY = "FK_";
+
     @ResponseBody
     @ExceptionHandler(value = SQLIntegrityConstraintViolationException.class)
+    public Body handler(SQLIntegrityConstraintViolationException e) {
+        logger.error("捕获到 SQLIntegrityConstraintViolationException 异常", e.getMessage());
+        String message;
+        if (e.getMessage().contains(UNIQUE_KEY)) {
+            message = "系统中存在与当前记录相同的数据，不允许重复提交。";
+        } else if (e.getMessage().contains(FOREIGN_KEY)) {
+            message = "您当前操作的数据已被其他业务应用，无法执行删除操作，请先撤销后续业务后再执行删除。";
+        } else {
+            message = e.getMessage();
+        }
+        return Body.newWaringInstance("失败", message, e.getStackTrace());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(value = Exception.class)
     public Body handler(Exception e) {
-        logger.error("捕获到Exception异常", e.getMessage());
-        return Body.newWaringInstance("失败", "数据已存在，请勿重复提交。", e.getStackTrace());
+        logger.error("捕获到 Exception 异常", e.getMessage());
+        return Body.newWaringInstance("失败", e.getMessage(), e.getStackTrace());
     }
 }
