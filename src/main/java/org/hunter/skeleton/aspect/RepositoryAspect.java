@@ -94,14 +94,14 @@ public class RepositoryAspect {
         sessionLocalField.setAccessible(true);
         ThreadLocal<Session> sessionLocal = (ThreadLocal<Session>) sessionLocalField.get(target);
         Session session = sessionLocal.get();
-
+        BaseEntity olderEntity = (BaseEntity) session.findDirect(entity.getClass(), entity.getUuid());
         Object result = joinPoint.proceed();
-        this.saveHistory(entity, session, track.operateName(), operate, operator);
+        this.saveHistory(olderEntity, session, track.operateName(), operate, operator);
         return result;
     }
 
-    private void saveHistory(BaseEntity entity, Session session, String operateName, String operate, String operator) throws SQLException {
-        Class clazz = entity.getClass();
+    private void saveHistory(BaseEntity olderEntity, Session session, String operateName, String operate, String operator) throws SQLException {
+        Class clazz = olderEntity.getClass();
         Entity entityAnnotation = (Entity) clazz.getAnnotation(Entity.class);
 
         if (entityAnnotation != null) {
@@ -111,31 +111,31 @@ public class RepositoryAspect {
             operateContent.put("操作对象", tableBusinessName);
             operateContent.put("业务", operateName);
             Map<String, Object> keyBusinessData = Arrays.stream(MapperFactory.getKeyBusinessFields(clazz.getName()))
-                    .map(field -> new HistoryData(entity, field))
+                    .map(field -> new HistoryData(olderEntity, field))
                     .collect(businessCollector);
             operateContent.put("关键数据", keyBusinessData);
             switch (operate) {
                 case ADD:
-
                     Map<String, Object> commonBusinessData = Arrays.stream(MapperFactory.getBusinessFields(clazz.getName()))
-                            .map(field -> new HistoryData(entity, field))
+                            .map(field -> new HistoryData(olderEntity, field))
                             .collect(businessCollector);
                     operateContent.put("操作数据", commonBusinessData);
                     break;
                 case EDIT:
-                    BaseEntity dirtyEntity = (BaseEntity) session.findOne(clazz, entity.getUuid());
+                    BaseEntity newEntity = (BaseEntity) session.findDirect(clazz, olderEntity.getUuid());
                     Map<String, Object> dirtyCommonBusinessData = Arrays.stream(MapperFactory.getBusinessFields(clazz.getName()))
-                            .filter(field -> this.dirtyFieldFilter(entity, dirtyEntity, field))
-                            .map(field -> new HistoryData(entity, field))
+                            .filter(field -> this.dirtyFieldFilter(newEntity, olderEntity, field))
+                            .map(field -> new HistoryData(newEntity, field))
                             .collect(businessCollector);
                     operateContent.put("操作数据", dirtyCommonBusinessData);
                     break;
                 case DELETE:
+                    newEntity = (BaseEntity) session.findDirect(clazz, olderEntity.getUuid());
                     Map<String, Object> deleteData = Arrays.stream(MapperFactory.getRepositoryFields(clazz.getName()))
                             .collect(Collectors.toMap(Field::getName, field -> {
                                 field.setAccessible(true);
                                 try {
-                                    return field.get(entity);
+                                    return field.get(newEntity);
                                 } catch (IllegalAccessException e) {
                                     e.printStackTrace();
                                     throw new RuntimeException("获取属性值失败");
@@ -150,7 +150,7 @@ public class RepositoryAspect {
 
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
-                Objects.requireNonNull(session).save(new History(operate, new Date(), operator, entity.getUuid(), objectMapper.writeValueAsString(operateContent)));
+                Objects.requireNonNull(session).save(new History(operate, new Date(), operator, olderEntity.getUuid(), objectMapper.writeValueAsString(operateContent)));
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }

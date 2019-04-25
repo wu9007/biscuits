@@ -6,7 +6,7 @@ apply plugin: 'build-dashboard'
 apply plugin: 'maven-publish'
 
 group = 'org.hunter'
-version = '0.2.17-PRE'
+version = '0.2.18-PRE'
 sourceCompatibility = 1.8
 
 compileJava {
@@ -23,6 +23,7 @@ jar {
                 'Implementation-Version': version
     }
 
+    exclude "org/hunter/demo"
     exclude "org/hunter/skeleton/Application.class"
     exclude "application*.yml"
 }
@@ -61,7 +62,7 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-cache:2.1.1.RELEASE'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.1.1.RELEASE'
-    implementation 'com.github.leyan95:pocket:0.2.18-PRE'
+    implementation 'com.github.leyan95:pocket:0.3.1-PRE'
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
     implementation 'mysql:mysql-connector-java:8.0.13'
 
