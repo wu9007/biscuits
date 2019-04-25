@@ -19,7 +19,7 @@ public interface BundleGroupRepository extends Repository {
 
     int save(BundleGroup bundleGroup) throws SQLException;
 
-    int delete(BundleGroup bundleGroup) throws SQLException;
+    int delete(BundleGroup bundleGroup) throws SQLException, IllegalAccessException;
 
     int update(BundleGroup bundleGroup) throws SQLException;
 }

@@ -30,7 +30,7 @@ public class BundleGroupRelationRepositoryImpl extends AbstractRepository implem
     }
 
     @Override
-    public int delete(BundleGroupRelation bundleGroupRelation) throws SQLException {
+    public int delete(BundleGroupRelation bundleGroupRelation) throws SQLException, IllegalAccessException {
         return this.getSession().delete(bundleGroupRelation);
     }
 

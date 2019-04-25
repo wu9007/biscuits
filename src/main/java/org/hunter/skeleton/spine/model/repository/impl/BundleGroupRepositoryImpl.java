@@ -45,7 +45,7 @@ public class BundleGroupRepositoryImpl extends AbstractRepository implements Bun
     }
 
     @Override
-    public int delete(BundleGroup bundleGroup) throws SQLException {
+    public int delete(BundleGroup bundleGroup) throws SQLException, IllegalAccessException {
         return this.getSession().delete(bundleGroup);
     }
 

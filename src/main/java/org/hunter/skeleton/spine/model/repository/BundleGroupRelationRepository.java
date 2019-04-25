@@ -14,7 +14,7 @@ public interface BundleGroupRelationRepository extends Repository {
 
     BundleGroupRelation findByGroupUuidAndBundleUuid(String groupUuid, String bundleUuid);
 
-    int delete(BundleGroupRelation bundleGroupRelation) throws SQLException;
+    int delete(BundleGroupRelation bundleGroupRelation) throws SQLException, IllegalAccessException;
 
     int updateSort(String groupUuid, String bundleUuid, double sort);
 
