@@ -36,7 +36,7 @@ public class ControllerExceptionHandler {
     @ResponseBody
     @ExceptionHandler(value = Exception.class)
     public Body handler(Exception e) {
-        logger.error("捕获到 Exception 异常", e.getMessage());
+        e.printStackTrace();
         return Body.newWaringInstance("失败", e.getMessage(), e.getStackTrace());
     }
 }
