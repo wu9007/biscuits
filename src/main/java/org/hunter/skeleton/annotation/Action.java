@@ -23,7 +23,7 @@ public @interface Action {
     String[] actionId() default {};
 
     @AliasFor(annotation = RequestMapping.class)
-    RequestMethod[] method() default {};
+    RequestMethod[] method() default {RequestMethod.GET};
 
     @AliasFor(annotation = RequestMapping.class)
     String[] produces() default {};
