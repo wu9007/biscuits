@@ -96,12 +96,12 @@ public class RepositoryAspect {
         Session session = sessionLocal.get();
         BaseEntity olderEntity = (BaseEntity) session.findDirect(entity.getClass(), entity.getUuid());
         Object result = joinPoint.proceed();
-        this.saveHistory(olderEntity, session, track.operateName(), operate, operator);
+        this.saveHistory(olderEntity, entity, session, track.operateName(), operate, operator);
         return result;
     }
 
-    private void saveHistory(BaseEntity olderEntity, Session session, String operateName, String operate, String operator) throws SQLException {
-        Class clazz = olderEntity.getClass();
+    private void saveHistory(BaseEntity olderEntity, BaseEntity entity, Session session, String operateName, String operate, String operator) throws SQLException {
+        Class clazz = entity.getClass();
         Entity entityAnnotation = (Entity) clazz.getAnnotation(Entity.class);
 
         if (entityAnnotation != null) {
@@ -111,18 +111,18 @@ public class RepositoryAspect {
             operateContent.put("操作对象", tableBusinessName);
             operateContent.put("业务", operateName);
             Map<String, Object> keyBusinessData = Arrays.stream(MapperFactory.getKeyBusinessFields(clazz.getName()))
-                    .map(field -> new HistoryData(olderEntity, field))
+                    .map(field -> new HistoryData(entity, field))
                     .collect(businessCollector);
             operateContent.put("关键数据", keyBusinessData);
             switch (operate) {
                 case ADD:
                     Map<String, Object> commonBusinessData = Arrays.stream(MapperFactory.getBusinessFields(clazz.getName()))
-                            .map(field -> new HistoryData(olderEntity, field))
+                            .map(field -> new HistoryData(entity, field))
                             .collect(businessCollector);
                     operateContent.put("操作数据", commonBusinessData);
                     break;
                 case EDIT:
-                    BaseEntity newEntity = (BaseEntity) session.findDirect(clazz, olderEntity.getUuid());
+                    BaseEntity newEntity = (BaseEntity) session.findDirect(clazz, entity.getUuid());
                     Map<String, Object> dirtyCommonBusinessData = Arrays.stream(MapperFactory.getBusinessFields(clazz.getName()))
                             .filter(field -> this.dirtyFieldFilter(newEntity, olderEntity, field))
                             .map(field -> new HistoryData(newEntity, field))
@@ -130,7 +130,7 @@ public class RepositoryAspect {
                     operateContent.put("操作数据", dirtyCommonBusinessData);
                     break;
                 case DELETE:
-                    newEntity = (BaseEntity) session.findDirect(clazz, olderEntity.getUuid());
+                    newEntity = (BaseEntity) session.findDirect(clazz, entity.getUuid());
                     Map<String, Object> deleteData = Arrays.stream(MapperFactory.getRepositoryFields(clazz.getName()))
                             .collect(Collectors.toMap(Field::getName, field -> {
                                 field.setAccessible(true);
