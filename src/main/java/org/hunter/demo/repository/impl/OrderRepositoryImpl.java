@@ -10,6 +10,8 @@ import org.hunter.skeleton.constant.OperateEnum;
 import org.hunter.skeleton.repository.AbstractRepository;
 import org.springframework.stereotype.Component;
 
+import java.sql.SQLException;
+
 /**
  * @author wujianchuan
  */
@@ -17,7 +19,7 @@ import org.springframework.stereotype.Component;
 public class OrderRepositoryImpl extends AbstractRepository implements OrderRepository {
     @Override
     @Track(data = "#order", operateName = "更新单据", operator = "#operator", operate = OperateEnum.EDIT)
-    public int updateOrder(Order order, String orderType, String operator) {
+    public int updateOrder(Order order, String orderType, String operator) throws SQLException {
         Criteria criteria = this.getSession().createCriteria(Order.class);
         criteria.add(Modern.set("type", orderType))
                 .add(Restrictions.equ("uuid", order.getUuid()));
@@ -25,7 +27,7 @@ public class OrderRepositoryImpl extends AbstractRepository implements OrderRepo
     }
 
     @Override
-    public Order findOne(String uuid) {
+    public Order findOne(String uuid) throws SQLException {
         return (Order) this.getSession().findDirect(Order.class, uuid);
     }
 }

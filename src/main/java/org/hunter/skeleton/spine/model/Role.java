@@ -7,6 +7,7 @@ import org.hunter.pocket.model.BaseEntity;
 import org.hunter.skeleton.spine.model.repository.AuthorityRepository;
 import org.hunter.skeleton.spine.model.repository.UserRepository;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -89,14 +90,16 @@ public class Role extends BaseEntity {
         this.roleAuthRelationList = roleAuthRelationList;
     }
 
-    public List<Authority> getAuths(AuthorityRepository authorityRepository) {
+    public List<Authority> getAuths(AuthorityRepository authorityRepository) throws SQLException {
         List<Authority> authorities = new ArrayList<>();
         List<RoleAuthRelation> roleAuthRelations = this.getRoleAuthRelationList();
         if (roleAuthRelations != null && roleAuthRelations.size() > 0) {
-            authorities = roleAuthRelations.stream()
-                    .map(roleAuthRelation -> authorityRepository.findOne(roleAuthRelation.getAuthUuid()))
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+            for (RoleAuthRelation roleAuthRelation : roleAuthRelations) {
+                Authority authority = authorityRepository.findOne(roleAuthRelation.getAuthUuid());
+                if (authority != null) {
+                    authorities.add(authority);
+                }
+            }
         }
         return authorities;
     }

@@ -33,7 +33,7 @@ public interface UserRepository extends Repository {
      * @param avatar user avatar.
      * @return user.
      */
-    User findByAvatar(String avatar);
+    User findByAvatar(String avatar) throws SQLException;
 
     /**
      * find user by avatar and password.
@@ -42,7 +42,7 @@ public interface UserRepository extends Repository {
      * @param password user password.
      * @return user.
      */
-    User findByAvatarAndPassword(String avatar, String password);
+    User findByAvatarAndPassword(String avatar, String password) throws SQLException;
 
     boolean canPass(String userCode, String serverId, String bundleId, String actionId) throws SQLException;
 }

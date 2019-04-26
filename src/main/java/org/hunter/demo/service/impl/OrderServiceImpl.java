@@ -8,6 +8,8 @@ import org.hunter.skeleton.annotation.Service;
 import org.hunter.skeleton.service.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.sql.SQLException;
+
 /**
  * @author wujianchuan
  */
@@ -24,7 +26,7 @@ public class OrderServiceImpl extends AbstractService implements OrderService {
 
     @Override
     @Affairs
-    public int updateType(String type) {
+    public int updateType(String type) throws SQLException {
         Order order = this.orderRepository.findOne("1011010");
         return this.orderRepository.updateOrder(order, type, "ADMIN");
     }

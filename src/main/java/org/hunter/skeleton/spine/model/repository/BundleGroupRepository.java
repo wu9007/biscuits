@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface BundleGroupRepository extends Repository {
 
-    BundleGroup findOne(String uuid);
+    BundleGroup findOne(String uuid) throws SQLException;
 
     List<BundleGroup> findAll(FilterView filterView);
 

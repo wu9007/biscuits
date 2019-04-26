@@ -7,6 +7,8 @@ import org.hunter.skeleton.spine.model.Role;
 import org.hunter.skeleton.spine.model.repository.RoleRepository;
 import org.springframework.stereotype.Repository;
 
+import java.sql.SQLException;
+
 /**
  * @author wujianchuan 2019/2/21
  */
@@ -18,7 +20,7 @@ public class RoleRepositoryImpl extends AbstractRepository implements RoleReposi
     }
 
     @Override
-    public Role findById(String id) {
+    public Role findById(String id) throws SQLException {
         Criteria criteria = this.getSession().createCriteria(Role.class);
         criteria.add(Restrictions.equ("id", id));
         return (Role) criteria.unique(true);

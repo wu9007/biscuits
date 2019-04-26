@@ -12,11 +12,11 @@ import java.sql.SQLException;
 public interface BundleGroupRelationRepository extends Repository {
     int save(BundleGroupRelation bundleGroupRelation) throws SQLException;
 
-    BundleGroupRelation findByGroupUuidAndBundleUuid(String groupUuid, String bundleUuid);
+    BundleGroupRelation findByGroupUuidAndBundleUuid(String groupUuid, String bundleUuid) throws SQLException;
 
     int delete(BundleGroupRelation bundleGroupRelation) throws SQLException, IllegalAccessException;
 
-    int updateSort(String groupUuid, String bundleUuid, double sort);
+    int updateSort(String groupUuid, String bundleUuid, double sort) throws SQLException;
 
-    int deleteByGroupUuidAndBundleUuid(String groupUuid, String bundleUuid);
+    int deleteByGroupUuidAndBundleUuid(String groupUuid, String bundleUuid) throws SQLException;
 }

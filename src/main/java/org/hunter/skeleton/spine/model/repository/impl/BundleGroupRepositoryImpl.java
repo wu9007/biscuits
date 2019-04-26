@@ -19,7 +19,7 @@ import java.util.List;
 @Repository
 public class BundleGroupRepositoryImpl extends AbstractRepository implements BundleGroupRepository {
     @Override
-    public BundleGroup findOne(String uuid) {
+    public BundleGroup findOne(String uuid) throws SQLException {
         return (BundleGroup) this.getSession().findDirect(BundleGroup.class, uuid);
     }
 

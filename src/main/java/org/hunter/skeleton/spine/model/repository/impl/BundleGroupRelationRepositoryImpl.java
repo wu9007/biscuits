@@ -22,7 +22,7 @@ public class BundleGroupRelationRepositoryImpl extends AbstractRepository implem
     }
 
     @Override
-    public BundleGroupRelation findByGroupUuidAndBundleUuid(String groupUuid, String bundleUuid) {
+    public BundleGroupRelation findByGroupUuidAndBundleUuid(String groupUuid, String bundleUuid) throws SQLException {
         Criteria criteria = this.getSession().createCriteria(BundleGroupRelation.class)
                 .add(Restrictions.equ("groupUuid", groupUuid))
                 .add(Restrictions.equ("bundleUuid", bundleUuid));
@@ -35,7 +35,7 @@ public class BundleGroupRelationRepositoryImpl extends AbstractRepository implem
     }
 
     @Override
-    public int updateSort(String groupUuid, String bundleUuid, double sort) {
+    public int updateSort(String groupUuid, String bundleUuid, double sort) throws SQLException {
         Criteria criteria = this.getSession().createCriteria(BundleGroupRelation.class);
         criteria.add(Modern.set("sort", sort))
                 .add(Restrictions.equ("groupUuid", groupUuid))
@@ -44,7 +44,7 @@ public class BundleGroupRelationRepositoryImpl extends AbstractRepository implem
     }
 
     @Override
-    public int deleteByGroupUuidAndBundleUuid(String groupUuid, String bundleUuid) {
+    public int deleteByGroupUuidAndBundleUuid(String groupUuid, String bundleUuid) throws SQLException {
         return (int) this.getSession().createCriteria(BundleGroupRelation.class)
                 .add(Restrictions.equ("groupUuid", groupUuid))
                 .add(Restrictions.equ("bundleUuid", bundleUuid))

@@ -7,10 +7,14 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.hunter.pocket.annotation.Entity;
+import org.hunter.pocket.constant.AnnotationType;
 import org.hunter.pocket.model.BaseEntity;
+import org.hunter.pocket.model.DetailInductiveBox;
 import org.hunter.pocket.model.MapperFactory;
 import org.hunter.pocket.session.Session;
+import org.hunter.pocket.utils.ReflectUtils;
 import org.hunter.skeleton.annotation.Track;
+import org.hunter.skeleton.constant.OperateEnum;
 import org.hunter.skeleton.spine.model.History;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.expression.EvaluationContext;
@@ -25,7 +29,9 @@ import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collector;
@@ -42,20 +48,6 @@ import static org.hunter.skeleton.constant.Operate.EDIT;
 @Aspect
 @Component
 public class RepositoryAspect {
-
-    private final Collector<HistoryData, ?, Map<String, Object>> businessCollector = Collectors.toMap(entityData ->
-                    MapperFactory.getBusinessName(entityData.entity.getClass().getName(), entityData.field.getName()),
-            entityData -> {
-                try {
-                    Field field = entityData.getField();
-                    field.setAccessible(true);
-                    Object value = field.get(entityData.getEntity());
-                    return value != null ? value : "---";
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                    return "---";
-                }
-            });
 
     @Around("@annotation(org.hunter.skeleton.annotation.Track)")
     public Object before(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -94,14 +86,17 @@ public class RepositoryAspect {
         sessionLocalField.setAccessible(true);
         ThreadLocal<Session> sessionLocal = (ThreadLocal<Session>) sessionLocalField.get(target);
         Session session = sessionLocal.get();
-        BaseEntity olderEntity = (BaseEntity) session.findDirect(entity.getClass(), entity.getUuid());
+        BaseEntity olderEntity = null;
+        if (entity.getUuid() != null) {
+            olderEntity = (BaseEntity) session.findDirect(entity.getClass(), entity.getUuid());
+        }
         Object result = joinPoint.proceed();
         this.saveHistory(olderEntity, entity, session, track.operateName(), operate, operator);
         return result;
     }
 
-    private void saveHistory(BaseEntity olderEntity, BaseEntity entity, Session session, String operateName, String operate, String operator) throws SQLException {
-        Class clazz = entity.getClass();
+    private void saveHistory(BaseEntity olderEntity, BaseEntity newEntity, Session session, String operateName, String operate, String operator) throws SQLException {
+        Class clazz = newEntity.getClass();
         Entity entityAnnotation = (Entity) clazz.getAnnotation(Entity.class);
 
         if (entityAnnotation != null) {
@@ -110,39 +105,16 @@ public class RepositoryAspect {
             Map<String, Object> operateContent = new LinkedHashMap<>(4);
             operateContent.put("操作对象", tableBusinessName);
             operateContent.put("业务", operateName);
-            Map<String, Object> keyBusinessData = Arrays.stream(MapperFactory.getKeyBusinessFields(clazz.getName()))
-                    .map(field -> new HistoryData(entity, field))
-                    .collect(businessCollector);
-            operateContent.put("关键数据", keyBusinessData);
+            operateContent.put("关键数据", this.getFlagBusinessContent(newEntity));
             switch (operate) {
                 case ADD:
-                    Map<String, Object> commonBusinessData = Arrays.stream(MapperFactory.getBusinessFields(clazz.getName()))
-                            .map(field -> new HistoryData(entity, field))
-                            .collect(businessCollector);
-                    operateContent.put("操作数据", commonBusinessData);
+                    operateContent.put("新增的数据", this.getBusinessContent(newEntity, null));
                     break;
                 case EDIT:
-                    BaseEntity newEntity = (BaseEntity) session.findDirect(clazz, entity.getUuid());
-                    Map<String, Object> dirtyCommonBusinessData = Arrays.stream(MapperFactory.getBusinessFields(clazz.getName()))
-                            .filter(field -> this.dirtyFieldFilter(newEntity, olderEntity, field))
-                            .map(field -> new HistoryData(newEntity, field))
-                            .collect(businessCollector);
-                    operateContent.put("操作数据", dirtyCommonBusinessData);
+                    operateContent.put("更新的数据", this.getBusinessContent(newEntity, olderEntity));
                     break;
                 case DELETE:
-                    newEntity = (BaseEntity) session.findDirect(clazz, entity.getUuid());
-                    Map<String, Object> deleteData = Arrays.stream(MapperFactory.getRepositoryFields(clazz.getName()))
-                            .collect(Collectors.toMap(Field::getName, field -> {
-                                field.setAccessible(true);
-                                try {
-                                    return field.get(newEntity);
-                                } catch (IllegalAccessException e) {
-                                    e.printStackTrace();
-                                    throw new RuntimeException("获取属性值失败");
-                                }
-                            }));
-
-                    operateContent.put("操作数据", deleteData);
+                    operateContent.put("删除的数据", this.getBusinessContent(null, olderEntity));
                     break;
                 default:
                     throw new NullPointerException(String.format("%s - 该操作不产生历史数据。", operate));
@@ -150,47 +122,163 @@ public class RepositoryAspect {
 
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
-                Objects.requireNonNull(session).save(new History(operate, new Date(), operator, olderEntity.getUuid(), objectMapper.writeValueAsString(operateContent)));
+                Objects.requireNonNull(session).save(new History(operate, new Date(), operator, newEntity.getUuid(), objectMapper.writeValueAsString(operateContent)));
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private boolean dirtyFieldFilter(Object modern, Object older, Field field) {
-        field.setAccessible(true);
-        try {
-            Object modernValue = field.get(modern);
-            Object olderValue = field.get(older);
-            return modernValue == null && olderValue != null || olderValue == null && modernValue != null || modernValue != null && !modernValue.equals(olderValue);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("获取属性值失败。");
+    /**
+     * 生成操作历史内容（所有业务内容）
+     *
+     * @param newEntity   新
+     * @param olderEntity 老
+     * @return business content
+     */
+    private Map<String, Object> getBusinessContent(BaseEntity newEntity, BaseEntity olderEntity) {
+        if (olderEntity == null) {
+            // 新增
+            return Arrays.stream(MapperFactory.getBusinessFields(newEntity.getClass().getName()))
+                    .map(field -> new HistoryData(newEntity, null, field, OperateEnum.ADD))
+                    .collect(businessCollector);
+        } else if (newEntity != null) {
+            // 编辑
+            List<Field> dirtyFields = Arrays.asList(ReflectUtils.getInstance().dirtyFieldFilter(newEntity, olderEntity));
+            return Arrays.stream(MapperFactory.getBusinessFields(newEntity.getClass().getName()))
+                    .filter(dirtyFields::contains)
+                    .map(field -> new HistoryData(newEntity, olderEntity, field, OperateEnum.EDIT))
+                    .collect(businessCollector);
+        } else {
+            // 删除
+            return Arrays.stream(MapperFactory.getBusinessFields(olderEntity.getClass().getName()))
+                    .map(field -> new HistoryData(newEntity, olderEntity, field, OperateEnum.DELETE))
+                    .collect(businessCollector);
         }
     }
 
-    private class HistoryData {
-        private BaseEntity entity;
-        private Field field;
+    private final Collector<HistoryData, ?, Map<String, Object>> businessCollector = Collectors.toMap(entityData ->
+                    MapperFactory.getBusinessName(entityData.getNewEntity().getClass().getName(), entityData.field.getName()),
+            entityData -> {
+                try {
+                    BaseEntity newEntity = entityData.getNewEntity();
+                    BaseEntity oldEntity = entityData.getOldEntity();
+                    Field field = entityData.getField();
+                    OperateEnum operateEnum = entityData.getOperateEnum();
+                    field.setAccessible(true);
+                    Object newValue = field.get(newEntity);
+                    AnnotationType annotationType = MapperFactory.getAnnotationType(newEntity.getClass().getName(), field.getName());
+                    if (OperateEnum.ADD.equals(operateEnum)) {
+                        if (AnnotationType.ONE_TO_MANY.equals(annotationType)) {
+                            List<BaseEntity> details = (List<BaseEntity>) newValue;
+                            return details.stream()
+                                    .map(detail -> this.getBusinessContent(detail, null))
+                                    .collect(Collectors.toList());
+                        }
+                        return newValue != null ? newValue : "---";
+                    } else if (OperateEnum.EDIT.equals(operateEnum)) {
+                        Object oldValue = field.get(oldEntity);
+                        if (AnnotationType.ONE_TO_MANY.equals(annotationType)) {
+                            List<BaseEntity> newDetails = (List<BaseEntity>) newValue;
+                            List<BaseEntity> oldDetails = (List<BaseEntity>) oldValue;
+                            DetailInductiveBox detailInductiveBox = DetailInductiveBox.newInstance(newDetails, oldDetails);
+                            List<Map> moribundDetailListContent = detailInductiveBox.getMoribund().stream()
+                                    .map(moribund -> this.getBusinessContent(null, moribund))
+                                    .collect(Collectors.toList());
+                            List<Map> newbornDetailListContent = detailInductiveBox.getNewborn().stream()
+                                    .map(newborn -> this.getBusinessContent(newborn, null))
+                                    .collect(Collectors.toList());
+                            Map<String, BaseEntity> olderMapper = oldDetails.stream().collect(Collectors.toMap(detail -> detail.getUuid(), detail -> detail));
+                            List<Map> updateDetailListContent = detailInductiveBox.getUpdate().stream()
+                                    .map(newDetail -> {
+                                        BaseEntity olderDetail = olderMapper.get(newDetail.getUuid());
+                                        return this.getBusinessContent(newDetail, olderDetail);
+                                    })
+                                    .collect(Collectors.toList());
+                            Map<String, Object> content = new HashMap<>(4);
+                            content.put("编辑明细", updateDetailListContent);
+                            content.put("新增明细", newbornDetailListContent);
+                            content.put("删除明细", moribundDetailListContent);
+                            return content;
+                        }
+                        return newValue != null ? newValue : "---";
+                    } else if (OperateEnum.DELETE.equals(operateEnum)) {
+                        Object oldValue = field.get(oldEntity);
+                        if (AnnotationType.ONE_TO_MANY.equals(annotationType)) {
+                            List<BaseEntity> oldDetails = (List<BaseEntity>) oldValue;
+                            return oldDetails.stream()
+                                    .map(oldDetail -> this.getBusinessContent(null, oldDetail))
+                                    .collect(Collectors.toList());
+                        }
+                        return oldValue != null ? oldValue : "---";
+                    } else {
+                        throw new RuntimeException("非法参数");
+                    }
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                    return "---";
+                }
+            });
 
-        HistoryData(BaseEntity entity, Field field) {
-            this.entity = entity;
+    /**
+     * 生成操作历史内容（关键业务内容）
+     *
+     * @param newEntity 新
+     * @return business content
+     */
+    private Map<String, Object> getFlagBusinessContent(BaseEntity newEntity) {
+        return Arrays.stream(MapperFactory.getKeyBusinessFields(newEntity.getClass().getName()))
+                .map(field -> new HistoryData(newEntity, field))
+                .collect(flagBusinessCollector);
+    }
+
+    private final Collector<HistoryData, ?, Map<String, Object>> flagBusinessCollector = Collectors.toMap(entityData ->
+                    MapperFactory.getBusinessName(entityData.getNewEntity().getClass().getName(), entityData.field.getName()),
+            entityData -> {
+                try {
+                    Field field = entityData.getField();
+                    field.setAccessible(true);
+                    Object value = field.get(entityData.getNewEntity());
+                    return value != null ? value : "---";
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                    return "---";
+                }
+            });
+
+    private class HistoryData {
+        private BaseEntity newEntity;
+        private BaseEntity oldEntity;
+        private Field field;
+        private OperateEnum operateEnum;
+
+        HistoryData(BaseEntity newEntity, BaseEntity oldEntity, Field field, OperateEnum operateEnum) {
+            this.newEntity = newEntity;
+            this.oldEntity = oldEntity;
+            this.field = field;
+            this.operateEnum = operateEnum;
+        }
+
+        HistoryData(BaseEntity newEntity, Field field) {
+            this.newEntity = newEntity;
             this.field = field;
         }
 
-        public BaseEntity getEntity() {
-            return entity;
+        BaseEntity getNewEntity() {
+            return newEntity;
         }
 
-        public void setEntity(BaseEntity entity) {
-            this.entity = entity;
+
+        BaseEntity getOldEntity() {
+            return oldEntity;
         }
 
         Field getField() {
             return field;
         }
 
-        public void setField(Field field) {
-            this.field = field;
+        OperateEnum getOperateEnum() {
+            return operateEnum;
         }
     }
 }

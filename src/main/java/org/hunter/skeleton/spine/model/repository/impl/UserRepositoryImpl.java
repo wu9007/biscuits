@@ -33,14 +33,14 @@ public class UserRepositoryImpl extends AbstractRepository implements UserReposi
     }
 
     @Override
-    public User findByAvatar(String avatar) {
+    public User findByAvatar(String avatar) throws SQLException {
         Criteria criteria = this.getSession().createCriteria(User.class);
         criteria.add(Restrictions.equ("avatar", avatar));
         return (User) criteria.unique(true);
     }
 
     @Override
-    public User findByAvatarAndPassword(String avatar, String password) {
+    public User findByAvatarAndPassword(String avatar, String password) throws SQLException {
         Criteria criteria = this.getSession().createCriteria(User.class);
         criteria.add(Restrictions.and(Restrictions.equ("avatar", avatar), Restrictions.equ("password", password)));
         return (User) criteria.unique(true);
