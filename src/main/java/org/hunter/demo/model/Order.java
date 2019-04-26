@@ -30,12 +30,12 @@ public class Order extends BaseEntity {
     private Boolean state;
     @Column(name = "SORT", businessName = "排序码")
     private int sort;
-    @Column(name = "TYPE", businessName = "类型")
+    @Column(name = "TYPE", businessName = "类型", flagBusiness = true)
     private String type;
     @Join(columnName = "TYPE", columnSurname = "TYPE_NAME", businessName = "订单支付方式", joinTable = "TBL_ORDER_TYPE", joinTableSurname = "T2", joinMethod = JoinMethod.LEFT, bridgeColumn = "UUID", destinationColumn = "NAME")
     private String typeName;
 
-    @OneToMany(clazz = Commodity.class, bridgeField = "order")
+    @OneToMany(clazz = Commodity.class, bridgeField = "order", businessName = "明细信息")
     private List<Commodity> commodities;
 
     public static Order newInstance(String code, BigDecimal price) {

@@ -26,8 +26,18 @@ public class OrderServiceImpl extends AbstractService implements OrderService {
 
     @Override
     @Affairs
-    public int updateType(String type) throws SQLException {
-        Order order = this.orderRepository.findOne("1011010");
-        return this.orderRepository.updateOrder(order, type, "ADMIN");
+    public int save(Order order) throws SQLException, IllegalAccessException {
+        return this.orderRepository.save(order, "ADMIN");
+    }
+
+    @Override
+    @Affairs
+    public int update(Order order) throws SQLException, IllegalAccessException {
+        return this.orderRepository.update(order, "ADMIN");
+    }
+
+    @Override
+    public Order findOne(String uuid) throws SQLException {
+        return this.orderRepository.findOne(uuid);
     }
 }

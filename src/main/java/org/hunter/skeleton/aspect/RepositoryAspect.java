@@ -86,12 +86,18 @@ public class RepositoryAspect {
         sessionLocalField.setAccessible(true);
         ThreadLocal<Session> sessionLocal = (ThreadLocal<Session>) sessionLocalField.get(target);
         Session session = sessionLocal.get();
+        BaseEntity newEntity;
         BaseEntity olderEntity = null;
         if (entity.getUuid() != null) {
             olderEntity = (BaseEntity) session.findDirect(entity.getClass(), entity.getUuid());
         }
         Object result = joinPoint.proceed();
-        this.saveHistory(olderEntity, entity, session, track.operateName(), operate, operator);
+        if (entity.getUuid() != null) {
+            newEntity = (BaseEntity) session.findDirect(entity.getClass(), entity.getUuid());
+        } else {
+            newEntity = entity;
+        }
+        this.saveHistory(olderEntity, newEntity, session, track.operateName(), operate, operator);
         return result;
     }
 
@@ -145,8 +151,9 @@ public class RepositoryAspect {
         } else if (newEntity != null) {
             // 编辑
             List<Field> dirtyFields = Arrays.asList(ReflectUtils.getInstance().dirtyFieldFilter(newEntity, olderEntity));
+            List<Field> onToManyFields = Arrays.asList(MapperFactory.getOneToMayFields(newEntity.getClass().getName()));
             return Arrays.stream(MapperFactory.getBusinessFields(newEntity.getClass().getName()))
-                    .filter(dirtyFields::contains)
+                    .filter(field -> dirtyFields.contains(field) || onToManyFields.contains(field))
                     .map(field -> new HistoryData(newEntity, olderEntity, field, OperateEnum.EDIT))
                     .collect(businessCollector);
         } else {
@@ -158,7 +165,7 @@ public class RepositoryAspect {
     }
 
     private final Collector<HistoryData, ?, Map<String, Object>> businessCollector = Collectors.toMap(entityData ->
-                    MapperFactory.getBusinessName(entityData.getNewEntity().getClass().getName(), entityData.field.getName()),
+                    MapperFactory.getBusinessName(entityData.getNewEntity() != null ? entityData.getNewEntity().getClass().getName() : entityData.getOldEntity().getClass().getName(), entityData.field.getName()),
             entityData -> {
                 try {
                     BaseEntity newEntity = entityData.getNewEntity();
@@ -166,9 +173,9 @@ public class RepositoryAspect {
                     Field field = entityData.getField();
                     OperateEnum operateEnum = entityData.getOperateEnum();
                     field.setAccessible(true);
-                    Object newValue = field.get(newEntity);
-                    AnnotationType annotationType = MapperFactory.getAnnotationType(newEntity.getClass().getName(), field.getName());
                     if (OperateEnum.ADD.equals(operateEnum)) {
+                        Object newValue = field.get(newEntity);
+                        AnnotationType annotationType = MapperFactory.getAnnotationType(newEntity.getClass().getName(), field.getName());
                         if (AnnotationType.ONE_TO_MANY.equals(annotationType)) {
                             List<BaseEntity> details = (List<BaseEntity>) newValue;
                             return details.stream()
@@ -177,6 +184,8 @@ public class RepositoryAspect {
                         }
                         return newValue != null ? newValue : "---";
                     } else if (OperateEnum.EDIT.equals(operateEnum)) {
+                        Object newValue = field.get(newEntity);
+                        AnnotationType annotationType = MapperFactory.getAnnotationType(newEntity.getClass().getName(), field.getName());
                         Object oldValue = field.get(oldEntity);
                         if (AnnotationType.ONE_TO_MANY.equals(annotationType)) {
                             List<BaseEntity> newDetails = (List<BaseEntity>) newValue;
@@ -204,6 +213,7 @@ public class RepositoryAspect {
                         return newValue != null ? newValue : "---";
                     } else if (OperateEnum.DELETE.equals(operateEnum)) {
                         Object oldValue = field.get(oldEntity);
+                        AnnotationType annotationType = MapperFactory.getAnnotationType(oldEntity.getClass().getName(), field.getName());
                         if (AnnotationType.ONE_TO_MANY.equals(annotationType)) {
                             List<BaseEntity> oldDetails = (List<BaseEntity>) oldValue;
                             return oldDetails.stream()
@@ -216,7 +226,7 @@ public class RepositoryAspect {
                     }
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
-                    return "---";
+                    return "警告⚠该条数据不合法";
                 }
             });
 

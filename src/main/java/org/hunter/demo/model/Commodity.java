@@ -17,7 +17,7 @@ public class Commodity extends BaseEntity {
     private static final long serialVersionUID = -6711578420837877371L;
     @Column(name = "NAME")
     private String name;
-    @Column(name = "PRICE")
+    @Column(name = "PRICE", businessName = "金额")
     private BigDecimal price;
     @Column(name = "TYPE")
     private String type;
