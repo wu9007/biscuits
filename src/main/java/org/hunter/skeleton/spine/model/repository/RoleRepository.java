@@ -10,7 +10,7 @@ import java.sql.SQLException;
  */
 public interface RoleRepository extends Repository {
 
-    Role findOne(String uuid);
+    Role findOne(String uuid) throws SQLException;
 
     Role findById(String id) throws SQLException;
 }

@@ -10,8 +10,6 @@ import org.hunter.skeleton.spine.model.repository.UserRepository;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * @author wujianchuan 2019/1/30
@@ -104,14 +102,17 @@ public class Role extends BaseEntity {
         return authorities;
     }
 
-    public List<User> getUsers(UserRepository userRepository) {
+    public List<User> getUsers(UserRepository userRepository) throws SQLException {
         List<User> users = new ArrayList<>();
         List<UserRoleRelation> userRoleRelations = this.getUserRoleRelations();
         if (userRoleRelations != null && userRoleRelations.size() > 0) {
-            users = userRoleRelations.stream()
-                    .map(roleAuthRelation -> userRepository.findOne(roleAuthRelation.getUserUuid()))
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+            User user;
+            for (UserRoleRelation userRoleRelation : userRoleRelations) {
+                user = userRepository.findOne(userRoleRelation.getUserUuid());
+                if (user != null) {
+                    users.add(user);
+                }
+            }
         }
         return users;
     }

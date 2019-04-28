@@ -19,7 +19,7 @@ import java.util.Date;
 public class UserRepositoryImpl extends AbstractRepository implements UserRepository {
 
     @Override
-    public User findOne(String uuid) {
+    public User findOne(String uuid) throws SQLException {
         return (User) this.getSession().findOne(User.class, uuid);
     }
 

@@ -26,6 +26,7 @@ import java.util.List;
 /**
  * @author wujianchuan 2019/1/31
  */
+@SuppressWarnings("unchecked")
 @Aspect
 @Component
 public class ServiceAspect {
@@ -38,6 +39,7 @@ public class ServiceAspect {
     private final ThreadLocal<LinkedList<Object>> targetThreadLocal = new ThreadLocal<>();
     private final ThreadLocal<Integer> transOnIndex = new ThreadLocal<>();
 
+    @SuppressWarnings("EmptyMethod")
     @Pointcut("execution(public * *..*.service.*.*(..))")
     public void point() {
     }

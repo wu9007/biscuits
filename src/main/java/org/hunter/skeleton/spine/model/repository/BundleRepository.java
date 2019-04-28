@@ -3,6 +3,7 @@ package org.hunter.skeleton.spine.model.repository;
 import org.hunter.skeleton.repository.Repository;
 import org.hunter.skeleton.spine.model.Bundle;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -13,7 +14,7 @@ public interface BundleRepository extends Repository {
 
     List<Bundle> findByAuthIf(Boolean auth);
 
-    Bundle findOne(String uuid);
+    Bundle findOne(String uuid) throws SQLException;
 
     List<Bundle> findAll();
 }

@@ -15,7 +15,7 @@ import java.sql.SQLException;
 @Repository
 public class RoleRepositoryImpl extends AbstractRepository implements RoleRepository {
     @Override
-    public Role findOne(String uuid) {
+    public Role findOne(String uuid) throws SQLException {
         return (Role) this.getSession().findOne(Role.class, uuid);
     }
 

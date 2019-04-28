@@ -7,6 +7,7 @@ import org.hunter.skeleton.repository.AbstractRepository;
 import org.hunter.skeleton.spine.model.Mapper;
 import org.hunter.skeleton.spine.model.repository.MapperRepository;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ import java.util.List;
 @Service(session = "skeleton")
 public class MapperRepositoryImpl extends AbstractRepository implements MapperRepository {
     @Override
-    public Mapper findOne(String uuid) {
+    public Mapper findOne(String uuid) throws SQLException {
         return (Mapper) this.getSession().findOne(Mapper.class, uuid);
     }
 

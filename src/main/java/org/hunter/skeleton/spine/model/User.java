@@ -4,9 +4,7 @@ import org.hunter.pocket.annotation.Column;
 import org.hunter.pocket.annotation.Entity;
 import org.hunter.pocket.annotation.OneToMany;
 import org.hunter.pocket.model.BaseEntity;
-import org.hunter.pocket.session.Session;
 
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -129,11 +127,5 @@ public class User extends BaseEntity {
 
     public void setUserRoleRelations(List<UserRoleRelation> userRoleRelations) {
         this.userRoleRelations = userRoleRelations;
-    }
-
-    public List<Role> getRoles(Session session) throws SQLException {
-        return session.createSQLQuery("SELECT T1.UUID AS uuid,T1.NAME AS name,T1.SPELL AS id,T1.SORT AS sort,T1.`ENABLE` AS enable,T1.MEMO AS memo FROM TBL_ROLE T1 LEFT JOIN TBL_USER_ROLE T2 ON T1.UUID = T2.ROLE_UUID LEFT JOIN TBL_USER T3 ON T2.USER_UUID = T3.UUID WHERE T3.UUID = :UUID", Role.class)
-                .setParameter("UUID", this.getUuid())
-                .list();
     }
 }

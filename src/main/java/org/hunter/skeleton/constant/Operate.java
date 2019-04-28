@@ -1,5 +1,8 @@
 package org.hunter.skeleton.constant;
 
+/**
+ * @author wujianchuan
+ */
 public interface Operate {
 
     String ADD = "add";

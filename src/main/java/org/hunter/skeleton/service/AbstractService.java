@@ -16,6 +16,7 @@ public class AbstractService {
      */
     private ThreadLocal<Session> sessionLocal = new ThreadLocal<>();
 
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private final List<Repository> repositoryList = new ArrayList<>();
 
     protected void injectRepository(Repository... repositories) {

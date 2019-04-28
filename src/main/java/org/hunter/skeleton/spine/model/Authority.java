@@ -6,10 +6,9 @@ import org.hunter.pocket.annotation.OneToMany;
 import org.hunter.pocket.model.BaseEntity;
 import org.hunter.skeleton.spine.model.repository.MapperRepository;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * @author wujianchuan 2019/1/30
@@ -88,14 +87,17 @@ public class Authority extends BaseEntity {
         this.roleAuthRelationList = roleAuthRelationList;
     }
 
-    public List<Mapper> getMappers(MapperRepository mapperRepository) {
+    public List<Mapper> getMappers(MapperRepository mapperRepository) throws SQLException {
         List<Mapper> mappers = new ArrayList<>();
         List<AuthMapperRelation> authMapperRelations = this.getAuthMapperRelationList();
         if (authMapperRelations != null && authMapperRelations.size() > 0) {
-            mappers = authMapperRelations.stream()
-                    .map(authMapperRelation -> mapperRepository.findOne(authMapperRelation.getMapperUuid()))
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+            Mapper mapper;
+            for (AuthMapperRelation authMapperRelation : authMapperRelations) {
+                mapper = mapperRepository.findOne(authMapperRelation.getMapperUuid());
+                if (mapper != null) {
+                    mappers.add(mapper);
+                }
+            }
         }
         return mappers;
     }

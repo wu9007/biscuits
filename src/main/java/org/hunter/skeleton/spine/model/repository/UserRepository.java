@@ -16,7 +16,7 @@ public interface UserRepository extends Repository {
      * @param uuid uuid.
      * @return user.
      */
-    User findOne(String uuid);
+    User findOne(String uuid) throws SQLException;
 
     /**
      * save user.

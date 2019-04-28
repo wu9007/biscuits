@@ -38,13 +38,16 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static org.hunter.skeleton.constant.Operate.ADD;
+import static org.hunter.skeleton.constant.Operate.AUDIT;
 import static org.hunter.skeleton.constant.Operate.DELETE;
 import static org.hunter.skeleton.constant.Operate.EDIT;
+import static org.hunter.skeleton.constant.Operate.REVOKE;
 
 /**
  * @author wujianchuan 2019/3/22
  * @version 1.0
  */
+@SuppressWarnings("unchecked")
 @Aspect
 @Component
 public class RepositoryAspect {
@@ -102,7 +105,8 @@ public class RepositoryAspect {
     }
 
     private void saveHistory(BaseEntity olderEntity, BaseEntity newEntity, Session session, String operateName, String operate, String operator) throws SQLException {
-        Class clazz = newEntity.getClass();
+
+        Class clazz = newEntity != null ? newEntity.getClass() : olderEntity.getClass();
         Entity entityAnnotation = (Entity) clazz.getAnnotation(Entity.class);
 
         if (entityAnnotation != null) {
@@ -111,10 +115,16 @@ public class RepositoryAspect {
             Map<String, Object> operateContent = new LinkedHashMap<>(4);
             operateContent.put("操作对象", tableBusinessName);
             operateContent.put("业务", operateName);
-            operateContent.put("关键数据", this.getFlagBusinessContent(newEntity));
+            operateContent.put("关键数据", this.getFlagBusinessContent(newEntity != null ? newEntity : olderEntity));
             switch (operate) {
                 case ADD:
                     operateContent.put("新增的数据", this.getBusinessContent(newEntity, null));
+                    break;
+                case AUDIT:
+                    operateContent.put("审核", this.getBusinessContent(newEntity, olderEntity));
+                    break;
+                case REVOKE:
+                    operateContent.put("撤销审核", this.getBusinessContent(newEntity, olderEntity));
                     break;
                 case EDIT:
                     operateContent.put("更新的数据", this.getBusinessContent(newEntity, olderEntity));
@@ -128,7 +138,7 @@ public class RepositoryAspect {
 
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
-                Objects.requireNonNull(session).save(new History(operate, new Date(), operator, newEntity.getUuid(), objectMapper.writeValueAsString(operateContent)));
+                Objects.requireNonNull(session).save(new History(operate, new Date(), operator, newEntity != null ? newEntity.getUuid() : olderEntity.getUuid(), objectMapper.writeValueAsString(operateContent)));
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
@@ -159,7 +169,7 @@ public class RepositoryAspect {
         } else {
             // 删除
             return Arrays.stream(MapperFactory.getBusinessFields(olderEntity.getClass().getName()))
-                    .map(field -> new HistoryData(newEntity, olderEntity, field, OperateEnum.DELETE))
+                    .map(field -> new HistoryData(null, olderEntity, field, OperateEnum.DELETE))
                     .collect(businessCollector);
         }
     }
@@ -197,7 +207,7 @@ public class RepositoryAspect {
                             List<Map> newbornDetailListContent = detailInductiveBox.getNewborn().stream()
                                     .map(newborn -> this.getBusinessContent(newborn, null))
                                     .collect(Collectors.toList());
-                            Map<String, BaseEntity> olderMapper = oldDetails.stream().collect(Collectors.toMap(detail -> detail.getUuid(), detail -> detail));
+                            Map<String, BaseEntity> olderMapper = oldDetails.stream().collect(Collectors.toMap(BaseEntity::getUuid, detail -> detail));
                             List<Map> updateDetailListContent = detailInductiveBox.getUpdate().stream()
                                     .map(newDetail -> {
                                         BaseEntity olderDetail = olderMapper.get(newDetail.getUuid());
@@ -210,7 +220,7 @@ public class RepositoryAspect {
                             content.put("删除明细", moribundDetailListContent);
                             return content;
                         }
-                        return newValue != null ? newValue : "---";
+                        return String.format("由 %s 改变为 %s", oldValue, newValue);
                     } else if (OperateEnum.DELETE.equals(operateEnum)) {
                         Object oldValue = field.get(oldEntity);
                         AnnotationType annotationType = MapperFactory.getAnnotationType(oldEntity.getClass().getName(), field.getName());
@@ -228,7 +238,9 @@ public class RepositoryAspect {
                     e.printStackTrace();
                     return "警告⚠该条数据不合法";
                 }
-            });
+            }, (u, v) -> {
+                throw new IllegalStateException(String.format("Duplicate key %s", u));
+            }, LinkedHashMap::new);
 
     /**
      * 生成操作历史内容（关键业务内容）
@@ -257,9 +269,9 @@ public class RepositoryAspect {
             });
 
     private class HistoryData {
-        private BaseEntity newEntity;
+        private final BaseEntity newEntity;
         private BaseEntity oldEntity;
-        private Field field;
+        private final Field field;
         private OperateEnum operateEnum;
 
         HistoryData(BaseEntity newEntity, BaseEntity oldEntity, Field field, OperateEnum operateEnum) {

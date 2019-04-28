@@ -7,6 +7,7 @@ import org.hunter.skeleton.spine.model.Bundle;
 import org.hunter.skeleton.spine.model.repository.BundleRepository;
 import org.springframework.stereotype.Repository;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -23,7 +24,7 @@ public class BundleRepositoryImpl extends AbstractRepository implements BundleRe
     }
 
     @Override
-    public Bundle findOne(String uuid) {
+    public Bundle findOne(String uuid) throws SQLException {
         return (Bundle) this.getSession().findOne(Bundle.class, uuid);
     }
 

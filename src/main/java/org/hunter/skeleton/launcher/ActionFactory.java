@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * @author wujianchuan
  */
-public class ActionFactory {
+class ActionFactory {
     private final static Map<String, Map<String, Method>> ACTION_MAP = new LinkedHashMap<>();
 
     static void init(List<AbstractController> controllers) {

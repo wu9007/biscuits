@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 /**
  * @author wujianchuan
  */
+@SuppressWarnings("unchecked")
 @Component
 @Order(1)
 public class Launcher implements CommandLineRunner {
@@ -45,6 +46,7 @@ public class Launcher implements CommandLineRunner {
     private Map<String, Bundle> bundleMap = null;
     private Map<String, Authority> permissionMap = null;
 
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
     public Launcher(@Nullable AbstractBundle bundleContainer, ApplicationContext context, @Nullable List<AbstractController> controllerList, @Nullable AbstractPermission permissionContainer) {
         this.serverId = Objects.requireNonNull(context.getEnvironment().getProperty("spring.application.name")).toUpperCase();
@@ -100,6 +102,7 @@ public class Launcher implements CommandLineRunner {
         });
     }
 
+    @SuppressWarnings("unchecked")
     private void operateAuthority(Session session, Transaction transaction) {
         this.permissionContainer.setServerId(this.serverId).init();
         ActionFactory.init(controllerList);
