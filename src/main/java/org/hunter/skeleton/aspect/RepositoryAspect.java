@@ -53,7 +53,7 @@ import static org.hunter.skeleton.constant.Operate.REVOKE;
 public class RepositoryAspect {
 
     @Around("@annotation(org.hunter.skeleton.annotation.Track)")
-    public Object before(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         Track track = method.getAnnotation(Track.class);
         String dataKey = track.data();
