@@ -20,7 +20,7 @@ import java.lang.annotation.Target;
 public @interface Action {
 
     @AliasFor(value = "path", annotation = RequestMapping.class)
-    String[] actionId() default {};
+    String[] actionId();
 
     @AliasFor(annotation = RequestMapping.class)
     RequestMethod[] method() default {RequestMethod.GET};
