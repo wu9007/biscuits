@@ -19,6 +19,10 @@ public class Body implements Serializable {
         this.object = object;
     }
 
+    private Body(Object object) {
+        this.object = object;
+    }
+
     public static Body newDefaultInstance(String title, String message, Object object) {
         Body instance = new Body(title, message, object);
         instance.setSuccess(true);
@@ -37,6 +41,12 @@ public class Body implements Serializable {
         Body instance = new Body(title, message, object);
         instance.setSuccess(true);
         instance.setCategory(CategoryTypes.SUCCESS);
+        return instance;
+    }
+
+    public static Body newSuccessInstance(Object object) {
+        Body instance = new Body(object);
+        instance.setSuccess(true);
         return instance;
     }
 
