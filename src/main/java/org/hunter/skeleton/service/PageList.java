@@ -5,15 +5,15 @@ import java.util.List;
 /**
  * @author wujianchuan
  */
-public class PageList<T> {
-    private List<T> result;
+public class PageList {
+    private List result;
     private Long count;
 
-    public List<T> getResult() {
+    public List getResult() {
         return result;
     }
 
-    public void setResult(List<T> result) {
+    public void setResult(List result) {
         this.result = result;
     }
 
