@@ -26,5 +26,5 @@ public @interface Action {
     RequestMethod[] method() default {RequestMethod.GET};
 
     @AliasFor(annotation = RequestMapping.class)
-    String[] produces() default {};
+    String[] produces() default {"application/json; charset=UTF-8"};
 }

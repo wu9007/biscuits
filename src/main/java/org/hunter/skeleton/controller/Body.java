@@ -13,6 +13,9 @@ public class Body implements Serializable {
     private String message;
     private Object object;
 
+    private Body() {
+    }
+
     private Body(String title, String message, Object object) {
         this.title = title;
         this.message = message;
