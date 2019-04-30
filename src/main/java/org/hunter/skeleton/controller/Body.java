@@ -5,70 +5,70 @@ import java.io.Serializable;
 /**
  * @author wujianchuan 2019/2/20
  */
-public class Body implements Serializable {
+public class Body<T> implements Serializable {
     private static final long serialVersionUID = -7606557226712921098L;
     private Boolean success;
     private String category;
     private String title;
     private String message;
-    private Object object;
+    private T object;
 
     private Body() {
     }
 
-    private Body(String title, String message, Object object) {
+    private Body(String title, String message, T object) {
         this.title = title;
         this.message = message;
         this.object = object;
     }
 
-    private Body(Object object) {
+    private Body(T object) {
         this.object = object;
     }
 
-    public static Body newDefaultInstance(String title, String message, Object object) {
-        Body instance = new Body(title, message, object);
+    public static <E> Body<E> newDefaultInstance(String title, String message, E object) {
+        Body<E> instance = new Body<>(title, message, object);
         instance.setSuccess(true);
         instance.setCategory(CategoryTypes.DEFAULT);
         return instance;
     }
 
-    public static Body newPrimaryInstance(String title, String message, Object object) {
-        Body instance = new Body(title, message, object);
+    public static <E> Body<E> newPrimaryInstance(String title, String message, E object) {
+        Body<E> instance = new Body<>(title, message, object);
         instance.setSuccess(true);
         instance.setCategory(CategoryTypes.PRIMARY);
         return instance;
     }
 
-    public static Body newSuccessInstance(String title, String message, Object object) {
-        Body instance = new Body(title, message, object);
+    public static <E> Body<E> newSuccessInstance(String title, String message, E object) {
+        Body<E> instance = new Body<>(title, message, object);
         instance.setSuccess(true);
         instance.setCategory(CategoryTypes.SUCCESS);
         return instance;
     }
 
-    public static Body newSuccessInstance(Object object) {
-        Body instance = new Body(object);
+    public static <E> Body<E> newSuccessInstance(E object) {
+        Body<E> instance = new Body<>(object);
         instance.setSuccess(true);
         return instance;
     }
 
-    public static Body newInfoInstance(String title, String message, Object object) {
-        Body instance = new Body(title, message, object);
+    public static <E> Body<E> newInfoInstance(String title, String message, E object) {
+        Body<E> instance = new Body<>(title, message, object);
         instance.setSuccess(true);
         instance.setCategory(CategoryTypes.INFO);
         return instance;
     }
 
-    public static Body newWaringInstance(String title, String message, Object object) {
-        Body instance = new Body(title, message, object);
+    public static <E> Body<E> newWaringInstance(String title, String message, E object) {
+        Body<E> instance = new Body<>(title, message, object);
         instance.setSuccess(false);
         instance.setCategory(CategoryTypes.WARING);
         return instance;
     }
 
-    public static Body newErrorInstance(String title, String message, Object object) {
-        Body instance = new Body(title, message, object);
+    public static <E> Body<E> newErrorInstance(String title, String message, E object) {
+        Body<E> instance = new Body<>(title, message, object);
         instance.setSuccess(false);
         instance.setCategory(CategoryTypes.ERROR);
         return instance;
@@ -110,7 +110,7 @@ public class Body implements Serializable {
         return object;
     }
 
-    public void setObject(Object object) {
+    public void setObject(T object) {
         this.object = object;
     }
 }
