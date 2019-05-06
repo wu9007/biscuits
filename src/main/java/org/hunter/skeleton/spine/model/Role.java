@@ -19,6 +19,8 @@ public class Role extends BaseEntity {
     private static final long serialVersionUID = -1762486150168555776L;
     @Column(name = "SPELL", businessName = "标识")
     private String id;
+    @Column(name = "SERVER_ID", businessName = "服务标识")
+    private String serverId;
     @Column(name = "NAME", businessName = "名称")
     private String name;
     @Column(name = "SORT", businessName = "排序")
@@ -38,6 +40,14 @@ public class Role extends BaseEntity {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getServerId() {
+        return serverId;
+    }
+
+    public void setServerId(String serverId) {
+        this.serverId = serverId;
     }
 
     public String getName() {
