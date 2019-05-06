@@ -106,7 +106,7 @@ public class Body<T> implements Serializable {
         this.message = message;
     }
 
-    public Object getObject() {
+    public T getObject() {
         return object;
     }
 
