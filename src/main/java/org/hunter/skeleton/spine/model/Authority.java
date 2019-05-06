@@ -4,7 +4,7 @@ import org.hunter.pocket.annotation.Column;
 import org.hunter.pocket.annotation.Entity;
 import org.hunter.pocket.annotation.OneToMany;
 import org.hunter.pocket.model.BaseEntity;
-import org.hunter.skeleton.spine.model.repository.MapperRepository;
+import org.hunter.skeleton.spine.model.repository.SpineMapperRepository;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -87,7 +87,7 @@ public class Authority extends BaseEntity {
         this.roleAuthRelationList = roleAuthRelationList;
     }
 
-    public List<Mapper> getMappers(MapperRepository mapperRepository) throws SQLException {
+    public List<Mapper> getMappers(SpineMapperRepository mapperRepository) throws SQLException {
         List<Mapper> mappers = new ArrayList<>();
         List<AuthMapperRelation> authMapperRelations = this.getAuthMapperRelationList();
         if (authMapperRelations != null && authMapperRelations.size() > 0) {

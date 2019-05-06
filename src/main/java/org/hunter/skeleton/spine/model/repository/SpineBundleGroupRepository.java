@@ -11,7 +11,7 @@ import java.util.List;
  * @author wujianchuan 2019/2/27
  * @version 1.0
  */
-public interface BundleGroupRepository extends Repository {
+public interface SpineBundleGroupRepository extends Repository {
 
     BundleGroup findOne(String uuid) throws SQLException;
 

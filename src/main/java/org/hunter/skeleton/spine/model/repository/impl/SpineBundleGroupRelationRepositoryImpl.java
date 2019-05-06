@@ -5,7 +5,7 @@ import org.hunter.pocket.criteria.Modern;
 import org.hunter.pocket.criteria.Restrictions;
 import org.hunter.skeleton.repository.AbstractRepository;
 import org.hunter.skeleton.spine.model.BundleGroupRelation;
-import org.hunter.skeleton.spine.model.repository.BundleGroupRelationRepository;
+import org.hunter.skeleton.spine.model.repository.SpineBundleGroupRelationRepository;
 import org.springframework.stereotype.Repository;
 
 import java.sql.SQLException;
@@ -15,7 +15,7 @@ import java.sql.SQLException;
  * @version 1.0
  */
 @Repository
-public class BundleGroupRelationRepositoryImpl extends AbstractRepository implements BundleGroupRelationRepository {
+public class SpineBundleGroupRelationRepositoryImpl extends AbstractRepository implements SpineBundleGroupRelationRepository {
     @Override
     public int save(BundleGroupRelation bundleGroupRelation) throws SQLException {
         return this.getSession().save(bundleGroupRelation);

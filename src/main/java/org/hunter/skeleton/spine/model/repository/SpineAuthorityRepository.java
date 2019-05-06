@@ -8,7 +8,7 @@ import java.sql.SQLException;
 /**
  * @author wujianchuan 2019/2/21
  */
-public interface AuthorityRepository extends Repository {
+public interface SpineAuthorityRepository extends Repository {
     Authority findOne(String uuid) throws SQLException;
 
 }

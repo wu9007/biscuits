@@ -8,7 +8,7 @@ import java.sql.SQLException;
 /**
  * @author wujianchuan 2019/2/21
  */
-public interface RoleRepository extends Repository {
+public interface SpineRoleRepository extends Repository {
 
     Role findOne(String uuid) throws SQLException;
 

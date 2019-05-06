@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * @author wujianchuan 2019/2/21
  */
-public interface MapperRepository extends Repository {
+public interface SpineMapperRepository extends Repository {
     Mapper findOne(String uuid) throws SQLException;
 
     List<Mapper> findByBundle(String bundleUuid);

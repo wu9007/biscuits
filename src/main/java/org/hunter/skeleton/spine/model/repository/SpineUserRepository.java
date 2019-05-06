@@ -8,7 +8,7 @@ import java.sql.SQLException;
 /**
  * @author wujianchuan 2019/1/30
  */
-public interface UserRepository extends Repository {
+public interface SpineUserRepository extends Repository {
 
     /**
      * find user by uuid.

@@ -4,7 +4,7 @@ import org.hunter.pocket.annotation.Column;
 import org.hunter.pocket.annotation.Entity;
 import org.hunter.pocket.annotation.OneToMany;
 import org.hunter.pocket.model.BaseEntity;
-import org.hunter.skeleton.spine.model.repository.BundleRepository;
+import org.hunter.skeleton.spine.model.repository.SpineBundleRepository;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -68,7 +68,7 @@ public class BundleGroup extends BaseEntity {
         this.bundleGroupRelations = bundleGroupRelations;
     }
 
-    public List<Bundle> getBundles(BundleRepository bundleRepository) throws SQLException {
+    public List<Bundle> getBundles(SpineBundleRepository bundleRepository) throws SQLException {
         List<Bundle> bundles = new ArrayList<>();
         List<BundleGroupRelation> bundleGroupRelations = this.getBundleGroupRelations();
         if (bundleGroupRelations != null && bundleGroupRelations.size() > 0) {

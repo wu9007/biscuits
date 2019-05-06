@@ -6,7 +6,7 @@ import org.hunter.skeleton.annotation.Track;
 import org.hunter.skeleton.constant.OperateEnum;
 import org.hunter.skeleton.repository.AbstractRepository;
 import org.hunter.skeleton.spine.model.User;
-import org.hunter.skeleton.spine.model.repository.UserRepository;
+import org.hunter.skeleton.spine.model.repository.SpineUserRepository;
 import org.springframework.stereotype.Repository;
 
 import java.sql.SQLException;
@@ -16,7 +16,7 @@ import java.util.Date;
  * @author wujianchuan 2019/1/30
  */
 @Repository
-public class UserRepositoryImpl extends AbstractRepository implements UserRepository {
+public class SpineUserRepositoryImpl extends AbstractRepository implements SpineUserRepository {
 
     @Override
     public User findOne(String uuid) throws SQLException {

@@ -9,7 +9,7 @@ import java.sql.SQLException;
  * @author wujianchuan 2019/3/1
  * @version 1.0
  */
-public interface BundleGroupRelationRepository extends Repository {
+public interface SpineBundleGroupRelationRepository extends Repository {
     int save(BundleGroupRelation bundleGroupRelation) throws SQLException;
 
     BundleGroupRelation findByGroupUuidAndBundleUuid(String groupUuid, String bundleUuid) throws SQLException;

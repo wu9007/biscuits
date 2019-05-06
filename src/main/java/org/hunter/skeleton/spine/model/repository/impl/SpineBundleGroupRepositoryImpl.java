@@ -6,7 +6,7 @@ import org.hunter.pocket.criteria.Sort;
 import org.hunter.skeleton.controller.FilterView;
 import org.hunter.skeleton.repository.AbstractRepository;
 import org.hunter.skeleton.spine.model.BundleGroup;
-import org.hunter.skeleton.spine.model.repository.BundleGroupRepository;
+import org.hunter.skeleton.spine.model.repository.SpineBundleGroupRepository;
 import org.springframework.stereotype.Repository;
 
 import java.sql.SQLException;
@@ -17,7 +17,7 @@ import java.util.List;
  * @version 1.0
  */
 @Repository
-public class BundleGroupRepositoryImpl extends AbstractRepository implements BundleGroupRepository {
+public class SpineBundleGroupRepositoryImpl extends AbstractRepository implements SpineBundleGroupRepository {
     @Override
     public BundleGroup findOne(String uuid) throws SQLException {
         return (BundleGroup) this.getSession().findDirect(BundleGroup.class, uuid);
