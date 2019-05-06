@@ -18,7 +18,7 @@ import java.util.List;
 public class Role extends BaseEntity {
     private static final long serialVersionUID = -1762486150168555776L;
     @Column(name = "SPELL", businessName = "标识")
-    private String id;
+    private String spell;
     @Column(name = "SERVER_ID", businessName = "服务标识")
     private String serverId;
     @Column(name = "NAME", businessName = "名称")
@@ -34,12 +34,12 @@ public class Role extends BaseEntity {
     @OneToMany(clazz = RoleAuthRelation.class, bridgeField = "roleUuid")
     private List<RoleAuthRelation> roleAuthRelationList;
 
-    public String getId() {
-        return id;
+    public String getSpell() {
+        return spell;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setSpell(String spell) {
+        this.spell = spell;
     }
 
     public String getServerId() {
