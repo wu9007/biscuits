@@ -16,6 +16,8 @@ import org.hunter.skeleton.annotation.Service;
 import org.hunter.skeleton.repository.Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
@@ -38,6 +40,13 @@ public class ServiceAspect {
     private final ThreadLocal<LinkedList<Method>> methodThreadLocal = new ThreadLocal<>();
     private final ThreadLocal<LinkedList<Object>> targetThreadLocal = new ThreadLocal<>();
     private final ThreadLocal<Integer> transOnIndex = new ThreadLocal<>();
+
+    private final ApplicationContext context;
+
+    @Autowired
+    public ServiceAspect(ApplicationContext context) {
+        this.context = context;
+    }
 
     @SuppressWarnings("EmptyMethod")
     @Pointcut("execution(public * *..*.service.*.*(..))")
@@ -127,7 +136,9 @@ public class ServiceAspect {
             ThreadLocal<Session> sessionLocal = (ThreadLocal<Session>) sessionLocalField.get(target);
 
             if (this.getSessionLocal() == null) {
-                sessionLocal.set(SessionFactory.getSession(service.session()));
+                String serviceSession = service.session();
+                // 未设置session则默认为配置文件中的spring.application.name
+                sessionLocal.set(SessionFactory.getSession(StringUtils.isNotEmpty(serviceSession) ? serviceSession : context.getEnvironment().getProperty("spring.application.name")));
                 this.setSessionLocal(sessionLocal);
 
                 if (sessionLocal.get().getClosed()) {
