@@ -9,6 +9,18 @@ public class PageList {
     private List result;
     private Long count;
 
+    public PageList() {
+    }
+
+    private PageList(List result, Long count) {
+        this.result = result;
+        this.count = count;
+    }
+
+    public static PageList newInstance(List result, long count) {
+        return new PageList(result, count);
+    }
+
     public List getResult() {
         return result;
     }
