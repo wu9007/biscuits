@@ -16,9 +16,9 @@ public class PermissionFactory {
         PermissionFactory.permissionMap = permissionMap;
     }
 
-    static void register(String serverId, String id, String name, String common) {
+    static void register(String serverId, String bundleId, String id, String name, String common) {
         if (!permissionMap.containsKey(id)) {
-            Authority authority = new Authority(serverId, id, name, common);
+            Authority authority = new Authority(serverId, bundleId, id, name, common);
             permissionMap.putIfAbsent(id, authority);
         }
     }
