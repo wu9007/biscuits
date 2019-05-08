@@ -35,18 +35,8 @@ public class SkeletonTest {
     @Autowired
     OrderService orderService;
 
-    private List<Commodity> commodities = new ArrayList<>();
-
     @Before
     public void setup() {
-        IntStream.range(1, 20).forEach((index) -> {
-            Commodity commodity = new Commodity();
-            commodity.setUuid(String.valueOf(index));
-            commodity.setName("c1");
-            commodity.setType("001");
-            commodity.setPrice(new BigDecimal("11.2"));
-            commodities.add(commodity);
-        });
     }
 
     @After
@@ -55,6 +45,15 @@ public class SkeletonTest {
 
     @Test
     public void test1() throws SQLException, IllegalAccessException {
+        List<Commodity> commodities = new ArrayList<>();
+        IntStream.range(1, 20).forEach((index) -> {
+            Commodity commodity = new Commodity();
+            commodity.setName("c1");
+            commodity.setType("001");
+            commodity.setPrice(new BigDecimal("11.2"));
+            commodities.add(commodity);
+        });
+
         Order order = new Order();
         order.setCode("C-001");
         order.setState(null);
@@ -77,6 +76,16 @@ public class SkeletonTest {
 
     @Test
     public void test2() {
+        List<Commodity> commodities = new ArrayList<>();
+        IntStream.range(1, 20).forEach((index) -> {
+            Commodity commodity = new Commodity();
+            commodity.setUuid(String.valueOf(index));
+            commodity.setName("c1");
+            commodity.setType("001");
+            commodity.setPrice(new BigDecimal("11.2"));
+            commodities.add(commodity);
+        });
+        // 聚合为LikedHashMap
         Map<String, Commodity> result = commodities.stream().collect(Collectors.toMap(BaseEntity::getUuid, commodity -> commodity, (u, v) -> {
             throw new IllegalStateException(String.format("Duplicate key %s", u));
         }, LinkedHashMap::new));
