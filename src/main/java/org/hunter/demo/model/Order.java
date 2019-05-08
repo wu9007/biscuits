@@ -1,14 +1,17 @@
 package org.hunter.demo.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.hunter.pocket.annotation.Column;
 import org.hunter.pocket.annotation.Entity;
 import org.hunter.pocket.annotation.Join;
 import org.hunter.pocket.annotation.OneToMany;
 import org.hunter.pocket.constant.JoinMethod;
 import org.hunter.pocket.model.BaseEntity;
+import org.hunter.skeleton.jsonserializer.LocalDateTimeDeserializer;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -23,9 +26,10 @@ public class Order extends BaseEntity {
     @Column(name = "PRICE", businessName = "单价")
     private BigDecimal price;
     @Column(name = "DAY", businessName = "日期")
-    private Date day;
+    private LocalDate day;
     @Column(name = "TIME", businessName = "时间")
-    private Date time;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    private LocalDateTime time;
     @Column(name = "STATE", businessName = "状态")
     private Boolean state;
     @Column(name = "SORT", businessName = "排序码")
@@ -69,19 +73,19 @@ public class Order extends BaseEntity {
         this.commodities = commodities;
     }
 
-    public Date getDay() {
+    public LocalDate getDay() {
         return day;
     }
 
-    public void setDay(Date day) {
+    public void setDay(LocalDate day) {
         this.day = day;
     }
 
-    public Date getTime() {
+    public LocalDateTime getTime() {
         return time;
     }
 
-    public void setTime(Date time) {
+    public void setTime(LocalDateTime time) {
         this.time = time;
     }
 
