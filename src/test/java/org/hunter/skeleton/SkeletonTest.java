@@ -15,6 +15,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -57,9 +59,9 @@ public class SkeletonTest {
         order.setCode("C-001");
         order.setState(null);
         order.setType("001");
-        order.setTime(new Date());
+        order.setTime(LocalDateTime.now());
         order.setPrice(new BigDecimal("99.56789"));
-        order.setDay(new Date());
+        order.setDay(LocalDate.now());
         order.setCommodities(commodities);
         this.orderService.save(order);
 
