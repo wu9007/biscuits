@@ -23,6 +23,8 @@ public class BundleGroup extends BaseEntity {
     private String groupName;
     @Column(name = "SORT")
     private Double sort;
+    @Column(name = "SERVER_ID")
+    private String serverId;
     @OneToMany(clazz = BundleGroupRelation.class, bridgeField = "groupUuid")
     private List<BundleGroupRelation> bundleGroupRelations;
 
@@ -54,6 +56,14 @@ public class BundleGroup extends BaseEntity {
 
     public List<Bundle> getBundles() {
         return bundles;
+    }
+
+    public String getServerId() {
+        return serverId;
+    }
+
+    public void setServerId(String serverId) {
+        this.serverId = serverId;
     }
 
     public void setBundles(List<Bundle> bundles) {
