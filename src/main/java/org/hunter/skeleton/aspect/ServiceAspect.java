@@ -14,6 +14,7 @@ import org.hunter.pocket.session.Transaction;
 import org.hunter.skeleton.annotation.Affairs;
 import org.hunter.skeleton.annotation.Service;
 import org.hunter.skeleton.repository.Repository;
+import org.hunter.skeleton.repository.RepositoryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +92,7 @@ public class ServiceAspect {
                 this.remove();
             } else {
                 //清空service下repository们的thread local.
-                this.getRepositoryList(target).forEach(Repository::pourSession);
+                RepositoryFactory.getRepositories(target.getClass().getName()).forEach(Repository::pourSession);
             }
         }
     }
@@ -159,7 +160,7 @@ public class ServiceAspect {
             }
 
             //给service下的所有repository注入session
-            this.getRepositoryList(target).forEach(repository -> repository.injectSession(sessionLocal.get()));
+            RepositoryFactory.getRepositories(target.getClass().getName()).forEach(repository -> repository.injectSession(sessionLocal.get()));
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -21,7 +21,6 @@ public class OrderServiceImpl extends AbstractService implements OrderService {
     @Autowired
     public OrderServiceImpl(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
-        this.injectRepository(this.orderRepository);
     }
 
     @Override

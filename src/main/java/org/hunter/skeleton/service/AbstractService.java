@@ -3,8 +3,9 @@ package org.hunter.skeleton.service;
 import org.hunter.pocket.session.Session;
 import org.hunter.skeleton.repository.Repository;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -17,9 +18,26 @@ public class AbstractService {
     private ThreadLocal<Session> sessionLocal = new ThreadLocal<>();
 
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    private final List<Repository> repositoryList = new ArrayList<>();
+    private final List<Field> repositoryFieldList = new ArrayList<>();
 
-    protected void injectRepository(Repository... repositories) {
-        this.repositoryList.addAll(Arrays.asList(repositories));
+    public AbstractService() {
+        for (Field field : this.getClass().getDeclaredFields()) {
+            for (Type genericInterface : field.getType().getGenericInterfaces()) {
+                if (genericInterface.equals(Repository.class)) {
+                    this.repositoryFieldList.add(field);
+                    break;
+                }
+            }
+        }
     }
+
+    /*protected void init() throws Exception {
+        for (Field field : this.getClass().getDeclaredFields()) {
+            field.setAccessible(true);
+            Object target = field.get(this);
+            if (target instanceof Repository) {
+                this.repositoryList.add((Repository) target);
+            }
+        }
+    }*/
 }

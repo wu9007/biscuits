@@ -19,7 +19,9 @@ public class ControllerExceptionHandler {
     @ResponseBody
     @ExceptionHandler(value = Exception.class)
     public Body handler(Exception e) {
-        e.printStackTrace();
+        if (e.getMessage() == null) {
+            return Body.newWaringInstance("失败", e.toString(), e.getStackTrace());
+        }
         String message;
         if (e.getMessage().contains(UNIQUE_KEY)) {
             // SQLIntegrityConstraintViolationException
