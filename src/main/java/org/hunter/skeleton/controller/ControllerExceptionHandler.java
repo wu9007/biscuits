@@ -1,7 +1,5 @@
 package org.hunter.skeleton.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -11,7 +9,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @ControllerAdvice
 public class ControllerExceptionHandler {
-    private static final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
     private static final String UNIQUE_KEY = "UK_";
     private static final String FOREIGN_KEY = "FK_";
@@ -19,6 +16,7 @@ public class ControllerExceptionHandler {
     @ResponseBody
     @ExceptionHandler(value = Exception.class)
     public Body handler(Exception e) {
+        e.printStackTrace();
         if (e.getMessage() == null) {
             return Body.newWaringInstance("失败", e.toString(), e.getStackTrace());
         }
