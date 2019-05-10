@@ -12,7 +12,7 @@ allprojects {
 }
 
 dependencies {
-        implementation 'com.github.leyan95:pocket:0.3.16-PRE'
-        implementation 'com.github.leyan95:skeleton:0.3.10-PRE'
+        implementation 'com.github.leyan95:pocket:0.5.6-PRE'
+        implementation 'com.github.leyan95:skeleton:0.6.0-PRE'
 }  
 ```
