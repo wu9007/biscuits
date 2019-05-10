@@ -2,6 +2,7 @@ package org.hunter.skeleton.spine.model.repository.impl;
 
 import org.hunter.pocket.criteria.Criteria;
 import org.hunter.pocket.criteria.Restrictions;
+import org.hunter.pocket.query.SQLQuery;
 import org.hunter.skeleton.annotation.Track;
 import org.hunter.skeleton.constant.OperateEnum;
 import org.hunter.skeleton.repository.AbstractRepository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * @author wujianchuan 2019/1/30
@@ -62,11 +64,13 @@ public class SpineUserRepositoryImpl extends AbstractRepository implements Spine
                 "WHERE  " +
                 "    ( T1.server_id = :SERVER_ID AND T1.bundle_id = :BUNDLE_ID AND t1.action_id = :ACTION_ID )   " +
                 "    AND ( t8.CODE = :USER_CODE OR T6.with_auth = 0 )";
-        return this.getSession().createSQLQuery(sql)
+        SQLQuery query = this.getSession().createSQLQuery(sql)
+                .mapperColumn("uuid")
                 .setParameter("SERVER_ID", serverId)
                 .setParameter("BUNDLE_ID", bundleId)
                 .setParameter("ACTION_ID", "/" + actionId)
-                .setParameter("USER_CODE", userCode)
-                .unique() != null;
+                .setParameter("USER_CODE", userCode);
+        Map<String, String> result = (Map<String, String>) query.unique();
+        return result.get("uuid") != null;
     }
 }
