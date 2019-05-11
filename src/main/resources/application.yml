@@ -1,3 +1,25 @@
 spring:
-  profiles:
-    active: test
+  application:
+    name: skeleton
+server:
+  port: 8080
+
+pocket:
+  serverId: 101
+  datasource:
+    node:
+      - url: jdbc:mysql://172.0.66.104:3306/lsphunter?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8
+        nodeName: mysql-01
+        driverName: com.mysql.cj.jdbc.Driver
+        showSql: false
+        user: root
+        password: tsxdtsxd
+        poolMiniSize: 10
+        poolMaxSize: 100
+        timeout: 1000
+        session: skeleton
+  cache:
+    logic:
+      hostName: 127.0.0.1
+    base:
+      hostName: 127.0.0.1
