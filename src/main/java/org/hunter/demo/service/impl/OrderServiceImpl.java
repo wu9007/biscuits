@@ -13,7 +13,7 @@ import java.sql.SQLException;
 /**
  * @author wujianchuan
  */
-//@Service(session = "skeleton")
+@Service(session = "skeleton")
 public class OrderServiceImpl extends AbstractService implements OrderService {
 
     private final OrderRepository orderRepository;
