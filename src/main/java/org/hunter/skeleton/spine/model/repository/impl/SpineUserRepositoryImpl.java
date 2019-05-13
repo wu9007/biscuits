@@ -71,6 +71,6 @@ public class SpineUserRepositoryImpl extends AbstractRepository implements Spine
                 .setParameter("ACTION_ID", "/" + actionId)
                 .setParameter("USER_CODE", userCode);
         Map<String, String> result = (Map<String, String>) query.unique();
-        return result.get("uuid") != null;
+        return result != null && result.get("uuid") != null;
     }
 }
