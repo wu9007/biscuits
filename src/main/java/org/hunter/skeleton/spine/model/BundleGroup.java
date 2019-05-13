@@ -17,8 +17,6 @@ import java.util.List;
 public class BundleGroup extends BaseEntity {
     private static final long serialVersionUID = 4032798805062223157L;
 
-    @Column(name = "GROUP_ID")
-    private String groupId;
     @Column(name = "GROUP_NAME")
     private String groupName;
     @Column(name = "SORT")
@@ -29,14 +27,6 @@ public class BundleGroup extends BaseEntity {
     private List<BundleGroupRelation> bundleGroupRelations;
 
     private List<Bundle> bundles;
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
-    }
 
     public String getGroupName() {
         return groupName;

@@ -30,10 +30,7 @@ public class SpineBundleGroupRepositoryImpl extends AbstractRepository implement
         if (filterView != null && filterView.getFilter() != null) {
             String keyWorld = (String) filterView.getFilter().get("keyWorld");
             if (keyWorld != null && keyWorld.length() > 0) {
-                criteria.add(Restrictions.or(
-                        Restrictions.like("groupName", "%" + filterView.getFilter().get("keyWord") + "%"),
-                        Restrictions.like("groupId", "%" + filterView.getFilter().get("keyWord") + "%"))
-                );
+                criteria.add(Restrictions.like("groupName", "%" + filterView.getFilter().get("keyWord") + "%"));
             }
         }
         return criteria.list(true);
