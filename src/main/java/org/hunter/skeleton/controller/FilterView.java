@@ -75,7 +75,7 @@ public class FilterView implements Serializable {
         this.filter = filter;
     }
 
-    private Integer getLimit() {
+    public Integer getLimit() {
         return limit;
     }
 
@@ -91,7 +91,7 @@ public class FilterView implements Serializable {
         this.page = page;
     }
 
-    private Integer getStart() {
+    public Integer getStart() {
         return start;
     }
 
