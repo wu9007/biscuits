@@ -107,46 +107,6 @@ public class FilterView implements Serializable {
         this.sort = sort;
     }
 
-    public class Filter implements Serializable {
-        private static final long serialVersionUID = -7107210286814248680L;
-        private String key;
-        private Object value;
-        private String operate;
-
-        Filter() {
-        }
-
-        Filter(String key, Object value, String operate) {
-            this.key = key;
-            this.value = value;
-            this.operate = operate;
-        }
-
-        String getKey() {
-            return key;
-        }
-
-        public void setKey(String key) {
-            this.key = key;
-        }
-
-        Object getValue() {
-            return value;
-        }
-
-        public void setValue(Object value) {
-            this.value = value;
-        }
-
-        String getOperate() {
-            return operate;
-        }
-
-        public void setOperate(String operate) {
-            this.operate = operate;
-        }
-    }
-
     public interface Operate {
         String EQU = "equ";
         String NO_EQU = "ne";
