@@ -5,7 +5,9 @@ import org.hunter.demo.repository.OrderRepository;
 import org.hunter.demo.service.OrderService;
 import org.hunter.skeleton.annotation.Affairs;
 import org.hunter.skeleton.annotation.Service;
+import org.hunter.skeleton.controller.FilterView;
 import org.hunter.skeleton.service.AbstractService;
+import org.hunter.skeleton.service.PageList;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.SQLException;
@@ -38,5 +40,10 @@ public class OrderServiceImpl extends AbstractService implements OrderService {
     @Override
     public Order findOne(String uuid) throws SQLException {
         return this.orderRepository.findOne(uuid);
+    }
+
+    @Override
+    public PageList loadPageList(FilterView filterView) throws SQLException {
+        return this.orderRepository.loadPage(filterView);
     }
 }

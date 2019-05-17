@@ -1,14 +1,13 @@
 package org.hunter.demo.repository.impl;
 
-import org.hunter.demo.model.Commodity;
 import org.hunter.demo.model.Order;
 import org.hunter.demo.repository.OrderRepository;
 import org.hunter.pocket.criteria.Criteria;
-import org.hunter.pocket.criteria.Modern;
-import org.hunter.pocket.criteria.Restrictions;
 import org.hunter.skeleton.annotation.Track;
 import org.hunter.skeleton.constant.OperateEnum;
+import org.hunter.skeleton.controller.FilterView;
 import org.hunter.skeleton.repository.AbstractRepository;
+import org.hunter.skeleton.service.PageList;
 import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
@@ -34,5 +33,12 @@ public class OrderRepositoryImpl extends AbstractRepository implements OrderRepo
     @Override
     public Order findOne(String uuid) throws SQLException {
         return (Order) this.getSession().findDirect(Order.class, uuid);
+    }
+
+    @Override
+    public PageList loadPage(FilterView filterView) throws SQLException {
+        Criteria criteria = filterView.createCriteria(this.getSession(), Order.class);
+        List list = criteria.listNotCleanRestrictions();
+        return PageList.newInstance(list, criteria.count());
     }
 }

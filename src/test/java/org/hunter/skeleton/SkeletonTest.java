@@ -5,6 +5,8 @@ import org.hunter.demo.model.Order;
 import org.hunter.demo.service.OrderService;
 import org.hunter.Application;
 import org.hunter.pocket.model.BaseEntity;
+import org.hunter.skeleton.controller.FilterView;
+import org.hunter.skeleton.service.PageList;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -88,5 +91,19 @@ public class SkeletonTest {
             throw new IllegalStateException(String.format("Duplicate key %s", u));
         }, LinkedHashMap::new));
         System.out.println(result.size());
+    }
+
+    @Test
+    public void test3() throws SQLException {
+        FilterView filterView = new FilterView();
+        filterView.setStart(0);
+        filterView.setLimit(10);
+        List<FilterView.Filter> filters = new LinkedList<>();
+        filters.add(filterView.createEFilter("code", "C-001", FilterView.Operate.EQU));
+        filters.add(filterView.createEFilter("price", 500.0, FilterView.Operate.LT));
+        filterView.setFilters(filters);
+
+        PageList pageList = this.orderService.loadPageList(filterView);
+        System.out.println(pageList.getCount());
     }
 }
