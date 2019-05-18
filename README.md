@@ -7,13 +7,12 @@ Add it in your root build.gradle at the end of repositories:
 ```groovy
 allprojects {
   repositories {
-    ...
     maven { url 'https://jitpack.io' }
   }
 }
 
 dependencies {
-        implementation 'com.github.leyan95:pocket:0.5.6-PRE'
-        implementation 'com.github.leyan95:skeleton:0.6.0-PRE'
+    implementation 'com.github.leyan95:pocket:+'
+    implementation 'com.github.leyan95:skeleton:+'
 }  
 ```
