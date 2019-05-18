@@ -15,7 +15,7 @@ import java.util.Map;
 class ActionFactory {
     private final static Map<String, Map<String, Method>> ACTION_MAP = new LinkedHashMap<>();
 
-    static void init(List<AbstractController> controllers) {
+    protected static void init(List<AbstractController> controllers) {
         controllers.forEach(controller -> {
             Class clazz = controller.getClass();
             Controller controllerAnnotation = (Controller) clazz.getAnnotation(Controller.class);
@@ -36,7 +36,7 @@ class ActionFactory {
         });
     }
 
-    static Map<String, Map<String, Method>> getActionMap() {
+    protected static Map<String, Map<String, Method>> getActionMap() {
         return new LinkedHashMap<>(ACTION_MAP);
     }
 }

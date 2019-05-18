@@ -78,7 +78,7 @@ public class Body<T> implements Serializable {
         return success;
     }
 
-    private void setSuccess(Boolean success) {
+    public void setSuccess(Boolean success) {
         this.success = success;
     }
 
@@ -86,7 +86,7 @@ public class Body<T> implements Serializable {
         return category;
     }
 
-    private void setCategory(String category) {
+    public void setCategory(String category) {
         this.category = category;
     }
 
@@ -94,7 +94,7 @@ public class Body<T> implements Serializable {
         return title;
     }
 
-    private void setTitle(String title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
@@ -102,7 +102,7 @@ public class Body<T> implements Serializable {
         return message;
     }
 
-    private void setMessage(String message) {
+    public void setMessage(String message) {
         this.message = message;
     }
 

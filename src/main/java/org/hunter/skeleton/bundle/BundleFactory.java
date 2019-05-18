@@ -11,7 +11,7 @@ public class BundleFactory {
 
     private static final Map<String, String> BUNDLE_NAME_POOL = new HashMap<>(6);
 
-    static void register(String bundleId, String name) {
+    protected static void register(String bundleId, String name) {
         if (!BUNDLE_NAME_POOL.containsKey(bundleId)) {
             BUNDLE_NAME_POOL.putIfAbsent(bundleId, name);
         }
