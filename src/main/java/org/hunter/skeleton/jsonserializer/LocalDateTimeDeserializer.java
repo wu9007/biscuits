@@ -1,7 +1,6 @@
 package org.hunter.skeleton.jsonserializer;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
@@ -18,7 +17,7 @@ public class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {
     private static final String ZULU = "Z";
 
     @Override
-    public LocalDateTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
+    public LocalDateTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
         String text = jsonParser.getText();
         if (text.endsWith(ZULU)) {
             return LocalDateTime.ofInstant(Instant.parse(text), ZoneId.systemDefault());

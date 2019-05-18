@@ -38,6 +38,8 @@ import java.util.stream.Collectors;
 @Order(1)
 public class Launcher implements CommandLineRunner {
 
+    private static final String UNDERLINE_DIVIDER = "_";
+
     private final String serverId;
     private final AbstractBundle bundleContainer;
     private final AbstractPermission permissionContainer;
@@ -68,7 +70,7 @@ public class Launcher implements CommandLineRunner {
             this.operateAuthority(session, transaction);
         }
         if (this.controllerList != null) {
-            this.operateMapper(session, transaction);
+            this.operateMapper(session);
         }
         transaction.commit();
         session.close();
@@ -134,23 +136,23 @@ public class Launcher implements CommandLineRunner {
 
     }
 
-    private void operateMapper(Session session, Transaction transaction) {
+    private void operateMapper(Session session) {
         Criteria criteria = session.createCriteria(Mapper.class)
                 .add(Restrictions.equ("serverId", this.serverId));
         List<Mapper> mappers = criteria.list();
         Map<String, Mapper> mapperMap = mappers.stream()
-                .collect(Collectors.toMap(mapper -> mapper.getBundleId() + "_" + mapper.getActionId() + "_" + mapper.getRequestMethod(), i -> i));
+                .collect(Collectors.toMap(mapper -> mapper.getBundleId() + UNDERLINE_DIVIDER + mapper.getActionId() + UNDERLINE_DIVIDER + mapper.getRequestMethod(), i -> i));
 
         Criteria relationCriteria = session.createCriteria(AuthMapperRelation.class)
                 .add(Restrictions.equ("serverId", this.serverId));
         List<AuthMapperRelation> authMapperRelations = relationCriteria.list();
         Map<String, AuthMapperRelation> authMapperRelationMap = authMapperRelations.stream()
-                .collect(Collectors.toMap(authMapperRelation -> authMapperRelation.getAuthUuid() + "_" + authMapperRelation.getMapperUuid(), i -> i));
+                .collect(Collectors.toMap(authMapperRelation -> authMapperRelation.getAuthUuid() + UNDERLINE_DIVIDER + authMapperRelation.getMapperUuid(), i -> i));
 
         ActionFactory.getActionMap().forEach((bundleId, actionMap) -> actionMap.forEach((actionId, action) -> {
             Action actionAnnotation = action.getAnnotation(Action.class);
             String requestMethod = actionAnnotation.method()[0].toString();
-            String mapperIdentification = bundleId + "_" + actionId + "_" + requestMethod;
+            String mapperIdentification = bundleId + UNDERLINE_DIVIDER + actionId + UNDERLINE_DIVIDER + requestMethod;
             Mapper mapper;
             if (!mapperMap.containsKey(mapperIdentification)) {
                 mapper = new Mapper(this.serverId, requestMethod, bundleId, actionId);
@@ -168,7 +170,7 @@ public class Launcher implements CommandLineRunner {
             if (authAnnotation != null) {
                 String authUuid = this.permissionMap.get(authAnnotation.value()).getUuid();
                 String mapperUuid = mapper.getUuid();
-                if (!authMapperRelationMap.containsKey(authUuid + "_" + mapperUuid)) {
+                if (!authMapperRelationMap.containsKey(authUuid + UNDERLINE_DIVIDER + mapperUuid)) {
                     AuthMapperRelation authMapperRelation = new AuthMapperRelation(this.serverId, authUuid, mapperUuid);
                     try {
                         session.save(authMapperRelation);

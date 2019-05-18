@@ -5,10 +5,13 @@ import org.hunter.pocket.annotation.Entity;
 
 import java.io.Serializable;
 
+/**
+ * @author wujianchuan
+ */
 @Entity(table = "", tableId = -1)
 public class Pair implements Serializable {
     private static final long serialVersionUID = 5656710925928861884L;
-    @Column(name = "lable")
+    @Column(name = "label")
     private String label;
     @Column(name = "value")
     private String value;
