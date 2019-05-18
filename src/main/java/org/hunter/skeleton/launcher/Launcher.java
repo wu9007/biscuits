@@ -98,7 +98,7 @@ public class Launcher implements CommandLineRunner {
                     this.bundleMap.put(bundleId, bundle);
                 } else {
                     transaction.rollBack();
-                    throw new NullPointerException(String.format("缺少 Bundle: %s", bundleId));
+                    throw new IllegalArgumentException(String.format("缺少 Bundle: %s", bundleId));
                 }
             }
         });
@@ -127,7 +127,7 @@ public class Launcher implements CommandLineRunner {
                         }
                     } else {
                         transaction.rollBack();
-                        throw new NullPointerException(String.format("缺少 Permission: %s", permissionId));
+                        throw new IllegalArgumentException(String.format("缺少 Permission: %s", permissionId));
                     }
                     permissionMap.put(auth.value(), authority);
                 }

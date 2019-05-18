@@ -8,8 +8,6 @@ import org.hunter.pocket.model.BaseEntity;
 import org.hunter.skeleton.controller.Filter;
 import org.hunter.skeleton.controller.FilterView;
 import org.hunter.skeleton.service.PageList;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,14 +34,6 @@ import java.util.stream.IntStream;
 public class SkeletonTest {
     @Autowired
     OrderService orderService;
-
-    @Before
-    public void setup() {
-    }
-
-    @After
-    public void destroy() {
-    }
 
     @Test
     public void test1() throws SQLException, IllegalAccessException {

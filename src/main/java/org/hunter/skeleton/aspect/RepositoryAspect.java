@@ -52,128 +52,19 @@ import static org.hunter.skeleton.constant.Operate.REVOKE;
 @Component
 public class RepositoryAspect {
 
-    @Around("@annotation(org.hunter.skeleton.annotation.Track)")
-    public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
-        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
-        Track track = method.getAnnotation(Track.class);
-        String dataKey = track.data();
-        String operatorKey = track.operator();
-        String operate = track.operate().getId();
-
-        ExpressionParser parser = new SpelExpressionParser();
-        Expression dataExpression = parser.parseExpression(dataKey);
-        Expression operatorExpression = parser.parseExpression(operatorKey);
-        EvaluationContext context = new StandardEvaluationContext();
-        DefaultParameterNameDiscoverer discoverer = new DefaultParameterNameDiscoverer();
-        String[] argsName = discoverer.getParameterNames(method);
-        Object[] argsValue = joinPoint.getArgs();
-        if (argsName != null) {
-            for (int index = 0; index < argsName.length; index++) {
-                context.setVariable(argsName[index], argsValue[index]);
-            }
-        } else {
-            throw new RuntimeException("can not found any arg.");
-        }
-        Object operateValue = operatorExpression.getValue(context);
-        Object dataValue = dataExpression.getValue(context);
-        String operator;
-        BaseEntity entity;
-        if (operateValue != null && dataValue != null) {
-            operator = operateValue.toString();
-            entity = (BaseEntity) dataValue;
-        } else {
-            throw new RuntimeException("can not found data and operator.");
-        }
-        Object target = joinPoint.getTarget();
-        Field sessionLocalField = target.getClass().getSuperclass().getDeclaredField("sessionLocal");
-        sessionLocalField.setAccessible(true);
-        ThreadLocal<Session> sessionLocal = (ThreadLocal<Session>) sessionLocalField.get(target);
-        Session session = sessionLocal.get();
-        BaseEntity newEntity;
-        BaseEntity olderEntity = null;
-        if (entity.getUuid() != null) {
-            olderEntity = (BaseEntity) session.findDirect(entity.getClass(), entity.getUuid());
-        }
-        Object result = joinPoint.proceed();
-        if (entity.getUuid() != null) {
-            newEntity = (BaseEntity) session.findDirect(entity.getClass(), entity.getUuid());
-        } else {
-            newEntity = entity;
-        }
-        this.saveHistory(olderEntity, newEntity, session, track.operateName(), operate, operator);
-        return result;
-    }
-
-    private void saveHistory(BaseEntity olderEntity, BaseEntity newEntity, Session session, String operateName, String operate, String operator) throws SQLException {
-
-        Class clazz = newEntity != null ? newEntity.getClass() : olderEntity.getClass();
-        Entity entityAnnotation = (Entity) clazz.getAnnotation(Entity.class);
-
-        if (entityAnnotation != null) {
-            String tableBusinessName = entityAnnotation.businessName();
-
-            Map<String, Object> operateContent = new LinkedHashMap<>(4);
-            operateContent.put("操作对象", tableBusinessName);
-            operateContent.put("业务", operateName);
-            operateContent.put("关键数据", this.getFlagBusinessContent(newEntity != null ? newEntity : olderEntity));
-            switch (operate) {
-                case ADD:
-                    operateContent.put("新增的数据", this.getBusinessContent(newEntity, null));
-                    break;
-                case AUDIT:
-                    operateContent.put("审核", this.getBusinessContent(newEntity, olderEntity));
-                    break;
-                case REVOKE:
-                    operateContent.put("撤销审核", this.getBusinessContent(newEntity, olderEntity));
-                    break;
-                case EDIT:
-                    operateContent.put("更新的数据", this.getBusinessContent(newEntity, olderEntity));
-                    break;
-                case DELETE:
-                    operateContent.put("删除的数据", this.getBusinessContent(null, olderEntity));
-                    break;
-                default:
-                    throw new NullPointerException(String.format("%s - 该操作不产生历史数据。", operate));
-            }
-
-            try {
-                ObjectMapper objectMapper = new ObjectMapper();
-                Objects.requireNonNull(session).save(new History(operate, new Date(), operator, newEntity != null ? newEntity.getUuid() : olderEntity.getUuid(), objectMapper.writeValueAsString(operateContent)));
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * 生成操作历史内容（所有业务内容）
-     *
-     * @param newEntity   新
-     * @param olderEntity 老
-     * @return business content
-     */
-    private Map<String, Object> getBusinessContent(BaseEntity newEntity, BaseEntity olderEntity) {
-        if (olderEntity == null) {
-            // 新增
-            return Arrays.stream(MapperFactory.getBusinessFields(newEntity.getClass().getName()))
-                    .map(field -> new HistoryData(newEntity, null, field, OperateEnum.ADD))
-                    .collect(businessCollector);
-        } else if (newEntity != null) {
-            // 编辑
-            List<Field> dirtyFields = Arrays.asList(ReflectUtils.getInstance().dirtyFieldFilter(newEntity, olderEntity));
-            List<Field> onToManyFields = Arrays.asList(MapperFactory.getOneToMayFields(newEntity.getClass().getName()));
-            return Arrays.stream(MapperFactory.getBusinessFields(newEntity.getClass().getName()))
-                    .filter(field -> dirtyFields.contains(field) || onToManyFields.contains(field))
-                    .map(field -> new HistoryData(newEntity, olderEntity, field, OperateEnum.EDIT))
-                    .collect(businessCollector);
-        } else {
-            // 删除
-            return Arrays.stream(MapperFactory.getBusinessFields(olderEntity.getClass().getName()))
-                    .map(field -> new HistoryData(null, olderEntity, field, OperateEnum.DELETE))
-                    .collect(businessCollector);
-        }
-    }
-
+    private final Collector<HistoryData, ?, Map<String, Object>> flagBusinessCollector = Collectors.toMap(entityData ->
+                    MapperFactory.getBusinessName(entityData.getNewEntity().getClass().getName(), entityData.field.getName()),
+            entityData -> {
+                try {
+                    Field field = entityData.getField();
+                    field.setAccessible(true);
+                    Object value = field.get(entityData.getNewEntity());
+                    return value != null ? value : "---";
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                    return "---";
+                }
+            });
     private final Collector<HistoryData, ?, Map<String, Object>> businessCollector = Collectors.toMap(entityData ->
                     MapperFactory.getBusinessName(entityData.getNewEntity() != null ? entityData.getNewEntity().getClass().getName() : entityData.getOldEntity().getClass().getName(), entityData.field.getName()),
             entityData -> {
@@ -232,7 +123,7 @@ public class RepositoryAspect {
                         }
                         return oldValue != null ? oldValue : "---";
                     } else {
-                        throw new RuntimeException("非法参数");
+                        throw new IllegalArgumentException("非法参数");
                     }
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
@@ -241,6 +132,129 @@ public class RepositoryAspect {
             }, (u, v) -> {
                 throw new IllegalStateException(String.format("Duplicate key %s", u));
             }, LinkedHashMap::new);
+
+
+    @Around("@annotation(org.hunter.skeleton.annotation.Track)")
+    public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
+        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
+        Track track = method.getAnnotation(Track.class);
+        String dataKey = track.data();
+        String operatorKey = track.operator();
+        String operate = track.operate().getId();
+
+        ExpressionParser parser = new SpelExpressionParser();
+        Expression dataExpression = parser.parseExpression(dataKey);
+        Expression operatorExpression = parser.parseExpression(operatorKey);
+        EvaluationContext context = new StandardEvaluationContext();
+        DefaultParameterNameDiscoverer discoverer = new DefaultParameterNameDiscoverer();
+        String[] argsName = discoverer.getParameterNames(method);
+        Object[] argsValue = joinPoint.getArgs();
+        if (argsName != null) {
+            for (int index = 0; index < argsName.length; index++) {
+                context.setVariable(argsName[index], argsValue[index]);
+            }
+        } else {
+            throw new IllegalArgumentException("can not found any arg.");
+        }
+        Object operateValue = operatorExpression.getValue(context);
+        Object dataValue = dataExpression.getValue(context);
+        String operator;
+        BaseEntity entity;
+        if (operateValue != null && dataValue != null) {
+            operator = operateValue.toString();
+            entity = (BaseEntity) dataValue;
+        } else {
+            throw new IllegalArgumentException("can not found data and operator.");
+        }
+        Object target = joinPoint.getTarget();
+        Field sessionLocalField = target.getClass().getSuperclass().getDeclaredField("sessionLocal");
+        sessionLocalField.setAccessible(true);
+        ThreadLocal<Session> sessionLocal = (ThreadLocal<Session>) sessionLocalField.get(target);
+        Session session = sessionLocal.get();
+        BaseEntity newEntity;
+        BaseEntity olderEntity = null;
+        if (entity.getUuid() != null) {
+            olderEntity = (BaseEntity) session.findDirect(entity.getClass(), entity.getUuid());
+        }
+        Object result = joinPoint.proceed();
+        if (entity.getUuid() != null) {
+            newEntity = (BaseEntity) session.findDirect(entity.getClass(), entity.getUuid());
+        } else {
+            newEntity = entity;
+        }
+        this.saveHistory(olderEntity, newEntity, session, track.operateName(), operate, operator);
+        return result;
+    }
+
+    private void saveHistory(BaseEntity olderEntity, BaseEntity newEntity, Session session, String operateName, String operate, String operator) throws SQLException {
+
+        Class clazz = newEntity != null ? newEntity.getClass() : olderEntity.getClass();
+        Entity entityAnnotation = (Entity) clazz.getAnnotation(Entity.class);
+
+        if (entityAnnotation != null) {
+            String tableBusinessName = entityAnnotation.businessName();
+
+            Map<String, Object> operateContent = new LinkedHashMap<>(4);
+            operateContent.put("操作对象", tableBusinessName);
+            operateContent.put("业务", operateName);
+            operateContent.put("关键数据", this.getFlagBusinessContent(newEntity != null ? newEntity : olderEntity));
+            switch (operate) {
+                case ADD:
+                    operateContent.put("新增的数据", this.getBusinessContent(newEntity, null));
+                    break;
+                case AUDIT:
+                    operateContent.put("审核", this.getBusinessContent(newEntity, olderEntity));
+                    break;
+                case REVOKE:
+                    operateContent.put("撤销审核", this.getBusinessContent(newEntity, olderEntity));
+                    break;
+                case EDIT:
+                    operateContent.put("更新的数据", this.getBusinessContent(newEntity, olderEntity));
+                    break;
+                case DELETE:
+                    operateContent.put("删除的数据", this.getBusinessContent(null, olderEntity));
+                    break;
+                default:
+                    throw new IllegalArgumentException(String.format("%s - 该操作不产生历史数据。", operate));
+            }
+
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                Objects.requireNonNull(session).save(new History(operate, new Date(), operator, newEntity != null ? newEntity.getUuid() : olderEntity.getUuid(), objectMapper.writeValueAsString(operateContent)));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 生成操作历史内容（所有业务内容）
+     *
+     * @param newEntity   新
+     * @param olderEntity 老
+     * @return business content
+     */
+    private Map<String, Object> getBusinessContent(BaseEntity newEntity, BaseEntity olderEntity) {
+        if (olderEntity == null) {
+            // 新增
+            return Arrays.stream(MapperFactory.getBusinessFields(newEntity.getClass().getName()))
+                    .map(field -> new HistoryData(newEntity, null, field, OperateEnum.ADD))
+                    .collect(businessCollector);
+        } else if (newEntity != null) {
+            // 编辑
+            List<Field> dirtyFields = Arrays.asList(ReflectUtils.getInstance().dirtyFieldFilter(newEntity, olderEntity));
+            List<Field> onToManyFields = Arrays.asList(MapperFactory.getOneToMayFields(newEntity.getClass().getName()));
+            return Arrays.stream(MapperFactory.getBusinessFields(newEntity.getClass().getName()))
+                    .filter(field -> dirtyFields.contains(field) || onToManyFields.contains(field))
+                    .map(field -> new HistoryData(newEntity, olderEntity, field, OperateEnum.EDIT))
+                    .collect(businessCollector);
+        } else {
+            // 删除
+            return Arrays.stream(MapperFactory.getBusinessFields(olderEntity.getClass().getName()))
+                    .map(field -> new HistoryData(null, olderEntity, field, OperateEnum.DELETE))
+                    .collect(businessCollector);
+        }
+    }
 
     /**
      * 生成操作历史内容（关键业务内容）
@@ -253,20 +267,6 @@ public class RepositoryAspect {
                 .map(field -> new HistoryData(newEntity, field))
                 .collect(flagBusinessCollector);
     }
-
-    private final Collector<HistoryData, ?, Map<String, Object>> flagBusinessCollector = Collectors.toMap(entityData ->
-                    MapperFactory.getBusinessName(entityData.getNewEntity().getClass().getName(), entityData.field.getName()),
-            entityData -> {
-                try {
-                    Field field = entityData.getField();
-                    field.setAccessible(true);
-                    Object value = field.get(entityData.getNewEntity());
-                    return value != null ? value : "---";
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                    return "---";
-                }
-            });
 
     private class HistoryData {
         private final BaseEntity newEntity;
@@ -286,20 +286,20 @@ public class RepositoryAspect {
             this.field = field;
         }
 
-        BaseEntity getNewEntity() {
+        private BaseEntity getNewEntity() {
             return newEntity;
         }
 
 
-        BaseEntity getOldEntity() {
+        private BaseEntity getOldEntity() {
             return oldEntity;
         }
 
-        Field getField() {
+        private Field getField() {
             return field;
         }
 
-        OperateEnum getOperateEnum() {
+        private OperateEnum getOperateEnum() {
             return operateEnum;
         }
     }

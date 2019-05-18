@@ -6,7 +6,6 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.hunter.pocket.session.Session;
 import org.hunter.pocket.session.SessionFactory;
@@ -49,12 +48,7 @@ public class ServiceAspect {
         this.context = context;
     }
 
-    @SuppressWarnings("EmptyMethod")
-    @Pointcut("execution(public * *..*.service.*.*(..))")
-    public void point() {
-    }
-
-    @Before("point()")
+    @Before("execution(public * *..*.service.*.*(..))")
     public void before(JoinPoint joinPoint) {
         if (this.methodThreadLocal.get() == null) {
             this.methodThreadLocal.set(new LinkedList<>());
@@ -73,7 +67,7 @@ public class ServiceAspect {
         log.info("<<==Before==>> Call method: {}({})", method.getName(), StringUtils.join(joinPoint.getArgs(), ","));
     }
 
-    @AfterReturning("point()")
+    @AfterReturning("execution(public * *..*.service.*.*(..))")
     public void afterReturning() {
         ThreadLocal<Session> sessionLocal = this.getSessionLocal();
         Method method = this.popMethod();
@@ -97,7 +91,7 @@ public class ServiceAspect {
         }
     }
 
-    @AfterThrowing(pointcut = "point()", throwing = "exception")
+    @AfterThrowing(pointcut = "execution(public * *..*.service.*.*(..))", throwing = "exception")
     public void afterThrowing(Exception exception) {
         ThreadLocal<Session> sessionLocal = this.getSessionLocal();
         if (sessionLocal.get() != null && !sessionLocal.get().getClosed()) {
@@ -153,7 +147,7 @@ public class ServiceAspect {
                         this.setTransOnIndex(this.getMethodLocal().size() - 1);
                     }
                 } else {
-                    throw new RuntimeException("the session has been opened.");
+                    throw new IllegalStateException("the session has been opened.");
                 }
             } else {
                 sessionLocal.set(this.getSessionLocal().get());
@@ -169,17 +163,6 @@ public class ServiceAspect {
     private void removeSessionLocal() {
         this.sessionThreadLocal.get().remove();
         this.sessionThreadLocal.remove();
-    }
-
-    private List<Repository> getRepositoryList(Object target) {
-        try {
-            Field repositoryListField = target.getClass().getSuperclass().getDeclaredField("repositoryList");
-            repositoryListField.setAccessible(true);
-            return (List<Repository>) repositoryListField.get(target);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
-        }
     }
 
     private void setSessionLocal(ThreadLocal<Session> sessionLocal) {
@@ -228,15 +211,7 @@ public class ServiceAspect {
         return this.methodThreadLocal.get().pop();
     }
 
-    private Method getLastMethod() {
-        return this.methodThreadLocal.get().getLast();
-    }
-
     //======== 对象栈操作 ========
-
-    private List<Object> getTargetLocal() {
-        return this.targetThreadLocal.get();
-    }
 
     private void removeTargetLocal() {
         this.targetThreadLocal.remove();
@@ -248,9 +223,5 @@ public class ServiceAspect {
 
     private Object popTarget() {
         return this.targetThreadLocal.get().pop();
-    }
-
-    private Object getLastTarget() {
-        return this.targetThreadLocal.get().getLast();
     }
 }
