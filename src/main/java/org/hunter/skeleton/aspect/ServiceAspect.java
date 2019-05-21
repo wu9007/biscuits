@@ -86,7 +86,10 @@ public class ServiceAspect {
                 this.remove();
             } else {
                 //清空service下repository们的thread local.
-                RepositoryFactory.getRepositories(target.getClass().getName()).forEach(Repository::pourSession);
+                List<Repository> repositories = RepositoryFactory.getRepositories(target.getClass().getName());
+                if (repositories.size() > 0) {
+                    repositories.forEach(Repository::pourSession);
+                }
             }
         }
     }
@@ -154,7 +157,10 @@ public class ServiceAspect {
             }
 
             //给service下的所有repository注入session
-            RepositoryFactory.getRepositories(target.getClass().getName()).forEach(repository -> repository.injectSession(sessionLocal.get()));
+            List<Repository> repositories = RepositoryFactory.getRepositories(target.getClass().getName());
+            if (repositories.size() > 0) {
+                repositories.forEach(repository -> repository.injectSession(sessionLocal.get()));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
