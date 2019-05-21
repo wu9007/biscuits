@@ -97,7 +97,7 @@ public class ServiceAspect {
     @AfterThrowing(pointcut = "execution(public * *..*.service.*.*(..))", throwing = "exception")
     public void afterThrowing(Exception exception) {
         ThreadLocal<Session> sessionLocal = this.getSessionLocal();
-        if (sessionLocal.get() != null && !sessionLocal.get().getClosed()) {
+        if (sessionLocal != null && sessionLocal.get() != null && !sessionLocal.get().getClosed()) {
             if (this.getTransOn()) {
                 sessionLocal.get().getTransaction().rollBack();
                 this.setTransOn(false);
