@@ -46,7 +46,7 @@ public class FilterView implements Serializable {
         Criteria criteria = session.createCriteria(clazz);
         if (filters != null && filters.size() > 0) {
             for (Filter item : filters) {
-                // 默认造作为 `Operate.EQU`
+                // 默认操作为 `Operate.EQU`
                 if (item.getOperate() != null && item.getOperate().length() > 0) {
                     criteria.add(RESTRICTIONS_FACTORY.get(item.getOperate()).apply(item));
                 } else {
