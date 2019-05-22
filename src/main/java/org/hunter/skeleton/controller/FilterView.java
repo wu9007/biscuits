@@ -28,7 +28,7 @@ public class FilterView implements Serializable {
         RESTRICTIONS_FACTORY.put(Operate.LTE, (item) -> Restrictions.lte(item.getKey(), item.getValue()));
         RESTRICTIONS_FACTORY.put(Operate.IN, (item) -> Restrictions.in(item.getKey(), (List) item.getValue()));
         RESTRICTIONS_FACTORY.put(Operate.NOT_IN, (item) -> Restrictions.notIn(item.getKey(), (List) item.getValue()));
-        RESTRICTIONS_FACTORY.put(Operate.LIKE, (item) -> Restrictions.like(item.getKey(), item.getValue()));
+        RESTRICTIONS_FACTORY.put(Operate.LIKE, (item) -> Restrictions.like(item.getKey(), "%" + item.getValue() + "%"));
         RESTRICTIONS_FACTORY.put(Operate.IS_NULL, (item) -> Restrictions.isNull(item.getKey()));
         RESTRICTIONS_FACTORY.put(Operate.IS_NOT_NULL, (item) -> Restrictions.isNotNull(item.getKey()));
     }
