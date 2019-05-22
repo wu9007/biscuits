@@ -43,7 +43,12 @@ public class FilterView implements Serializable {
     public Criteria createCriteria(Session session, Class clazz) {
         Criteria criteria = session.createCriteria(clazz);
         for (Filter item : filters) {
-            criteria.add(RESTRICTIONS_FACTORY.get(item.getOperate()).apply(item));
+            // 默认造作为 `Operate.EQU`
+            if (item.getOperate() != null && item.getOperate().length() > 0) {
+                criteria.add(RESTRICTIONS_FACTORY.get(item.getOperate()).apply(item));
+            } else {
+                criteria.add(RESTRICTIONS_FACTORY.get(Operate.EQU).apply(item));
+            }
         }
         if (this.getLimit() != null && this.getStart() != null) {
             criteria.limit(this.getStart(), this.getLimit());
