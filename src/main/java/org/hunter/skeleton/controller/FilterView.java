@@ -2,6 +2,7 @@ package org.hunter.skeleton.controller;
 
 import org.hunter.pocket.criteria.Criteria;
 import org.hunter.pocket.criteria.Restrictions;
+import org.hunter.pocket.criteria.Sort;
 import org.hunter.pocket.session.Session;
 
 import java.io.Serializable;
@@ -39,6 +40,7 @@ public class FilterView implements Serializable {
     private Integer page;
     private Integer start;
     private List<Filter> filters;
+    private List<Sorter> sorters;
 
     public Criteria createCriteria(Session session, Class clazz) {
         Criteria criteria = session.createCriteria(clazz);
@@ -50,6 +52,15 @@ public class FilterView implements Serializable {
                 criteria.add(RESTRICTIONS_FACTORY.get(Operate.EQU).apply(item));
             }
         }
+        for (Sorter sorter : sorters) {
+            if (SortDirection.ASC.equals(sorter.getDirection())) {
+                criteria.add(Sort.asc(sorter.getProperty()));
+            } else {
+                criteria.add(Sort.desc(sorter.getProperty()));
+            }
+        }
+        // 默认UUID降序
+        criteria.add(Sort.desc("uuid"));
         if (this.getLimit() != null && this.getStart() != null) {
             criteria.limit(this.getStart(), this.getLimit());
         }
@@ -112,6 +123,14 @@ public class FilterView implements Serializable {
         this.sort = sort;
     }
 
+    public List<Sorter> getSorters() {
+        return sorters;
+    }
+
+    public void setSorters(List<Sorter> sorters) {
+        this.sorters = sorters;
+    }
+
     public interface Operate {
         String EQU = "equ";
         String NO_EQU = "ne";
@@ -124,5 +143,10 @@ public class FilterView implements Serializable {
         String LIKE = "like";
         String IS_NULL = "isNull";
         String IS_NOT_NULL = "isNotNull";
+    }
+
+    public interface SortDirection {
+        String DESC = "desc";
+        String ASC = "asc";
     }
 }
