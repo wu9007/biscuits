@@ -35,12 +35,15 @@ public class FilterView implements Serializable {
     }
 
     private Map<String, Object> filter;
-    private Map<String, Object> sort;
+    /**
+     * key-> 属性名
+     * value-> 排序方式 `SortDirection`
+     */
+    private Map<String, String> sort;
     private Integer limit;
     private Integer page;
     private Integer start;
     private List<Filter> filters;
-    private List<Sorter> sorters;
 
     public Criteria createCriteria(Session session, Class clazz) {
         Criteria criteria = session.createCriteria(clazz);
@@ -54,14 +57,14 @@ public class FilterView implements Serializable {
                 }
             }
         }
-        if (sorters != null && sorters.size() > 0) {
-            for (Sorter sorter : sorters) {
-                if (SortDirection.ASC.equals(sorter.getDirection())) {
-                    criteria.add(Sort.asc(sorter.getProperty()));
+        if (this.sort != null && this.sort.size() > 0) {
+            this.sort.forEach((key, value) -> {
+                if (SortDirection.ASC.equals(value)) {
+                    criteria.add(Sort.asc(key));
                 } else {
-                    criteria.add(Sort.desc(sorter.getProperty()));
+                    criteria.add(Sort.desc(key));
                 }
-            }
+            });
         }
         // 默认UUID降序
         criteria.add(Sort.desc("uuid"));
@@ -119,20 +122,12 @@ public class FilterView implements Serializable {
         this.start = start;
     }
 
-    public Map<String, Object> getSort() {
+    public Map<String, String> getSort() {
         return sort;
     }
 
-    public void setSort(Map<String, Object> sort) {
+    public void setSort(Map<String, String> sort) {
         this.sort = sort;
-    }
-
-    public List<Sorter> getSorters() {
-        return sorters;
-    }
-
-    public void setSorters(List<Sorter> sorters) {
-        this.sorters = sorters;
     }
 
     public interface Operate {
