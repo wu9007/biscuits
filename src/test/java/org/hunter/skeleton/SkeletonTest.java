@@ -90,8 +90,8 @@ public class SkeletonTest {
         filterView.setStart(0);
         filterView.setLimit(10);
         List<Filter> filters = new LinkedList<>();
-        filters.add(filterView.createEFilter("code", "C-001", FilterView.Operate.EQU));
-        filters.add(filterView.createEFilter("price", 500.0, FilterView.Operate.LT));
+        filters.add(filterView.createFilter("code", "C-001", FilterView.Operate.EQU));
+        filters.add(filterView.createFilter("price", 500.0, FilterView.Operate.LT));
         filterView.setFilters(filters);
 
         PageList pageList = this.orderService.loadPageList(filterView);

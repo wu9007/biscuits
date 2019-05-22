@@ -44,19 +44,23 @@ public class FilterView implements Serializable {
 
     public Criteria createCriteria(Session session, Class clazz) {
         Criteria criteria = session.createCriteria(clazz);
-        for (Filter item : filters) {
-            // 默认造作为 `Operate.EQU`
-            if (item.getOperate() != null && item.getOperate().length() > 0) {
-                criteria.add(RESTRICTIONS_FACTORY.get(item.getOperate()).apply(item));
-            } else {
-                criteria.add(RESTRICTIONS_FACTORY.get(Operate.EQU).apply(item));
+        if (filters != null && filters.size() > 0) {
+            for (Filter item : filters) {
+                // 默认造作为 `Operate.EQU`
+                if (item.getOperate() != null && item.getOperate().length() > 0) {
+                    criteria.add(RESTRICTIONS_FACTORY.get(item.getOperate()).apply(item));
+                } else {
+                    criteria.add(RESTRICTIONS_FACTORY.get(Operate.EQU).apply(item));
+                }
             }
         }
-        for (Sorter sorter : sorters) {
-            if (SortDirection.ASC.equals(sorter.getDirection())) {
-                criteria.add(Sort.asc(sorter.getProperty()));
-            } else {
-                criteria.add(Sort.desc(sorter.getProperty()));
+        if (sorters != null && sorters.size() > 0) {
+            for (Sorter sorter : sorters) {
+                if (SortDirection.ASC.equals(sorter.getDirection())) {
+                    criteria.add(Sort.asc(sorter.getProperty()));
+                } else {
+                    criteria.add(Sort.desc(sorter.getProperty()));
+                }
             }
         }
         // 默认UUID降序
@@ -71,7 +75,7 @@ public class FilterView implements Serializable {
         return new Filter();
     }
 
-    public Filter createEFilter(String key, Object value, String operate) {
+    public Filter createFilter(String key, Object value, String operate) {
         return new Filter(key, value, operate);
     }
 
