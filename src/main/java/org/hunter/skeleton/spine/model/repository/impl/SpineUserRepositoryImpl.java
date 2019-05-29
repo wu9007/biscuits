@@ -62,7 +62,7 @@ public class SpineUserRepositoryImpl extends AbstractRepository implements Spine
                 "    LEFT JOIN tbl_user_role T7 ON T5.UUID = T7.ROLE_UUID  " +
                 "    LEFT JOIN TBL_USER T8 ON T7.USER_UUID = T8.UUID   " +
                 "WHERE  " +
-                "    ( T1.server_id = :SERVER_ID AND T1.bundle_id = :BUNDLE_ID AND t1.action_id = :ACTION_ID )   " +
+                "    ( T1.server_id = :SERVER_ID AND T1.bundle_id = :BUNDLE_ID AND ( T6.with_auth = 0 OR t1.action_id = :ACTION_ID ))   " +
                 "    AND ( t8.CODE = :USER_CODE OR T6.with_auth = 0 )";
         SQLQuery query = this.getSession().createSQLQuery(sql)
                 .mapperColumn("uuid")
