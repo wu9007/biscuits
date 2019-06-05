@@ -10,5 +10,4 @@ import java.sql.SQLException;
  */
 public interface SpineAuthorityRepository extends Repository {
     Authority findOne(String uuid) throws SQLException;
-
 }

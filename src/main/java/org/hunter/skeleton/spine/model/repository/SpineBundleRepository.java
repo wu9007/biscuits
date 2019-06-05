@@ -4,7 +4,6 @@ import org.hunter.skeleton.repository.Repository;
 import org.hunter.skeleton.spine.model.Bundle;
 
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * @author wujianchuan 2019/2/26
@@ -12,9 +11,5 @@ import java.util.List;
  */
 public interface SpineBundleRepository extends Repository {
 
-    List<Bundle> findByAuthIf(Boolean auth);
-
     Bundle findOne(String uuid) throws SQLException;
-
-    List<Bundle> findAll();
 }

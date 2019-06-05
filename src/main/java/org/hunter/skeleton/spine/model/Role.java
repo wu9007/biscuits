@@ -4,10 +4,7 @@ import org.hunter.pocket.annotation.Column;
 import org.hunter.pocket.annotation.Entity;
 import org.hunter.pocket.annotation.OneToMany;
 import org.hunter.pocket.model.BaseEntity;
-import org.hunter.skeleton.spine.model.repository.SpineAuthorityRepository;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -95,19 +92,5 @@ public class Role extends BaseEntity {
 
     public void setRoleAuthRelationList(List<RoleAuthRelation> roleAuthRelationList) {
         this.roleAuthRelationList = roleAuthRelationList;
-    }
-
-    public List<Authority> getAuths(SpineAuthorityRepository authorityRepository) throws SQLException {
-        List<Authority> authorities = new ArrayList<>();
-        List<RoleAuthRelation> roleAuthRelations = this.getRoleAuthRelationList();
-        if (roleAuthRelations != null && roleAuthRelations.size() > 0) {
-            for (RoleAuthRelation roleAuthRelation : roleAuthRelations) {
-                Authority authority = authorityRepository.findOne(roleAuthRelation.getAuthUuid());
-                if (authority != null) {
-                    authorities.add(authority);
-                }
-            }
-        }
-        return authorities;
     }
 }

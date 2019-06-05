@@ -11,6 +11,4 @@ import java.sql.SQLException;
 public interface SpineRoleRepository extends Repository {
 
     Role findOne(String uuid) throws SQLException;
-
-    Role findById(String id) throws SQLException;
 }

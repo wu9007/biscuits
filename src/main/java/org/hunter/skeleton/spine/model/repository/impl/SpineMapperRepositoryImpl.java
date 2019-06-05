@@ -1,7 +1,5 @@
 package org.hunter.skeleton.spine.model.repository.impl;
 
-import org.hunter.pocket.criteria.Criteria;
-import org.hunter.pocket.criteria.Restrictions;
 import org.hunter.skeleton.annotation.Service;
 import org.hunter.skeleton.repository.AbstractRepository;
 import org.hunter.skeleton.spine.model.Mapper;
@@ -18,12 +16,5 @@ public class SpineMapperRepositoryImpl extends AbstractRepository implements Spi
     @Override
     public Mapper findOne(String uuid) throws SQLException {
         return (Mapper) this.getSession().findOne(Mapper.class, uuid);
-    }
-
-    @Override
-    public List<Mapper> findByBundle(String bundleUuid) {
-        Criteria criteria = this.getSession().createCriteria(Mapper.class);
-        criteria.add(Restrictions.equ("bundleUuid", bundleUuid));
-        return criteria.list();
     }
 }
