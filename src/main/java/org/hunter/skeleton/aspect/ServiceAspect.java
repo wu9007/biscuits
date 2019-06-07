@@ -1,6 +1,5 @@
 package org.hunter.skeleton.aspect;
 
-import org.aopalliance.aop.AspectException;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -115,7 +114,6 @@ public class ServiceAspect {
                 }
             }
         }
-        this.remove();
     }
 
     /**
