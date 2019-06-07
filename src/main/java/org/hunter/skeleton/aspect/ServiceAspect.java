@@ -97,7 +97,6 @@ public class ServiceAspect {
     @AfterThrowing(pointcut = "execution(public * *..*.service.*.*(..))", throwing = "exception")
     public void afterThrowing(Exception exception) {
         ThreadLocal<Session> sessionLocal = this.getSessionLocal();
-        Method method = this.popMethod();
         Object target = this.popTarget();
         if (sessionLocal != null && sessionLocal.get() != null && !sessionLocal.get().getClosed()) {
             if (this.getTransOn()) {
