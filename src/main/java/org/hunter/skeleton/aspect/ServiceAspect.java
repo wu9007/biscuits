@@ -1,5 +1,6 @@
 package org.hunter.skeleton.aspect;
 
+import org.aopalliance.aop.AspectException;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -97,15 +98,24 @@ public class ServiceAspect {
     @AfterThrowing(pointcut = "execution(public * *..*.service.*.*(..))", throwing = "exception")
     public void afterThrowing(Exception exception) {
         ThreadLocal<Session> sessionLocal = this.getSessionLocal();
+        Method method = this.popMethod();
+        Object target = this.popTarget();
         if (sessionLocal != null && sessionLocal.get() != null && !sessionLocal.get().getClosed()) {
             if (this.getTransOn()) {
                 sessionLocal.get().getTransaction().rollBack();
                 this.setTransOn(false);
             }
-            sessionLocal.get().close();
+            if (this.getMethodLocal().size() == 0) {
+                sessionLocal.get().close();
+                this.remove();
+            } else {
+                List<Repository> repositories = RepositoryFactory.getRepositories(target.getClass().getName());
+                if (repositories != null && repositories.size() > 0) {
+                    repositories.forEach(Repository::pourSession);
+                }
+            }
         }
         this.remove();
-        exception.printStackTrace();
     }
 
     /**
