@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * @author wujianchuan 2019/1/30
  */
-@Entity(table = "TBL_ROLE", tableId = 104)
+@Entity(table = "T_ROLE", tableId = 104)
 public class Role extends BaseEntity {
     private static final long serialVersionUID = -1762486150168555776L;
     @Column(name = "SPELL", businessName = "标识")
