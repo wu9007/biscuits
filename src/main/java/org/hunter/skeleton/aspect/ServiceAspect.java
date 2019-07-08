@@ -103,15 +103,12 @@ public class ServiceAspect {
                 sessionLocal.get().getTransaction().rollBack();
                 this.setTransOn(false);
             }
-            if (this.getMethodLocal().size() == 0) {
-                sessionLocal.get().close();
-                this.remove();
-            } else {
-                List<Repository> repositories = RepositoryFactory.getRepositories(target.getClass().getName());
-                if (repositories != null && repositories.size() > 0) {
-                    repositories.forEach(Repository::pourSession);
-                }
+            List<Repository> repositories = RepositoryFactory.getRepositories(target.getClass().getName());
+            if (repositories != null && repositories.size() > 0) {
+                repositories.forEach(Repository::pourSession);
             }
+            sessionLocal.get().close();
+            this.remove();
         }
     }
 
