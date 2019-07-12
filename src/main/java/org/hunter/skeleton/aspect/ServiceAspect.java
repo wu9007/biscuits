@@ -108,8 +108,8 @@ public class ServiceAspect {
                 repositories.forEach(Repository::pourSession);
             }
             sessionLocal.get().close();
+            this.remove();
         }
-        this.remove();
     }
 
     /**
