@@ -95,7 +95,7 @@ public class ServiceAspect {
     }
 
     @AfterThrowing(pointcut = "execution(public * *..*.service.*.*(..))", throwing = "exception")
-    public void afterThrowing(Exception exception) {
+    public void afterThrowing(Exception exception) throws Exception {
         ThreadLocal<Session> sessionLocal = this.getSessionLocal();
         if (sessionLocal != null && sessionLocal.get() != null && !sessionLocal.get().getClosed()) {
             if (this.getTransOn()) {
@@ -110,6 +110,7 @@ public class ServiceAspect {
             sessionLocal.get().close();
             this.remove();
         }
+        throw exception;
     }
 
     /**
