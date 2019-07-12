@@ -95,7 +95,7 @@ public class ServiceAspect {
     }
 
     @AfterThrowing(pointcut = "execution(public * *..*.service.*.*(..))", throwing = "exception")
-    public void afterThrowing(Exception exception) {
+    public void afterThrowing(Exception exception) throws Exception {
         ThreadLocal<Session> sessionLocal = this.getSessionLocal();
         Object target = this.popTarget();
         if (sessionLocal != null && sessionLocal.get() != null && !sessionLocal.get().getClosed()) {
@@ -108,8 +108,9 @@ public class ServiceAspect {
                 repositories.forEach(Repository::pourSession);
             }
             sessionLocal.get().close();
-            this.remove();
         }
+        this.remove();
+        throw exception;
     }
 
     /**
