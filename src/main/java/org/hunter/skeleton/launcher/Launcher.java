@@ -41,8 +41,8 @@ public class Launcher implements CommandLineRunner {
     private static final String UNDERLINE_DIVIDER = "_";
 
     private final String serverId;
-    private final AbstractBundle bundleContainer;
-    private final AbstractPermission permissionContainer;
+    private final List<AbstractBundle> bundleContainers;
+    private final List<AbstractPermission> permissionContainers;
     private final List<AbstractController> controllerList;
 
     private Map<String, Bundle> bundleMap = null;
@@ -50,11 +50,12 @@ public class Launcher implements CommandLineRunner {
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
-    public Launcher(@Nullable AbstractBundle bundleContainer, ApplicationContext context, @Nullable List<AbstractController> controllerList, @Nullable AbstractPermission permissionContainer) {
+    public Launcher(@Nullable List<AbstractBundle> bundleContainers, ApplicationContext context, @Nullable List<AbstractController> controllerList,
+                    @Nullable List<AbstractPermission> permissionContainers) {
         this.serverId = Objects.requireNonNull(context.getEnvironment().getProperty("spring.application.name")).toUpperCase();
-        this.bundleContainer = bundleContainer;
+        this.bundleContainers = bundleContainers;
         this.controllerList = controllerList;
-        this.permissionContainer = permissionContainer;
+        this.permissionContainers = permissionContainers;
     }
 
     @Override
@@ -63,10 +64,10 @@ public class Launcher implements CommandLineRunner {
         session.open();
         Transaction transaction = session.getTransaction();
         transaction.begin();
-        if (this.bundleContainer != null) {
+        if (this.bundleContainers != null && this.bundleContainers.size() > 0) {
             this.operateBundle(session, transaction);
         }
-        if (this.permissionContainer != null) {
+        if (this.permissionContainers != null && this.permissionContainers.size() > 0) {
             this.operateAuthority(session, transaction);
         }
         if (this.controllerList != null) {
@@ -77,7 +78,7 @@ public class Launcher implements CommandLineRunner {
     }
 
     private void operateBundle(Session session, Transaction transaction) {
-        this.bundleContainer.init();
+        this.bundleContainers.forEach(bundleContainer -> bundleContainer.init());
         Criteria criteria = session.createCriteria(Bundle.class)
                 .add(Restrictions.equ("serverId", serverId));
         List<Bundle> bundleList = criteria.list();
@@ -106,7 +107,7 @@ public class Launcher implements CommandLineRunner {
 
     @SuppressWarnings("unchecked")
     private void operateAuthority(Session session, Transaction transaction) {
-        this.permissionContainer.setServerId(this.serverId).init();
+        this.permissionContainers.forEach(permissionContainer -> permissionContainer.setServerId(this.serverId).init());
         ActionFactory.init(controllerList);
         Criteria criteria = session.createCriteria(Authority.class)
                 .add(Restrictions.equ("serverId", this.serverId));
