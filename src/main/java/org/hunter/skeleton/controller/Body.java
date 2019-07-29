@@ -8,9 +8,11 @@ import java.io.Serializable;
 public class Body<T> implements Serializable {
     private static final long serialVersionUID = -7606557226712921098L;
     private Boolean success;
+    private String code;
     private String category;
     private String title;
     private String message;
+    private String msg;
     private T object;
 
     private Body() {
@@ -29,6 +31,7 @@ public class Body<T> implements Serializable {
     public static <E> Body<E> newDefaultInstance(String title, String message, E object) {
         Body<E> instance = new Body<>(title, message, object);
         instance.setSuccess(true);
+        instance.setCode("200");
         instance.setCategory(CategoryTypes.DEFAULT);
         return instance;
     }
@@ -36,6 +39,7 @@ public class Body<T> implements Serializable {
     public static <E> Body<E> newPrimaryInstance(String title, String message, E object) {
         Body<E> instance = new Body<>(title, message, object);
         instance.setSuccess(true);
+        instance.setCode("200");
         instance.setCategory(CategoryTypes.PRIMARY);
         return instance;
     }
@@ -43,6 +47,7 @@ public class Body<T> implements Serializable {
     public static <E> Body<E> newSuccessInstance(String title, String message, E object) {
         Body<E> instance = new Body<>(title, message, object);
         instance.setSuccess(true);
+        instance.setCode("200");
         instance.setCategory(CategoryTypes.SUCCESS);
         return instance;
     }
@@ -56,6 +61,7 @@ public class Body<T> implements Serializable {
     public static <E> Body<E> newInfoInstance(String title, String message, E object) {
         Body<E> instance = new Body<>(title, message, object);
         instance.setSuccess(true);
+        instance.setCode("200");
         instance.setCategory(CategoryTypes.INFO);
         return instance;
     }
@@ -63,6 +69,8 @@ public class Body<T> implements Serializable {
     public static <E> Body<E> newWaringInstance(String title, String message, E object) {
         Body<E> instance = new Body<>(title, message, object);
         instance.setSuccess(false);
+        instance.setCode("500");
+        instance.setMsg(message);
         instance.setCategory(CategoryTypes.WARING);
         return instance;
     }
@@ -70,6 +78,8 @@ public class Body<T> implements Serializable {
     public static <E> Body<E> newErrorInstance(String title, String message, E object) {
         Body<E> instance = new Body<>(title, message, object);
         instance.setSuccess(false);
+        instance.setCode("500");
+        instance.setMsg(message);
         instance.setCategory(CategoryTypes.ERROR);
         return instance;
     }
@@ -112,5 +122,21 @@ public class Body<T> implements Serializable {
 
     public void setObject(T object) {
         this.object = object;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 }
