@@ -43,6 +43,11 @@ publishing {
             from components.java
             pom.withXml {
                 asNode().remove(asNode().get("dependencies"))
+                def dependenciesNode = asNode().appendNode("dependencies")
+                def dependencyNode = dependenciesNode.appendNode('dependency')
+                dependencyNode.appendNode('groupId', 'org.apache.httpcomponents')
+                dependencyNode.appendNode('artifactId', 'httpclient')
+                dependencyNode.appendNode('version', '4.5.2')
             }
         }
     }
@@ -70,6 +75,8 @@ dependencies {
     implementation 'com.github.leyan95:pocket:0.7.2-PRE'
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
     implementation 'mysql:mysql-connector-java:8.0.13'
+
+    implementation 'org.apache.httpcomponents:httpclient:4.5.2'
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor:2.1.1.RELEASE")
     testImplementation('org.springframework.boot:spring-boot-starter-test:2.1.1.RELEASE')
