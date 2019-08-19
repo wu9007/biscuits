@@ -2,6 +2,8 @@ package org.hunter.skeleton.spine.model;
 
 import org.hunter.pocket.annotation.Column;
 import org.hunter.pocket.annotation.Entity;
+import org.hunter.pocket.annotation.Join;
+import org.hunter.pocket.constant.JoinMethod;
 import org.hunter.pocket.model.BaseEntity;
 
 /**
@@ -12,6 +14,8 @@ public class Department extends BaseEntity {
     private static final long serialVersionUID = -893404050854935292L;
     @Column(name = "PARENT_UUID", businessName = "父节点标识")
     private String parentUuid;
+    @Join(columnName = "PARENT_UUID",columnSurname = "PARENT_NAME",businessName = "父节点名称",joinTable = "T_DEPARTMENT",joinTableSurname = "T1",joinMethod = JoinMethod.LEFT,bridgeColumn = "UUID",destinationColumn = "NAME")
+    private String parentName;
     @Column(name = "NAME", businessName = "名称")
     private String name;
     @Column(name = "SPELL", businessName = "拼音码")
@@ -99,5 +103,13 @@ public class Department extends BaseEntity {
 
     public void setSystemCode(String systemCode) {
         this.systemCode = systemCode;
+    }
+
+    public String getParentName() {
+        return parentName;
+    }
+
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
     }
 }
