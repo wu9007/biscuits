@@ -14,7 +14,7 @@ public class Department extends BaseEntity {
     private static final long serialVersionUID = -893404050854935292L;
     @Column(name = "PARENT_UUID", businessName = "父节点标识")
     private String parentUuid;
-    @Join(columnName = "PARENT_UUID",columnSurname = "PARENT_NAME",businessName = "父节点名称",joinTable = "T_DEPARTMENT",joinTableSurname = "T1",joinMethod = JoinMethod.LEFT,bridgeColumn = "UUID",destinationColumn = "NAME")
+    @Join(columnName = "PARENT_UUID", columnSurname = "PARENT_NAME", businessName = "父节点名称", joinTable = "T_DEPARTMENT", joinTableSurname = "T1", joinMethod = JoinMethod.LEFT, bridgeColumn = "UUID", destinationColumn = "NAME")
     private String parentName;
     @Column(name = "NAME", businessName = "名称")
     private String name;
