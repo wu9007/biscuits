@@ -32,6 +32,8 @@ public class Department extends BaseEntity {
     private Boolean hasChild;
     @Column(name = "SYSTEM_CODE", businessName = "业务系统对照")
     private String systemCode;
+    @Column(name = "LEADER", businessName = "部门领导")
+    private String leader;
 
     public String getParentUuid() {
         return parentUuid;
@@ -111,5 +113,13 @@ public class Department extends BaseEntity {
 
     public void setParentName(String parentName) {
         this.parentName = parentName;
+    }
+
+    public String getLeader() {
+        return leader;
+    }
+
+    public void setLeader(String leader) {
+        this.leader = leader;
     }
 }
