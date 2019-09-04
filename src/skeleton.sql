@@ -65,7 +65,7 @@ CREATE TABLE `t_bundle_group_relation`  (
   `sort` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`uuid`) USING BTREE,
   UNIQUE INDEX `key_sort`(`sort`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 172 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 194 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for t_department
@@ -81,7 +81,8 @@ CREATE TABLE `t_department`  (
   `IS_QC` int(1) NOT NULL DEFAULT 0 COMMENT '是否质控科室',
   `IS_PURCHASE` int(1) NOT NULL DEFAULT 0 COMMENT '是否采购科室',
   `IS_CHILD` int(1) NOT NULL DEFAULT 0 COMMENT '是否含子节点',
-  `SYSTEM_CODE` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '业务系统对照'
+  `SYSTEM_CODE` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '业务系统对照',
+  `LEADER` varchar(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '分管领导'
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -174,5 +175,45 @@ CREATE TABLE `t_user_role`  (
   PRIMARY KEY (`UUID`) USING BTREE,
   UNIQUE INDEX `UDX_USER_ROLE`(`USER_UUID`, `ROLE_UUID`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for tbl_commodity
+-- ----------------------------
+DROP TABLE IF EXISTS `tbl_commodity`;
+CREATE TABLE `tbl_commodity`  (
+  `uuid` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
+  `price` decimal(10, 2) NULL DEFAULT 0.00,
+  `order_uuid` int(32) NULL DEFAULT NULL,
+  `type` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
+  PRIMARY KEY (`uuid`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for tbl_order
+-- ----------------------------
+DROP TABLE IF EXISTS `tbl_order`;
+CREATE TABLE `tbl_order`  (
+  `uuid` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '1',
+  `code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
+  `price` decimal(10, 2) NULL DEFAULT NULL,
+  `day` date NULL DEFAULT NULL,
+  `time` datetime(0) NULL DEFAULT NULL,
+  `state` int(1) NULL DEFAULT 1,
+  `type` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
+  `sort` int(11) NULL DEFAULT 0,
+  `photo` longblob NULL,
+  PRIMARY KEY (`uuid`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for tbl_order_type
+-- ----------------------------
+DROP TABLE IF EXISTS `tbl_order_type`;
+CREATE TABLE `tbl_order_type`  (
+  `uuid` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
+  PRIMARY KEY (`uuid`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;
