@@ -1,73 +1,89 @@
 package org.hunter.skeleton.repository;
 
-import org.hunter.demo.model.Order;
-import org.hunter.pocket.criteria.Criteria;
 import org.hunter.pocket.model.BaseEntity;
-import org.hunter.skeleton.annotation.Track;
-import org.hunter.skeleton.constant.OperateEnum;
 import org.hunter.skeleton.controller.FilterView;
 import org.hunter.skeleton.service.PageList;
 
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * @author wujianchuan
  */
-public class CommonRepository<T extends BaseEntity> extends AbstractRepository implements UniversalOperate<T> {
-    private Class clazz;
+public interface CommonRepository<T extends BaseEntity> extends Repository {
+    /**
+     * Select data by identify (Default with querying subsets).
+     *
+     * @param uuid Primary Key
+     * @return T
+     * @throws SQLException e
+     */
+    Object findOne(Serializable uuid) throws SQLException;
 
-    public CommonRepository() {
-        Type genType = getClass().getGenericSuperclass();
-        Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
-        this.clazz = (Class) params[0];
-    }
+    /**
+     * Save
+     *
+     * @param obj     New object who extend {@link BaseEntity}
+     * @param cascade With save subsets
+     * @return Number of rows affected
+     * @throws SQLException e
+     */
+    int save(T obj, boolean cascade) throws SQLException;
 
-    @Override
-    public Object findOne(Serializable uuid) throws SQLException {
-        return super.getSession().findDirect(this.clazz, uuid);
-    }
+    /**
+     * Update
+     *
+     * @param obj     Persisted object who extend {@link BaseEntity}
+     * @param cascade With update subsets
+     * @return Number of rows affected
+     * @throws SQLException e
+     */
+    int update(T obj, boolean cascade) throws SQLException;
 
-    @Override
-    public int save(T obj, boolean cascade) throws SQLException {
-        return super.getSession().save(obj);
-    }
+    /**
+     * Delete
+     *
+     * @param obj Delete object who extend {@link BaseEntity}
+     * @return Number of rows affected
+     * @throws SQLException e
+     */
+    int delete(T obj) throws SQLException, IllegalAccessException;
 
-    @Override
-    public int update(T obj, boolean cascade) throws SQLException {
-        return super.getSession().update(obj);
-    }
+    /**
+     * Save With Track
+     *
+     * @param obj              New object who extend {@link BaseEntity}
+     * @param cascade          With save subsets
+     * @param trackOperator    Track Operator
+     * @param trackDescription Track Description
+     * @return Number of rows affected
+     * @throws SQLException e
+     */
+    int saveWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException;
 
-    @Override
-    public int delete(T obj) throws SQLException, IllegalAccessException {
-        return super.getSession().delete(obj);
-    }
+    /**
+     * Update With Track
+     *
+     * @param obj              Persisted object who extend {@link BaseEntity}
+     * @param cascade          With update subsets
+     * @param operator         Operator
+     * @param trackDescription Track Description
+     * @return Number of rows affected
+     * @throws SQLException e
+     */
+    int updateWithTrack(T obj, boolean cascade, String operator, String trackDescription) throws SQLException;
 
-    @Override
-    @Track(data = "#obj", operateName = "#trackDescription", operator = "#trackOperator", operate = OperateEnum.ADD)
-    public int saveWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException {
-        return this.save(obj, cascade);
-    }
+    /**
+     * Delete With Track
+     *
+     * @param obj              Delete object who extend {@link BaseEntity}
+     * @param operator         Operator
+     * @param trackDescription Track Description
+     * @return Number of rows affected
+     * @throws SQLException           e
+     * @throws IllegalAccessException e
+     */
+    int deleteWithTrack(T obj, String operator, String trackDescription) throws SQLException, IllegalAccessException;
 
-    @Override
-    @Track(data = "#obj", operateName = "#trackDescription", operator = "#trackOperator", operate = OperateEnum.EDIT)
-    public int updateWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException {
-        return this.update(obj, cascade);
-    }
-
-    @Override
-    @Track(data = "#obj", operateName = "#trackDescription", operator = "#trackOperator", operate = OperateEnum.DELETE)
-    public int deleteWithTrack(T obj, String operator, String trackDescription) throws SQLException, IllegalAccessException {
-        return this.delete(obj);
-    }
-
-    @Override
-    public PageList loadPage(FilterView filterView) throws SQLException {
-        Criteria criteria = filterView.createCriteria(this.getSession(), clazz);
-        List list = criteria.listNotCleanRestrictions();
-        return PageList.newInstance(list, criteria.count());
-    }
+    PageList loadPage(FilterView filterView) throws SQLException;
 }
