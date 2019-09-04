@@ -15,6 +15,7 @@ import org.hunter.pocket.session.Session;
 import org.hunter.pocket.utils.ReflectUtils;
 import org.hunter.skeleton.annotation.Track;
 import org.hunter.skeleton.constant.OperateEnum;
+import org.hunter.skeleton.repository.AbstractRepository;
 import org.hunter.skeleton.spine.model.History;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.expression.EvaluationContext;
@@ -140,11 +141,13 @@ public class RepositoryAspect {
         Track track = method.getAnnotation(Track.class);
         String dataKey = track.data();
         String operatorKey = track.operator();
+        String operateNameKey = track.operateName();
         String operate = track.operate().getId();
 
         ExpressionParser parser = new SpelExpressionParser();
         Expression dataExpression = parser.parseExpression(dataKey);
         Expression operatorExpression = parser.parseExpression(operatorKey);
+        Expression operateNameExpression = parser.parseExpression(operateNameKey);
         EvaluationContext context = new StandardEvaluationContext();
         DefaultParameterNameDiscoverer discoverer = new DefaultParameterNameDiscoverer();
         String[] argsName = discoverer.getParameterNames(method);
@@ -156,18 +159,26 @@ public class RepositoryAspect {
         } else {
             throw new IllegalArgumentException("can not found any arg.");
         }
-        Object operateValue = operatorExpression.getValue(context);
+        Object operatorValue = operatorExpression.getValue(context);
+        Object operateNameValue = operateNameExpression.getValue(context);
         Object dataValue = dataExpression.getValue(context);
         String operator;
         BaseEntity entity;
-        if (operateValue != null && dataValue != null) {
-            operator = operateValue.toString();
+        String operateName;
+        if (operatorValue != null && dataValue != null) {
+            operator = operatorValue.toString();
             entity = (BaseEntity) dataValue;
         } else {
             throw new IllegalArgumentException("can not found data and operator.");
         }
+        if (operateNameValue == null) {
+            operateName = track.operateName();
+        } else {
+            operateName = operateNameValue.toString();
+        }
         Object target = joinPoint.getTarget();
-        Field sessionLocalField = target.getClass().getSuperclass().getDeclaredField("sessionLocal");
+        Field sessionLocalField = AbstractRepository.class.getDeclaredField("sessionLocal");
+
         sessionLocalField.setAccessible(true);
         ThreadLocal<Session> sessionLocal = (ThreadLocal<Session>) sessionLocalField.get(target);
         Session session = sessionLocal.get();
@@ -182,7 +193,7 @@ public class RepositoryAspect {
         } else {
             newEntity = entity;
         }
-        this.saveHistory(olderEntity, newEntity, session, track.operateName(), operate, operator);
+        this.saveHistory(olderEntity, newEntity, session, operateName, operate, operator);
         return result;
     }
 

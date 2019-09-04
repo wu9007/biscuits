@@ -2,6 +2,7 @@ package org.hunter.skeleton.service;
 
 import org.hunter.pocket.session.Session;
 import org.hunter.skeleton.repository.Repository;
+import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -23,7 +24,7 @@ public class AbstractService {
     public AbstractService() {
         for (Field field : this.getClass().getDeclaredFields()) {
             for (Type genericInterface : field.getType().getGenericInterfaces()) {
-                if (genericInterface.equals(Repository.class)) {
+                if (genericInterface.equals(Repository.class) || Repository.class.isAssignableFrom(((ParameterizedTypeImpl) genericInterface).getRawType())) {
                     this.repositoryFieldList.add(field);
                     break;
                 }
