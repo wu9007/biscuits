@@ -12,8 +12,8 @@ import java.math.BigDecimal;
 /**
  * @author wujianchuan 2019/1/9
  */
-@Entity(table = "TBL_COMMODITY", tableId = 2)
-public class Commodity extends BaseEntity {
+@Entity(table = "TBL_RELEVANT_BILL_DETAIL", tableId = 2)
+public class RelevantBillDetail extends BaseEntity {
     private static final long serialVersionUID = -6711578420837877371L;
     @Column(name = "NAME")
     private String name;
@@ -24,8 +24,8 @@ public class Commodity extends BaseEntity {
     @Join(columnName = "TYPE", columnSurname = "TYPE_NAME", businessName = "订单支付方式", joinTable = "TBL_ORDER_TYPE", joinTableSurname = "T1", joinMethod = JoinMethod.LEFT, bridgeColumn = "UUID", destinationColumn = "NAME")
     private String typeName;
 
-    @ManyToOne(columnName = "ORDER_UUID", clazz = Order.class, upBridgeField = "uuid")
-    private String order;
+    @ManyToOne(columnName = "RELEVANT_BILL_UUID", clazz = RelevantBill.class, upBridgeField = "uuid")
+    private String relevantBillUuid;
 
     public String getName() {
         return name;
@@ -43,12 +43,12 @@ public class Commodity extends BaseEntity {
         this.price = price;
     }
 
-    public String getOrder() {
-        return order;
+    public String getRelevantBillUuid() {
+        return relevantBillUuid;
     }
 
-    public void setOrder(String order) {
-        this.order = order;
+    public void setRelevantBillUuid(String relevantBillUuid) {
+        this.relevantBillUuid = relevantBillUuid;
     }
 
     public String getTypeName() {

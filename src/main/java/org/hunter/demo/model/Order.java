@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.hunter.pocket.annotation.Column;
 import org.hunter.pocket.annotation.Entity;
 import org.hunter.pocket.annotation.Join;
-import org.hunter.pocket.annotation.OneToMany;
 import org.hunter.pocket.constant.JoinMethod;
 import org.hunter.pocket.model.BaseEntity;
 import org.hunter.skeleton.jsonserializer.LocalDateTimeDeserializer;
@@ -12,7 +11,6 @@ import org.hunter.skeleton.jsonserializer.LocalDateTimeDeserializer;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * @author wujianchuan 2018/12/26
@@ -21,6 +19,8 @@ import java.util.List;
 public class Order extends BaseEntity {
     private static final long serialVersionUID = 2560385391551524826L;
 
+    @Column(name = "RELEVANT_BILL_UUID", businessName = "关联单据的数据标识")
+    private String relevantBillUuid;
     @Column(name = "CODE", businessName = "编号")
     private String code;
     @Column(name = "PRICE", businessName = "单价")
@@ -39,14 +39,19 @@ public class Order extends BaseEntity {
     @Join(columnName = "TYPE", columnSurname = "TYPE_NAME", businessName = "订单支付方式", joinTable = "TBL_ORDER_TYPE", joinTableSurname = "T2", joinMethod = JoinMethod.LEFT, bridgeColumn = "UUID", destinationColumn = "NAME")
     private String typeName;
 
-    @OneToMany(clazz = Commodity.class, bridgeField = "order", businessName = "明细信息")
-    private List<Commodity> commodities;
-
     public static Order newInstance(String code, BigDecimal price) {
         Order order = new Order();
         order.setCode(code);
         order.setPrice(price);
         return order;
+    }
+
+    public String getRelevantBillUuid() {
+        return relevantBillUuid;
+    }
+
+    public void setRelevantBillUuid(String relevantBillUuid) {
+        this.relevantBillUuid = relevantBillUuid;
     }
 
     public String getCode() {
@@ -63,14 +68,6 @@ public class Order extends BaseEntity {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
-    }
-
-    public List<Commodity> getCommodities() {
-        return commodities;
-    }
-
-    public void setCommodities(List<Commodity> commodities) {
-        this.commodities = commodities;
     }
 
     public LocalDate getDay() {

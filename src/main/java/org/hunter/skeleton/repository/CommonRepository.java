@@ -26,9 +26,10 @@ public interface CommonRepository<T extends BaseEntity> extends Repository {
      * @param obj     New object who extend {@link BaseEntity}
      * @param cascade With save subsets
      * @return Number of rows affected
-     * @throws SQLException e
+     * @throws SQLException           e
+     * @throws IllegalAccessException e
      */
-    int save(T obj, boolean cascade) throws SQLException;
+    int save(T obj, boolean cascade) throws SQLException, IllegalAccessException;
 
     /**
      * Update
@@ -36,16 +37,18 @@ public interface CommonRepository<T extends BaseEntity> extends Repository {
      * @param obj     Persisted object who extend {@link BaseEntity}
      * @param cascade With update subsets
      * @return Number of rows affected
-     * @throws SQLException e
+     * @throws SQLException           e
+     * @throws IllegalAccessException e
      */
-    int update(T obj, boolean cascade) throws SQLException;
+    int update(T obj, boolean cascade) throws SQLException, IllegalAccessException;
 
     /**
      * Delete
      *
      * @param obj Delete object who extend {@link BaseEntity}
      * @return Number of rows affected
-     * @throws SQLException e
+     * @throws SQLException           e
+     * @throws IllegalAccessException e
      */
     int delete(T obj) throws SQLException, IllegalAccessException;
 
@@ -57,9 +60,10 @@ public interface CommonRepository<T extends BaseEntity> extends Repository {
      * @param trackOperator    Track Operator
      * @param trackDescription Track Description
      * @return Number of rows affected
-     * @throws SQLException e
+     * @throws SQLException           e
+     * @throws IllegalAccessException e
      */
-    int saveWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException;
+    int saveWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException;
 
     /**
      * Update With Track
@@ -69,9 +73,10 @@ public interface CommonRepository<T extends BaseEntity> extends Repository {
      * @param operator         Operator
      * @param trackDescription Track Description
      * @return Number of rows affected
-     * @throws SQLException e
+     * @throws SQLException           e
+     * @throws IllegalAccessException e
      */
-    int updateWithTrack(T obj, boolean cascade, String operator, String trackDescription) throws SQLException;
+    int updateWithTrack(T obj, boolean cascade, String operator, String trackDescription) throws SQLException, IllegalAccessException;
 
     /**
      * Delete With Track

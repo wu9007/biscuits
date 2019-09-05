@@ -1,9 +1,11 @@
 package org.hunter.skeleton;
 
 import org.hunter.Application;
-import org.hunter.demo.model.Commodity;
 import org.hunter.demo.model.Order;
+import org.hunter.demo.model.RelevantBill;
+import org.hunter.demo.model.RelevantBillDetail;
 import org.hunter.demo.service.OrderPlusService;
+import org.hunter.demo.service.RelevantBillService;
 import org.hunter.pocket.model.BaseEntity;
 import org.hunter.skeleton.controller.Filter;
 import org.hunter.skeleton.controller.FilterView;
@@ -34,18 +36,11 @@ import java.util.stream.IntStream;
 public class SkeletonPlusTest {
     @Autowired
     OrderPlusService orderService;
+    @Autowired
+    RelevantBillService relevantBillService;
 
     @Test
     public void test1() throws SQLException, IllegalAccessException {
-        List<Commodity> commodities = new ArrayList<>();
-        IntStream.range(1, 20).forEach((index) -> {
-            Commodity commodity = new Commodity();
-            commodity.setName("c1");
-            commodity.setType("001");
-            commodity.setPrice(new BigDecimal("11.2"));
-            commodities.add(commodity);
-        });
-
         Order order = new Order();
         order.setCode("C-001");
         order.setState(null);
@@ -53,24 +48,14 @@ public class SkeletonPlusTest {
         order.setTime(LocalDateTime.now());
         order.setPrice(new BigDecimal("99.56789"));
         order.setDay(LocalDate.now());
-        order.setCommodities(commodities);
         this.orderService.save(order);
-
-        order.getCommodities().remove(0);
-        order.getCommodities().get(0).setPrice(new BigDecimal("200.25"));
-        Commodity commodity = new Commodity();
-        commodity.setName("C001");
-        commodity.setType("002");
-        commodity.setPrice(new BigDecimal("868"));
-        order.getCommodities().add(commodity);
-        this.orderService.update(order);
     }
 
     @Test
     public void test2() {
-        List<Commodity> commodities = new ArrayList<>();
+        List<RelevantBillDetail> commodities = new ArrayList<>();
         IntStream.range(1, 20).forEach((index) -> {
-            Commodity commodity = new Commodity();
+            RelevantBillDetail commodity = new RelevantBillDetail();
             commodity.setUuid(String.valueOf(index));
             commodity.setName("c1");
             commodity.setType("001");
@@ -78,7 +63,7 @@ public class SkeletonPlusTest {
             commodities.add(commodity);
         });
         // 聚合为LikedHashMap
-        Map<String, Commodity> result = commodities.stream().collect(Collectors.toMap(BaseEntity::getUuid, commodity -> commodity, (u, v) -> {
+        Map<String, RelevantBillDetail> result = commodities.stream().collect(Collectors.toMap(BaseEntity::getUuid, commodity -> commodity, (u, v) -> {
             throw new IllegalStateException(String.format("Duplicate key %s", u));
         }, LinkedHashMap::new));
         System.out.println(result.size());
@@ -96,5 +81,32 @@ public class SkeletonPlusTest {
 
         PageList pageList = this.orderService.loadPageList(filterView);
         System.out.println(pageList.getCount());
+    }
+
+    @Test
+    public void test4() throws SQLException, IllegalAccessException {
+        List<RelevantBillDetail> details = new ArrayList<>();
+        IntStream.range(1, 20).forEach((index) -> {
+            RelevantBillDetail detail = new RelevantBillDetail();
+            detail.setName("c1");
+            detail.setType("001");
+            detail.setPrice(new BigDecimal("11.2"));
+            details.add(detail);
+        });
+
+        RelevantBill relevantBill = new RelevantBill();
+        relevantBill.setCode("C-001");
+        relevantBill.setAvailable(true);
+        relevantBill.setDetails(details);
+        this.relevantBillService.save(relevantBill);
+
+        relevantBill.getDetails().remove(0);
+        relevantBill.getDetails().get(0).setPrice(new BigDecimal("200.25"));
+        RelevantBillDetail commodity = new RelevantBillDetail();
+        commodity.setName("C001");
+        commodity.setType("002");
+        commodity.setPrice(new BigDecimal("868"));
+        relevantBill.getDetails().add(commodity);
+        this.relevantBillService.update(relevantBill);
     }
 }

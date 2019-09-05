@@ -1,6 +1,6 @@
 package org.hunter.skeleton;
 
-import org.hunter.demo.model.Commodity;
+import org.hunter.demo.model.RelevantBillDetail;
 import org.hunter.demo.model.Order;
 import org.hunter.demo.service.OrderService;
 import org.hunter.Application;
@@ -37,15 +37,6 @@ public class SkeletonTest {
 
     @Test
     public void test1() throws SQLException, IllegalAccessException {
-        List<Commodity> commodities = new ArrayList<>();
-        IntStream.range(1, 20).forEach((index) -> {
-            Commodity commodity = new Commodity();
-            commodity.setName("c1");
-            commodity.setType("001");
-            commodity.setPrice(new BigDecimal("11.2"));
-            commodities.add(commodity);
-        });
-
         Order order = new Order();
         order.setCode("C-001");
         order.setState(null);
@@ -53,24 +44,14 @@ public class SkeletonTest {
         order.setTime(LocalDateTime.now());
         order.setPrice(new BigDecimal("99.56789"));
         order.setDay(LocalDate.now());
-        order.setCommodities(commodities);
         this.orderService.save(order);
-
-        order.getCommodities().remove(0);
-        order.getCommodities().get(0).setPrice(new BigDecimal("200.25"));
-        Commodity commodity = new Commodity();
-        commodity.setName("C001");
-        commodity.setType("002");
-        commodity.setPrice(new BigDecimal("868"));
-        order.getCommodities().add(commodity);
-        this.orderService.update(order);
     }
 
     @Test
     public void test2() {
-        List<Commodity> commodities = new ArrayList<>();
+        List<RelevantBillDetail> commodities = new ArrayList<>();
         IntStream.range(1, 20).forEach((index) -> {
-            Commodity commodity = new Commodity();
+            RelevantBillDetail commodity = new RelevantBillDetail();
             commodity.setUuid(String.valueOf(index));
             commodity.setName("c1");
             commodity.setType("001");
@@ -78,7 +59,7 @@ public class SkeletonTest {
             commodities.add(commodity);
         });
         // 聚合为LikedHashMap
-        Map<String, Commodity> result = commodities.stream().collect(Collectors.toMap(BaseEntity::getUuid, commodity -> commodity, (u, v) -> {
+        Map<String, RelevantBillDetail> result = commodities.stream().collect(Collectors.toMap(BaseEntity::getUuid, commodity -> commodity, (u, v) -> {
             throw new IllegalStateException(String.format("Duplicate key %s", u));
         }, LinkedHashMap::new));
         System.out.println(result.size());

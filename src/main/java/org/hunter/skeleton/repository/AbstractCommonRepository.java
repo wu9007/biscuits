@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * @author wujianchuan
  */
-public abstract class AbstractCommonRepository<T extends BaseEntity> extends AbstractRepository{
+public abstract class AbstractCommonRepository<T extends BaseEntity> extends AbstractRepository implements CommonRepository<T> {
     private Class clazz;
 
     public AbstractCommonRepository() {
@@ -25,37 +25,45 @@ public abstract class AbstractCommonRepository<T extends BaseEntity> extends Abs
         this.clazz = (Class) params[0];
     }
 
+    @Override
     public Object findOne(Serializable uuid) throws SQLException {
         return super.getSession().findDirect(this.clazz, uuid);
     }
 
-    public int save(T obj, boolean cascade) throws SQLException {
-        return super.getSession().save(obj);
+    @Override
+    public int save(T obj, boolean cascade) throws SQLException, IllegalAccessException {
+        return super.getSession().save(obj, cascade);
     }
 
-    public int update(T obj, boolean cascade) throws SQLException {
-        return super.getSession().update(obj);
+    @Override
+    public int update(T obj, boolean cascade) throws SQLException, IllegalAccessException {
+        return super.getSession().update(obj, cascade);
     }
 
+    @Override
     public int delete(T obj) throws SQLException, IllegalAccessException {
         return super.getSession().delete(obj);
     }
 
+    @Override
     @Track(data = "#obj", operateName = "#trackDescription", operator = "#trackOperator", operate = OperateEnum.ADD)
-    public int saveWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException {
+    public int saveWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException {
         return this.save(obj, cascade);
     }
 
+    @Override
     @Track(data = "#obj", operateName = "#trackDescription", operator = "#trackOperator", operate = OperateEnum.EDIT)
-    public int updateWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException {
+    public int updateWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException {
         return this.update(obj, cascade);
     }
 
+    @Override
     @Track(data = "#obj", operateName = "#trackDescription", operator = "#trackOperator", operate = OperateEnum.DELETE)
     public int deleteWithTrack(T obj, String operator, String trackDescription) throws SQLException, IllegalAccessException {
         return this.delete(obj);
     }
 
+    @Override
     public PageList loadPage(FilterView filterView) throws SQLException {
         Criteria criteria = filterView.createCriteria(this.getSession(), clazz);
         List list = criteria.listNotCleanRestrictions();
