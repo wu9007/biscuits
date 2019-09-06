@@ -15,7 +15,7 @@ import java.sql.SQLException;
  */
 @Service(session = "skeleton")
 public class RelevantBillServiceImpl extends AbstractService implements RelevantBillService {
-    final
+    private final
     RelevantBillRepository relevantBillRepository;
 
     public RelevantBillServiceImpl(RelevantBillRepository relevantBillRepository) {
@@ -40,5 +40,10 @@ public class RelevantBillServiceImpl extends AbstractService implements Relevant
     @Override
     public PageList loadPageList(FilterView filterView) throws SQLException {
         return this.relevantBillRepository.loadPage(filterView);
+    }
+
+    @Override
+    public int updateStatus(String uuid, boolean newStatus) throws SQLException {
+        return this.relevantBillRepository.updateStatus(uuid, newStatus);
     }
 }

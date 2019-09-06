@@ -17,4 +17,6 @@ public interface RelevantBillService {
     RelevantBill findOne(String uuid) throws SQLException;
 
     PageList loadPageList(FilterView filterView) throws SQLException;
+
+    int updateStatus(String uuid, boolean newStatus) throws SQLException;
 }

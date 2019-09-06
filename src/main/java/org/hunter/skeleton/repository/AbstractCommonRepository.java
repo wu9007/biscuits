@@ -17,17 +17,17 @@ import java.util.List;
  * @author wujianchuan
  */
 public abstract class AbstractCommonRepository<T extends BaseEntity> extends AbstractRepository implements CommonRepository<T> {
-    private Class clazz;
+    protected Class genericClazz;
 
     public AbstractCommonRepository() {
         Type genType = getClass().getGenericSuperclass();
         Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
-        this.clazz = (Class) params[0];
+        this.genericClazz = (Class) params[0];
     }
 
     @Override
     public Object findOne(Serializable uuid) throws SQLException {
-        return super.getSession().findDirect(this.clazz, uuid);
+        return super.getSession().findDirect(this.genericClazz, uuid);
     }
 
     @Override
@@ -65,7 +65,7 @@ public abstract class AbstractCommonRepository<T extends BaseEntity> extends Abs
 
     @Override
     public PageList loadPage(FilterView filterView) throws SQLException {
-        Criteria criteria = filterView.createCriteria(this.getSession(), clazz);
+        Criteria criteria = filterView.createCriteria(this.getSession(), this.genericClazz);
         List list = criteria.listNotCleanRestrictions();
         return PageList.newInstance(list, criteria.count());
     }

@@ -177,24 +177,12 @@ CREATE TABLE `t_user_role`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Table structure for tbl_commodity
--- ----------------------------
-DROP TABLE IF EXISTS `tbl_commodity`;
-CREATE TABLE `tbl_commodity`  (
-  `uuid` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-  `name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
-  `price` decimal(10, 2) NULL DEFAULT 0.00,
-  `order_uuid` int(32) NULL DEFAULT NULL,
-  `type` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
-  PRIMARY KEY (`uuid`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
-
--- ----------------------------
 -- Table structure for tbl_order
 -- ----------------------------
 DROP TABLE IF EXISTS `tbl_order`;
 CREATE TABLE `tbl_order`  (
   `uuid` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '1',
+  `RELEVANT_BILL_UUID` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
   `code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
   `price` decimal(10, 2) NULL DEFAULT NULL,
   `day` date NULL DEFAULT NULL,
@@ -213,6 +201,30 @@ DROP TABLE IF EXISTS `tbl_order_type`;
 CREATE TABLE `tbl_order_type`  (
   `uuid` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
+  PRIMARY KEY (`uuid`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for tbl_relevant_bill
+-- ----------------------------
+DROP TABLE IF EXISTS `tbl_relevant_bill`;
+CREATE TABLE `tbl_relevant_bill`  (
+  `uuid` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '1',
+  `code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
+  `AVAILABLE` int(1) NULL DEFAULT 1,
+  PRIMARY KEY (`uuid`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for tbl_relevant_bill_detail
+-- ----------------------------
+DROP TABLE IF EXISTS `tbl_relevant_bill_detail`;
+CREATE TABLE `tbl_relevant_bill_detail`  (
+  `uuid` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
+  `price` decimal(10, 2) NULL DEFAULT 0.00,
+  `RELEVANT_BILL_UUID` int(32) NULL DEFAULT NULL,
+  `type` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
   PRIMARY KEY (`uuid`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 

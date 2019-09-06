@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 public interface OrderPlusService {
 
-    int save(Order order) throws SQLException, IllegalAccessException;
+    int save(Order order) throws Exception;
 
     int update(Order order) throws SQLException, IllegalAccessException;
 

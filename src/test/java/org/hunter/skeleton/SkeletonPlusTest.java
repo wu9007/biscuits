@@ -40,8 +40,33 @@ public class SkeletonPlusTest {
     RelevantBillService relevantBillService;
 
     @Test
-    public void test1() throws SQLException, IllegalAccessException {
+    public void test1() throws Exception {
+        List<RelevantBillDetail> details = new ArrayList<>();
+        IntStream.range(1, 20).forEach((index) -> {
+            RelevantBillDetail detail = new RelevantBillDetail();
+            detail.setName("c1");
+            detail.setType("001");
+            detail.setPrice(new BigDecimal("11.2"));
+            details.add(detail);
+        });
+
+        RelevantBill relevantBill = new RelevantBill();
+        relevantBill.setCode("C-001");
+        relevantBill.setAvailable(true);
+        relevantBill.setDetails(details);
+        this.relevantBillService.save(relevantBill);
+
+        relevantBill.getDetails().remove(0);
+        relevantBill.getDetails().get(0).setPrice(new BigDecimal("200.25"));
+        RelevantBillDetail commodity = new RelevantBillDetail();
+        commodity.setName("C001");
+        commodity.setType("002");
+        commodity.setPrice(new BigDecimal("868"));
+        relevantBill.getDetails().add(commodity);
+        this.relevantBillService.update(relevantBill);
+
         Order order = new Order();
+        order.setRelevantBillUuid(relevantBill.getUuid());
         order.setCode("C-001");
         order.setState(null);
         order.setType("001");
@@ -81,32 +106,5 @@ public class SkeletonPlusTest {
 
         PageList pageList = this.orderService.loadPageList(filterView);
         System.out.println(pageList.getCount());
-    }
-
-    @Test
-    public void test4() throws SQLException, IllegalAccessException {
-        List<RelevantBillDetail> details = new ArrayList<>();
-        IntStream.range(1, 20).forEach((index) -> {
-            RelevantBillDetail detail = new RelevantBillDetail();
-            detail.setName("c1");
-            detail.setType("001");
-            detail.setPrice(new BigDecimal("11.2"));
-            details.add(detail);
-        });
-
-        RelevantBill relevantBill = new RelevantBill();
-        relevantBill.setCode("C-001");
-        relevantBill.setAvailable(true);
-        relevantBill.setDetails(details);
-        this.relevantBillService.save(relevantBill);
-
-        relevantBill.getDetails().remove(0);
-        relevantBill.getDetails().get(0).setPrice(new BigDecimal("200.25"));
-        RelevantBillDetail commodity = new RelevantBillDetail();
-        commodity.setName("C001");
-        commodity.setType("002");
-        commodity.setPrice(new BigDecimal("868"));
-        relevantBill.getDetails().add(commodity);
-        this.relevantBillService.update(relevantBill);
     }
 }
