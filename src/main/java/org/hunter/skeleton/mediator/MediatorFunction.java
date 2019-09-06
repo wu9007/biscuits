@@ -1,11 +1,14 @@
 package org.hunter.skeleton.mediator;
 
-import org.hunter.skeleton.service.AbstractService;
+import org.hunter.skeleton.service.Service;
 
 import java.util.Map;
 
+/**
+ * @author wujianchuan
+ */
 @FunctionalInterface
-public interface MediatorFunction<T extends AbstractService, R> {
+public interface MediatorFunction<T extends Service, R> {
 
     /**
      * Applies this function to the given arguments.

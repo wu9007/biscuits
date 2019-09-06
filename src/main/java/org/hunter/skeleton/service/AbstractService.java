@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author wujianchuan 2019/1/31
  */
-public class AbstractService {
+public abstract class AbstractService implements Service {
     /**
      * 在切面中进行了赋值操作，而后将 session 注入到所以来的 repository 中。
      */
@@ -30,6 +30,11 @@ public class AbstractService {
                 }
             }
         }
+    }
+
+    @Override
+    public Session getSession() {
+        return this.sessionLocal.get();
     }
 
     /*protected void init() throws Exception {

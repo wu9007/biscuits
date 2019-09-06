@@ -1,6 +1,6 @@
 package org.hunter.skeleton.mediator;
 
-import org.hunter.skeleton.service.AbstractService;
+import org.hunter.skeleton.service.Service;
 
 import java.util.List;
 import java.util.Map;
@@ -14,14 +14,14 @@ public interface Mediator {
      *
      * @return Class array.
      */
-    List<Class<AbstractService>> getServiceClazzList();
+    List<Class<Service>> getServiceClazzList();
 
     /**
      * Register service
      *
-     * @param service Service instance who extend {@link AbstractService}
+     * @param service Service instance who implement {@link Service}
      */
-    void registerService(AbstractService service) throws Exception;
+    void registerService(Service service) throws Exception;
 
     /**
      * call another service method

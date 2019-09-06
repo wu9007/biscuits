@@ -1,6 +1,7 @@
 package org.hunter.demo.mediator;
 
-import org.hunter.demo.service.impl.OrderServiceImpl;
+import org.hunter.demo.service.OrderService;
+import org.hunter.demo.service.RelevantBillService;
 import org.hunter.demo.service.impl.RelevantBillServiceImpl;
 import org.hunter.skeleton.mediator.AbstractMediator;
 import org.springframework.stereotype.Component;
@@ -15,8 +16,8 @@ public class MaterialMediatorImpl extends AbstractMediator implements MaterialMe
 
     @Override
     protected void init() {
-        super.installService(OrderServiceImpl.class);
-        super.installService(RelevantBillServiceImpl.class);
+        super.installService(OrderService.class);
+        super.installService(RelevantBillService.class);
 
         super.installBusiness(UPDATE_RELEVANT_BILL_STATUS, (RelevantBillServiceImpl service, Map<String, Object> args) -> {
             String uuid = (String) args.get("uuid");
