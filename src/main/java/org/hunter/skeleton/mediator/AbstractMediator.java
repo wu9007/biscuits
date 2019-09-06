@@ -24,8 +24,7 @@ public abstract class AbstractMediator implements Mediator {
     }
 
     /**
-     * install service clazz
-     * install business function
+     * install business function witch you need in the future.
      */
     protected abstract void init();
 
