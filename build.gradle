@@ -27,6 +27,7 @@ jar {
     exclude "org/hunter/Application.class"
     exclude "application*.yml"
     exclude "skeleton.sql"
+    exclude "skeleton.png"
 }
 
 javadoc {

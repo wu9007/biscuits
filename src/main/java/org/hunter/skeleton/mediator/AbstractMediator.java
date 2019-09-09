@@ -10,6 +10,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author wujianchuan
+ * 负责不同模块间的交互（中介）
+ * 通常将同一个流程中涉及到的模块的交互方法注入到中介中
  */
 public abstract class AbstractMediator implements Mediator {
     private List<Class<Service>> serviceClazzList;
