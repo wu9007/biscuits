@@ -1,0 +1,34 @@
+{
+  "properties": [
+    {
+      "name": "skeleton.cache.hostName",
+      "type": "java.lang.String",
+      "description": "base cache hostName."
+    },
+    {
+      "name": "skeleton.cache.password",
+      "type": "java.lang.String",
+      "description": "base cache password."
+    },
+    {
+      "name": "skeleton.token.secret",
+      "type": "java.lang.String",
+      "description": "token secret code."
+    },
+    {
+      "name": "skeleton.token.expiration",
+      "type": "java.lang.Long",
+      "description": "token expiration."
+    },
+    {
+      "name": "skeleton.token.tokenHead",
+      "type": "java.lang.String",
+      "description": "token head."
+    },
+    {
+      "name": "skeleton.filter.excludeUrlPatterns",
+      "type": "java.lang.String",
+      "description": "application filter exclude url patterns."
+    }
+  ]
+}

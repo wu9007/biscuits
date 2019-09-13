@@ -5,8 +5,8 @@ server:
   port: 8089
 
 pocket:
-  serverId: 101
   datasource:
+    serverId: 101
     node:
       - url: jdbc:mysql://localhost:3306/home?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8
         nodeName: mysql-01
@@ -17,9 +17,14 @@ pocket:
         poolMiniSize: 10
         poolMaxSize: 100
         timeout: 1000
+        cacheSize: 1000
         session: skeleton
+skeleton:
   cache:
-    logic:
-      hostName: 127.0.0.1
-    base:
-      hostName: 127.0.0.1
+    hostName: 127.0.0.1
+  token:
+    secret: skeleton-secret
+    expiration: 1000
+    tokenHead: Berear
+  filter:
+    excludeUrlPatterns: /login

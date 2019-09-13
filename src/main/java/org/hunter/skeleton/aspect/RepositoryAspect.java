@@ -147,7 +147,10 @@ public class RepositoryAspect {
         ExpressionParser parser = new SpelExpressionParser();
         Expression dataExpression = parser.parseExpression(dataKey);
         Expression operatorExpression = parser.parseExpression(operatorKey);
-        Expression operateNameExpression = parser.parseExpression(operateNameKey);
+        Expression operateNameExpression = null;
+        if (operateNameKey.startsWith("#")) {
+            operateNameExpression = parser.parseExpression(operateNameKey);
+        }
         EvaluationContext context = new StandardEvaluationContext();
         DefaultParameterNameDiscoverer discoverer = new DefaultParameterNameDiscoverer();
         String[] argsName = discoverer.getParameterNames(method);
@@ -160,7 +163,10 @@ public class RepositoryAspect {
             throw new IllegalArgumentException("can not found any arg.");
         }
         Object operatorValue = operatorExpression.getValue(context);
-        Object operateNameValue = operateNameExpression.getValue(context);
+        Object operateNameValue = null;
+        if (operateNameExpression != null) {
+            operateNameValue = operateNameExpression.getValue(context);
+        }
         Object dataValue = dataExpression.getValue(context);
         String operator;
         BaseEntity entity;

@@ -1,9 +1,9 @@
 package org.hunter.skeleton;
 
-import org.hunter.demo.model.RelevantBillDetail;
-import org.hunter.demo.model.Order;
-import org.hunter.demo.service.OrderService;
 import org.hunter.Application;
+import org.hunter.demo.model.Order;
+import org.hunter.demo.model.RelevantBillDetail;
+import org.hunter.demo.service.OrderService;
 import org.hunter.pocket.model.BaseEntity;
 import org.hunter.skeleton.controller.Filter;
 import org.hunter.skeleton.controller.FilterView;
@@ -36,19 +36,7 @@ public class SkeletonTest {
     OrderService orderService;
 
     @Test
-    public void test1() throws SQLException, IllegalAccessException {
-        Order order = new Order();
-        order.setCode("C-001");
-        order.setState(null);
-        order.setType("001");
-        order.setTime(LocalDateTime.now());
-        order.setPrice(new BigDecimal("99.56789"));
-        order.setDay(LocalDate.now());
-        this.orderService.save(order);
-    }
-
-    @Test
-    public void test2() {
+    public void test1() {
         List<RelevantBillDetail> commodities = new ArrayList<>();
         IntStream.range(1, 20).forEach((index) -> {
             RelevantBillDetail commodity = new RelevantBillDetail();
@@ -63,6 +51,18 @@ public class SkeletonTest {
             throw new IllegalStateException(String.format("Duplicate key %s", u));
         }, LinkedHashMap::new));
         System.out.println(result.size());
+    }
+
+    @Test
+    public void test2() throws SQLException, IllegalAccessException {
+        Order order = new Order();
+        order.setCode("C-001");
+        order.setState(null);
+        order.setType("001");
+        order.setTime(LocalDateTime.now());
+        order.setPrice(new BigDecimal("99.56789"));
+        order.setDay(LocalDate.now());
+        this.orderService.save(order);
     }
 
     @Test
