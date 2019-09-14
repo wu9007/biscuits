@@ -5,6 +5,7 @@ import org.hunter.skeleton.annotation.Action;
 import org.hunter.skeleton.annotation.Controller;
 import org.hunter.skeleton.controller.AbstractController;
 import org.hunter.skeleton.controller.Body;
+import org.hunter.skeleton.spine.model.User;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -22,13 +23,22 @@ public class HomeController extends AbstractController {
     }
 
     @Action(actionId = "/welcome", method = RequestMethod.GET)
-    public Body<String> welcome() {
-        return Body.newSuccessInstance("welcome to hunter village");
+    public String welcome() {
+        return "welcome to hunter village";
     }
 
     @Action(actionId = "/login", method = RequestMethod.POST)
-    public Body<String> login(@RequestParam String avatar, @RequestParam String password) throws SQLException {
-        String token = securityService.generateToken(avatar, password);
-        return Body.newSuccessInstance(token);
+    public String login(@RequestParam String avatar, @RequestParam String password) throws SQLException {
+        return securityService.generateToken(avatar, password);
+    }
+
+    @Action(actionId = "/register", method = RequestMethod.POST)
+    public Body<User> register(@RequestParam String avatar, @RequestParam String name, @RequestParam String password) throws SQLException, IllegalAccessException {
+        if (avatar == null || password == null || name == null) {
+            return Body.newWaringInstance("失败", "请正确填写信息", null);
+        } else {
+            User user = this.securityService.register(avatar, name, password);
+            return Body.newSuccessInstance("成功", "恭喜！注册成功！", user);
+        }
     }
 }

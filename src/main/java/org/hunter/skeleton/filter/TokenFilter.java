@@ -1,5 +1,8 @@
 package org.hunter.skeleton.filter;
 
+import org.hunter.pocket.query.SQLQuery;
+import org.hunter.pocket.session.Session;
+import org.hunter.pocket.session.SessionFactory;
 import org.hunter.skeleton.config.FilterPathConfig;
 import org.hunter.skeleton.utils.PathMatcher;
 import org.hunter.skeleton.utils.TokenUtil;
@@ -15,6 +18,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -29,6 +33,7 @@ public class TokenFilter implements Filter {
     private Set<String> excludeUrlPatterns = new LinkedHashSet<>();
     private final FilterPathConfig filterPathConfig;
     private final TokenUtil tokenUtil;
+    private volatile Session session;
 
     public TokenFilter(FilterPathConfig filterPathConfig, TokenUtil tokenUtil) {
         this.filterPathConfig = filterPathConfig;
@@ -52,8 +57,10 @@ public class TokenFilter implements Filter {
                 chain.doFilter(req, res);
             } else {
                 String avatar = this.getAvatar(authHeader);
-                // TODO 权限认证
-                request.setAttribute("claims", avatar);
+                if (!this.canPass(avatar, path)) {
+                    throw new ServletException(String.format("You are not authorized to pass %s", path));
+                }
+                request.setAttribute("avatar", avatar);
                 chain.doFilter(req, res);
             }
         } else {
@@ -79,8 +86,57 @@ public class TokenFilter implements Filter {
         return false;
     }
 
+    private boolean canPass(String avatar, String path) throws ServletException {
+        String[] splitPath = path.split("/");
+        String bundleId = splitPath[splitPath.length - 2];
+        String actionId = splitPath[splitPath.length - 1];
+
+        if (this.session == null) {
+            synchronized (this) {
+                if (this.session == null) {
+                    this.session = SessionFactory.getSession("skeleton");
+                    this.session.open();
+                }
+            }
+        }
+        String sql = "SELECT   " +
+                "   T6.UUID    " +
+                "FROM   " +
+                "   T_MAPPER T1   " +
+                "   LEFT JOIN T_AUTH_MAPPER T2 ON T1.UUID = T2.MAPPER_UUID   " +
+                "   LEFT JOIN T_AUTHORITY T3 ON T2.AUTH_UUID = T3.UUID   " +
+                "   LEFT JOIN T_ROLE_AUTH T4 ON T3.UUID = T4.AUTH_UUID   " +
+                "   LEFT JOIN T_ROLE T5 ON T4.ROLE_UUID = T5.UUID   " +
+                "   LEFT JOIN T_BUNDLE T6 ON T1.BUNDLE_UUID = T6.UUID   " +
+                "   LEFT JOIN T_USER_ROLE T7 ON T5.UUID = T7.ROLE_UUID   " +
+                "   LEFT JOIN T_USER T8 ON T7.USER_UUID = T8.UUID    " +
+                "WHERE   " +
+                "   T1.BUNDLE_ID = :BUNDLE_ID    " +
+                "   AND T1.ACTION_ID = :ACTION_ID    " +
+                "   AND T8.CODE = :USER_CODE UNION   " +
+                "SELECT   " +
+                "   UUID    " +
+                "FROM   " +
+                "   T_BUNDLE    " +
+                "WHERE   " +
+                "   WITH_AUTH = 0    " +
+                "   AND BUNDLE_ID = :BUNDLE_ID ";
+
+        SQLQuery query = this.session.createSQLQuery(sql)
+                .mapperColumn("uuid")
+                .setParameter("BUNDLE_ID", bundleId)
+                .setParameter("ACTION_ID", "/" + actionId)
+                .setParameter("USER_CODE", avatar);
+        try {
+            return query.list().size() > 0;
+        } catch (SQLException e) {
+            throw new ServletException(e.getMessage());
+        }
+    }
+
     @Override
     public void destroy() {
         this.excludeUrlPatterns.clear();
+        this.session.close();
     }
 }

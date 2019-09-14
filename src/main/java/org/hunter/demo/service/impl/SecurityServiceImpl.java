@@ -30,4 +30,15 @@ public class SecurityServiceImpl extends AbstractService implements SecurityServ
         User user = this.userRepository.findByAvatarAndPassword(avatar, this.encodeUtil.abcEncoder(password));
         return this.tokenUtil.generateToken(user);
     }
+
+    @Override
+    public User register(String avatar, String name, String password) throws SQLException, IllegalAccessException {
+        User user = new User();
+        user.setAvatar(avatar);
+        user.setName(name);
+        user.setEnable(true);
+        user.setPassword(encodeUtil.abcEncoder(password));
+        this.userRepository.save(user, false);
+        return user;
+    }
 }

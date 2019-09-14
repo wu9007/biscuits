@@ -25,6 +25,6 @@ skeleton:
   token:
     secret: skeleton-secret
     expiration: 1000
-    tokenHead: Berear
+    tokenHead: Bearer
   filter:
-    excludeUrlPatterns: /login
+    excludeUrlPatterns: /login,/register
