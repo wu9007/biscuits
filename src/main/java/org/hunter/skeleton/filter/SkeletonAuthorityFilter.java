@@ -7,6 +7,7 @@ import org.hunter.skeleton.config.FilterPathConfig;
 import org.hunter.skeleton.utils.PathMatcher;
 import org.hunter.skeleton.utils.TokenUtil;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.Filter;
@@ -54,7 +55,7 @@ public class SkeletonAuthorityFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) res;
         String path = request.getServletPath();
         if (!matchExclude(path)) {
-            final String authHeader = request.getHeader("authorization");
+            final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
             if (OPTIONS.equals(request.getMethod())) {
                 response.setStatus(HttpServletResponse.SC_OK);
                 chain.doFilter(req, res);

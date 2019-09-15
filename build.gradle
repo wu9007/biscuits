@@ -6,7 +6,7 @@ apply plugin: 'build-dashboard'
 apply plugin: 'maven-publish'
 
 group = 'org.hunter'
-version = '0.7.14-PRE'
+version = '0.7.15-PRE'
 sourceCompatibility = 1.8
 
 compileJava {
@@ -45,10 +45,14 @@ publishing {
             pom.withXml {
                 asNode().remove(asNode().get("dependencies"))
                 def dependenciesNode = asNode().appendNode("dependencies")
-                def dependencyNode = dependenciesNode.appendNode('dependency')
-                dependencyNode.appendNode('groupId', 'org.apache.httpcomponents')
-                dependencyNode.appendNode('artifactId', 'httpclient')
-                dependencyNode.appendNode('version', '4.5.2')
+                def httpclientDependencyNode = dependenciesNode.appendNode('dependency')
+                httpclientDependencyNode.appendNode('groupId', 'org.apache.httpcomponents')
+                httpclientDependencyNode.appendNode('artifactId', 'httpclient')
+                httpclientDependencyNode.appendNode('version', '4.5.2')
+                def jwtDependencyNode = dependenciesNode.appendNode('dependency')
+                jwtDependencyNode.appendNode('groupId', 'io.jsonwebtoken')
+                jwtDependencyNode.appendNode('artifactId', 'jjwt')
+                jwtDependencyNode.appendNode('version', '0.9.1')
             }
         }
     }
