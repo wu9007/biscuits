@@ -99,6 +99,12 @@ public class SkeletonAuthorityFilter implements Filter {
             synchronized (this) {
                 if (this.session == null) {
                     this.session = SessionFactory.getSession("skeleton");
+                }
+            }
+        }
+        if (this.session.getClosed()) {
+            synchronized (this) {
+                if (this.session.getClosed()) {
                     this.session.open();
                 }
             }
@@ -135,14 +141,19 @@ public class SkeletonAuthorityFilter implements Filter {
             return query.list().size() > 0;
         } catch (SQLException e) {
             throw new ServletException(e.getMessage());
+        } finally {
+            if (!this.session.getClosed()) {
+                synchronized (this) {
+                    if (!this.session.getClosed()) {
+                        this.session.close();
+                    }
+                }
+            }
         }
     }
 
     @Override
     public void destroy() {
         this.excludeUrlPatterns.clear();
-        if (this.session != null && !this.session.getClosed()) {
-            this.session.close();
-        }
     }
 }

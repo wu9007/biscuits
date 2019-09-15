@@ -5,8 +5,8 @@ apply plugin: "jacoco"
 apply plugin: 'build-dashboard'
 apply plugin: 'maven-publish'
 
-group = 'org.hunter'
-version = '0.7.18-PRE'
+group = 'com.github.leyan95'
+version = '0.7.19-PRE'
 sourceCompatibility = 1.8
 
 compileJava {
@@ -43,8 +43,9 @@ publishing {
         mavenJava(MavenPublication) {
             from components.java
             pom.withXml {
-                asNode().remove(asNode().get("dependencies"))
-                def dependenciesNode = asNode().appendNode("dependencies")
+                def root = asNode()
+                root.remove(root.get("dependencies"))
+                def dependenciesNode = root.appendNode("dependencies")
                 def httpclientDependencyNode = dependenciesNode.appendNode('dependency')
                 httpclientDependencyNode.appendNode('groupId', 'org.apache.httpcomponents')
                 httpclientDependencyNode.appendNode('artifactId', 'httpclient')
