@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,16 +22,18 @@ public class MediatorLauncher implements CommandLineRunner {
     private final ApplicationContext context;
 
     @Autowired
-    public MediatorLauncher(List<Mediator> mediators, ApplicationContext context) {
+    public MediatorLauncher(@Nullable List<Mediator> mediators, ApplicationContext context) {
         this.mediators = mediators;
         this.context = context;
     }
 
     @Override
     public void run(String... args) throws Exception {
-        for (Mediator mediator : mediators) {
-            for (Class<? extends Service> serviceClazz : mediator.getServiceClazzList()) {
-                mediator.registerService(context.getBean(serviceClazz));
+        if (this.mediators != null) {
+            for (Mediator mediator : mediators) {
+                for (Class<? extends Service> serviceClazz : mediator.getServiceClazzList()) {
+                    mediator.registerService(context.getBean(serviceClazz));
+                }
             }
         }
     }
