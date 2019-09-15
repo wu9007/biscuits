@@ -27,22 +27,25 @@ import java.util.Set;
  * @author wujianchuan
  */
 @Component
-@Order(-2147483647)
-public class TokenFilter implements Filter {
+@Order(Integer.MIN_VALUE + 1)
+public class SkeletonAuthorityFilter implements Filter {
     private static final String OPTIONS = "OPTIONS";
     private Set<String> excludeUrlPatterns = new LinkedHashSet<>();
     private final FilterPathConfig filterPathConfig;
     private final TokenUtil tokenUtil;
     private volatile Session session;
 
-    public TokenFilter(FilterPathConfig filterPathConfig, TokenUtil tokenUtil) {
+    public SkeletonAuthorityFilter(FilterPathConfig filterPathConfig, TokenUtil tokenUtil) {
         this.filterPathConfig = filterPathConfig;
         this.tokenUtil = tokenUtil;
     }
 
     @Override
     public void init(FilterConfig filterConfig) {
-        this.excludeUrlPatterns.addAll(Arrays.asList(this.filterPathConfig.getExcludeUrlPatterns().trim().split(",")));
+        String excludeUrlStr = this.filterPathConfig.getExcludeUrlPatterns();
+        if (excludeUrlStr != null && excludeUrlStr.length() > 0) {
+            this.excludeUrlPatterns.addAll(Arrays.asList(this.filterPathConfig.getExcludeUrlPatterns().trim().split(",")));
+        }
     }
 
     @Override
@@ -137,6 +140,8 @@ public class TokenFilter implements Filter {
     @Override
     public void destroy() {
         this.excludeUrlPatterns.clear();
-        this.session.close();
+        if (this.session != null && !this.session.getClosed()) {
+            this.session.close();
+        }
     }
 }
