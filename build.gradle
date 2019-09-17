@@ -57,6 +57,15 @@ publishing {
             }
         }
     }
+    repositories {
+        maven {
+            credentials {
+                username "${upload_username}"
+                password "${upload_password}"
+            }
+            url "${upload_url}"
+        }
+    }
 }
 
 repositories {
@@ -78,7 +87,7 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-cache:2.1.1.RELEASE'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.1.1.RELEASE'
-    implementation 'com.github.leyan95:pocket:0.7.9-PRE'
+    implementation 'com.github.leyan95:pocket:0.7.13-PRE'
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
     implementation 'mysql:mysql-connector-java:8.0.13'

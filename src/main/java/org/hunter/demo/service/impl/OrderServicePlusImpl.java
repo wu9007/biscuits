@@ -8,6 +8,7 @@ import org.hunter.demo.service.OrderPlusService;
 import org.hunter.skeleton.annotation.Affairs;
 import org.hunter.skeleton.annotation.Service;
 import org.hunter.skeleton.controller.FilterView;
+import org.hunter.skeleton.even.EvenCenter;
 import org.hunter.skeleton.service.AbstractService;
 import org.hunter.skeleton.service.PageList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,13 +41,21 @@ public class OrderServicePlusImpl extends AbstractService implements OrderPlusSe
         mediatorArgs.putIfAbsent("available", false);
         this.materialMediator.call(MaterialMediator.UPDATE_RELEVANT_BILL_STATUS, mediatorArgs);
 
-        return this.orderRepository.saveWithTrack(order, true, "ADMIN", "保存订单");
+        int numberOfRowsAffected = this.orderRepository.saveWithTrack(order, true, "ADMIN", "保存订单");
+
+        // Call monitors
+        EvenCenter.getInstance().fireEven("order_save", numberOfRowsAffected, order.getUuid());
+        return numberOfRowsAffected;
     }
 
     @Override
     @Affairs
-    public int update(Order order) throws SQLException, IllegalAccessException {
-        return this.orderRepository.updateWithTrack(order, true, "ADMIN", "更新订单");
+    public int update(Order order) throws Exception {
+        int numberOfRowsAffected = this.orderRepository.updateWithTrack(order, true, "ADMIN", "更新订单");
+
+        // Call monitors
+        EvenCenter.getInstance().fireEven("order_update", numberOfRowsAffected, order.getUuid());
+        return numberOfRowsAffected;
     }
 
     @Override

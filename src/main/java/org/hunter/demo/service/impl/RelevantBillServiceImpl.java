@@ -46,4 +46,17 @@ public class RelevantBillServiceImpl extends AbstractService implements Relevant
     public int updateStatus(String uuid, boolean newStatus) throws SQLException {
         return this.relevantBillRepository.updateStatus(uuid, newStatus);
     }
+
+    @Override
+    public String[] evenSourceIds() {
+        return new String[]{"order_save", "order_update"};
+    }
+
+    @Override
+    public void execute(Object... args) throws SQLException {
+        System.out.println(String.format("I'm %s I see you. I see you. Come out guy, ha ha ha.", this.getClass().getName()));
+        System.out.println(String.format("Give me %s biscuits", args[0]));
+        RelevantBill relevantBill = this.findOne("10130");
+        System.out.println(String.format("Relevant Bill Code Is: %s", relevantBill.getCode()));
+    }
 }

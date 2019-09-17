@@ -1,5 +1,7 @@
 package org.hunter.skeleton.launcher;
 
+import org.hunter.skeleton.even.EvenCenter;
+import org.hunter.skeleton.even.Monitor;
 import org.hunter.skeleton.repository.Repository;
 import org.hunter.skeleton.repository.RepositoryFactory;
 import org.hunter.skeleton.service.AbstractService;
@@ -34,6 +36,11 @@ public class ServiceLauncher implements CommandLineRunner {
         if (serviceList != null && serviceList.size() > 0) {
             for (AbstractService serviceProxy : serviceList) {
                 Object target = AopTargetUtils.getTarget(serviceProxy);
+                // install monitor
+                if (target instanceof Monitor) {
+                    EvenCenter.getInstance().installMonitor((Monitor) serviceProxy);
+                }
+                // install repository list
                 clazz = target.getClass();
                 clazzName = clazz.getName();
                 Field repositoryListField = clazz.getSuperclass().getDeclaredField("repositoryFieldList");

@@ -10,7 +10,7 @@ public interface OrderPlusService {
 
     int save(Order order) throws Exception;
 
-    int update(Order order) throws SQLException, IllegalAccessException;
+    int update(Order order) throws Exception;
 
     Order findOne(String uuid) throws SQLException;
 
