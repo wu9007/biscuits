@@ -5,3 +5,6 @@
 ![Framework diagram](./skeleton.png)
 
 **Document [Link](https://www.yuque.com/shusheng/suibqb/rxi3sd)**
+
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
