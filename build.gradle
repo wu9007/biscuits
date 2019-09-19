@@ -54,6 +54,10 @@ publishing {
                 jwtDependencyNode.appendNode('groupId', 'io.jsonwebtoken')
                 jwtDependencyNode.appendNode('artifactId', 'jjwt')
                 jwtDependencyNode.appendNode('version', '0.9.1')
+                def aopDependencyNode = dependenciesNode.appendNode('dependency')
+                aopDependencyNode.appendNode('groupId', 'org.springframework.boot')
+                aopDependencyNode.appendNode('artifactId', 'spring-boot-starter-aop')
+                aopDependencyNode.appendNode('version', '2.1.1.RELEASE')
             }
         }
     }
