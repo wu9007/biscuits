@@ -135,7 +135,7 @@ public class SkeletonAuthorityFilter implements Filter {
         SQLQuery query = this.session.createSQLQuery(sql)
                 .mapperColumn("uuid")
                 .setParameter("BUNDLE_ID", bundleId)
-                .setParameter("ACTION_ID", "/" + actionId)
+                .setParameter("ACTION_ID", actionId)
                 .setParameter("USER_CODE", avatar);
         try {
             return query.list().size() > 0;
