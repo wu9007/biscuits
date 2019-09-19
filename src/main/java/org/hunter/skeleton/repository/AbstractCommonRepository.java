@@ -65,7 +65,12 @@ public abstract class AbstractCommonRepository<T extends BaseEntity> extends Abs
 
     @Override
     public PageList loadPage(FilterView filterView) throws SQLException {
-        Criteria criteria = filterView.createCriteria(this.getSession(), this.genericClazz);
+        Criteria criteria;
+        if (filterView == null) {
+            criteria = this.getSession().createCriteria(this.genericClazz);
+        } else {
+            criteria = filterView.createCriteria(this.getSession(), this.genericClazz);
+        }
         List list = criteria.listNotCleanRestrictions();
         return PageList.newInstance(list, criteria.count());
     }
