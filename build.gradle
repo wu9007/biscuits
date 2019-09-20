@@ -5,7 +5,7 @@ apply plugin: "jacoco"
 apply plugin: 'build-dashboard'
 apply plugin: 'maven-publish'
 
-group = 'com.github.leyan95'
+group = 'org.hv'
 version = '0.7.21-PRE'
 sourceCompatibility = 1.8
 
@@ -19,15 +19,15 @@ compileTestJava {
 
 jar {
     manifest {
-        attributes 'Implementation-Title': 'skeleton',
+        attributes 'Implementation-Title': 'biscuits',
                 'Implementation-Version': version
     }
 
     exclude "org/hunter/demo"
     exclude "org/hunter/Application.class"
     exclude "application*.yml"
-    exclude "skeleton.sql"
-    exclude "./skeleton.png"
+    exclude "biscuits.sql"
+    exclude "./biscuits.png"
 }
 
 javadoc {
@@ -58,6 +58,10 @@ publishing {
                 aopDependencyNode.appendNode('groupId', 'org.springframework.boot')
                 aopDependencyNode.appendNode('artifactId', 'spring-boot-starter-aop')
                 aopDependencyNode.appendNode('version', '2.1.1.RELEASE')
+                def pocketDependencyNode = dependenciesNode.appendNode('dependency')
+                pocketDependencyNode.appendNode('groupId', 'org.hv')
+                pocketDependencyNode.appendNode('artifactId', 'pocket')
+                pocketDependencyNode.appendNode('version', '0.1.0')
             }
         }
     }
@@ -91,7 +95,7 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-cache:2.1.1.RELEASE'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.1.1.RELEASE'
-    implementation 'com.github.leyan95:pocket:0.7.13-PRE'
+    implementation 'org.hv:pocket:0.1.0'
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
     implementation 'mysql:mysql-connector-java:8.0.13'

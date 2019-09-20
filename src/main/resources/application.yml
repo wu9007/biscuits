@@ -1,6 +1,6 @@
 spring:
   application:
-    name: skeleton
+    name: biscuits-server
 server:
   port: 8089
 
@@ -18,12 +18,10 @@ pocket:
         poolMaxSize: 100
         timeout: 1000
         cacheSize: 1000
-        session: skeleton,demo
-skeleton:
-  cache:
-    hostName: 127.0.0.1
+        session: biscuits,demo
+biscuit:
   token:
-    secret: skeleton-secret
+    secret: biscuit-secret
     expiration: 1000
     tokenHead: Bearer
   filter:

@@ -7,7 +7,7 @@
     },
     {
       "name": "pocket.datasource.node",
-      "type": "java.util.List<org.hunter.pocket.config.DatabaseNodeConfig>",
+      "type": "java.util.List<org.hv.pocket.config.DatabaseNodeConfig>",
       "description": "java.util.List<org.homo.dbconnect.config.DatabaseNode>"
     },
     {
@@ -16,32 +16,32 @@
       "description": "cache size."
     },
     {
-      "name": "skeleton.cache.hostName",
+      "name": "biscuit.cache.hostName",
       "type": "java.lang.String",
       "description": "base cache hostName."
     },
     {
-      "name": "skeleton.cache.password",
+      "name": "biscuit.cache.password",
       "type": "java.lang.String",
       "description": "base cache password."
     },
     {
-      "name": "skeleton.token.secret",
+      "name": "biscuit.token.secret",
       "type": "java.lang.String",
       "description": "token secret code."
     },
     {
-      "name": "skeleton.token.expiration",
+      "name": "biscuit.token.expiration",
       "type": "java.lang.Long",
       "description": "token expiration."
     },
     {
-      "name": "skeleton.token.tokenHead",
+      "name": "biscuit.token.tokenHead",
       "type": "java.lang.String",
       "description": "token head."
     },
     {
-      "name": "skeleton.filter.excludeUrlPatterns",
+      "name": "biscuit.filter.excludeUrlPatterns",
       "type": "java.lang.String",
       "description": "application filter exclude url patterns."
     }
