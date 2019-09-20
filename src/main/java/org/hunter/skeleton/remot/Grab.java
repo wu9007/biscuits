@@ -123,16 +123,36 @@ public class Grab<R> {
         return this;
     }
 
+    /**
+     * Returns the timeout in milliseconds used when requesting a connection from the connection manager
+     *
+     * @param connectionRequestTimeout connection request timeout
+     * @return Grab
+     */
     public Grab<R> setConnectionRequestTimeout(int connectionRequestTimeout) {
         this.connectionRequestTimeout = connectionRequestTimeout;
         return this;
     }
 
+    /**
+     * Determines the timeout in milliseconds until a connection is established.
+     *
+     * @param connectTimeout connect timeout
+     * @return Grab
+     */
     public Grab<R> setConnectTimeout(int connectTimeout) {
         this.connectTimeout = connectTimeout;
         return this;
     }
 
+    /**
+     * Defines the socket timeout ({@code SO_TIMEOUT}) in milliseconds,
+     * which is the timeout for waiting for data  or, put differently,
+     * a maximum period inactivity between two consecutive data packets).
+     *
+     * @param socketTimeout socket timout
+     * @return Grab
+     */
     public Grab<R> setSocketTimeout(int socketTimeout) {
         this.socketTimeout = socketTimeout;
         return this;

@@ -1,5 +1,6 @@
 package org.hunter.demo.service;
 
+
 import org.hunter.skeleton.spine.model.User;
 
 import java.sql.SQLException;

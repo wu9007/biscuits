@@ -1,7 +1,5 @@
 package org.hunter.skeleton.even;
 
-import java.sql.SQLException;
-
 /**
  * @author wujianchuan
  */
@@ -18,5 +16,5 @@ public interface Monitor {
      *
      * @param args arguments.
      */
-    void execute(Object... args) throws SQLException, Exception;
+    void execute(Object... args) throws Exception;
 }

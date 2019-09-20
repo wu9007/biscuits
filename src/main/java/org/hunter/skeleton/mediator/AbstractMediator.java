@@ -1,5 +1,6 @@
 package org.hunter.skeleton.mediator;
 
+
 import org.hunter.skeleton.service.Service;
 import org.hunter.skeleton.utils.AopTargetUtils;
 
@@ -38,7 +39,7 @@ public abstract class AbstractMediator implements Mediator {
         }
     }
 
-    protected <T extends Service> Object apply(String businessName, Map<String, Object> args) throws Exception {
+    protected <T extends Service> Object apply(String businessName, Object... args) throws Exception {
         MediatorFunction<T, Object> businessFunction = (MediatorFunction<T, Object>) this.functionMap.get(businessName);
         if (businessFunction == null) {
             throw new NoSuchMediatorFunctionException(String.format("can not found the mediator function named %s ", businessName));

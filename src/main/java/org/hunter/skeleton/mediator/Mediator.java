@@ -1,9 +1,9 @@
 package org.hunter.skeleton.mediator;
 
+
 import org.hunter.skeleton.service.Service;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author wujianchuan
@@ -31,5 +31,5 @@ public interface Mediator {
      * @return obj
      * @throws Exception e
      */
-    Object call(String businessName, Map<String, Object> args) throws Exception;
+    Object call(String businessName, Object... args) throws Exception;
 }

@@ -1,8 +1,7 @@
 package org.hunter.skeleton.mediator;
 
-import org.hunter.skeleton.service.Service;
 
-import java.util.Map;
+import org.hunter.skeleton.service.Service;
 
 /**
  * @author wujianchuan
@@ -18,5 +17,5 @@ public interface MediatorFunction<T extends Service, R> {
      * @return the function result
      * @throws Exception e
      */
-    R apply(T t, Map<String, Object> u) throws Exception;
+    R apply(T t, Object... u) throws Exception;
 }

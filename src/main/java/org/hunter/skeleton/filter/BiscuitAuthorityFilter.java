@@ -29,14 +29,14 @@ import java.util.Set;
  */
 @Component
 @Order(Integer.MIN_VALUE + 1)
-public class SkeletonAuthorityFilter implements Filter {
+public class BiscuitAuthorityFilter implements Filter {
     private static final String OPTIONS = "OPTIONS";
     private Set<String> excludeUrlPatterns = new LinkedHashSet<>();
     private final FilterPathConfig filterPathConfig;
     private final TokenUtil tokenUtil;
     private volatile Session session;
 
-    public SkeletonAuthorityFilter(FilterPathConfig filterPathConfig, TokenUtil tokenUtil) {
+    public BiscuitAuthorityFilter(FilterPathConfig filterPathConfig, TokenUtil tokenUtil) {
         this.filterPathConfig = filterPathConfig;
         this.tokenUtil = tokenUtil;
     }

@@ -12,6 +12,8 @@ public class DemoBundle extends AbstractBundle {
 
     @Override
     public void init() {
-        this.register("hunter", "主页");
+        this.register("home", "主页");
+        this.register("order", "订单");
+        this.register("remote", "远程调用");
     }
 }

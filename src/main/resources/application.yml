@@ -18,7 +18,7 @@ pocket:
         poolMaxSize: 100
         timeout: 1000
         cacheSize: 1000
-        session: skeleton
+        session: skeleton,demo
 skeleton:
   cache:
     hostName: 127.0.0.1

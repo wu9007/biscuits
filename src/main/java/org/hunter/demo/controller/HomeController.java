@@ -14,7 +14,7 @@ import java.sql.SQLException;
 /**
  * @author wujianchuan
  */
-@Controller(bundleId = "hunter", auth = false)
+@Controller(bundleId = "home", auth = false)
 public class HomeController extends AbstractController {
     private final SecurityService securityService;
 
@@ -24,7 +24,7 @@ public class HomeController extends AbstractController {
 
     @Action(actionId = "/welcome", method = RequestMethod.GET)
     public String welcome() {
-        return "welcome to hunter village";
+        return "welcome to my home!";
     }
 
     @Action(actionId = "/login", method = RequestMethod.POST)

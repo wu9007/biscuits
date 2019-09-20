@@ -13,7 +13,7 @@ import java.sql.SQLException;
 /**
  * @author wujianchuan
  */
-@Service(session = "skeleton")
+@Service(session = "demo")
 public class SecurityServiceImpl extends AbstractService implements SecurityService {
     private final TokenUtil tokenUtil;
     private final EncodeUtil encodeUtil;

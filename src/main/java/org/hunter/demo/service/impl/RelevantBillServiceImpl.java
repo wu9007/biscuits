@@ -10,10 +10,14 @@ import org.hunter.skeleton.service.PageList;
 
 import java.sql.SQLException;
 
+import static org.hunter.demo.constant.DemoEvenConstant.EVEN_ORDER_SAVE;
+import static org.hunter.demo.constant.DemoEvenConstant.EVEN_ORDER_UPDATE;
+
 /**
  * @author wujianchuan
+ * 监听类同服务类组合使用是  前提：{RelevantBillService extends Service, Monitor}
  */
-@Service(session = "skeleton")
+@Service(session = "demo")
 public class RelevantBillServiceImpl extends AbstractService implements RelevantBillService {
     private final
     RelevantBillRepository relevantBillRepository;
@@ -49,7 +53,7 @@ public class RelevantBillServiceImpl extends AbstractService implements Relevant
 
     @Override
     public String[] evenSourceIds() {
-        return new String[]{"order_save", "order_update"};
+        return new String[]{EVEN_ORDER_SAVE, EVEN_ORDER_UPDATE};
     }
 
     @Override

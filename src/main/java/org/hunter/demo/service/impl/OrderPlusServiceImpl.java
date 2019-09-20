@@ -1,7 +1,7 @@
 package org.hunter.demo.service.impl;
 
-import org.hunter.demo.mediator.MaterialMediator;
-import org.hunter.demo.mediator.MaterialMediatorImpl;
+import org.hunter.demo.DemoMediator;
+import org.hunter.demo.constant.DemoMediatorConstant;
 import org.hunter.demo.model.Order;
 import org.hunter.demo.repository.OrderPlusRepository;
 import org.hunter.demo.service.OrderPlusService;
@@ -14,37 +14,37 @@ import org.hunter.skeleton.service.PageList;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
+
+import static org.hunter.demo.constant.DemoEvenConstant.EVEN_ORDER_SAVE;
+import static org.hunter.demo.constant.DemoEvenConstant.EVEN_ORDER_UPDATE;
+
 
 /**
  * @author wujianchuan
  */
-@Service(session = "skeleton")
-public class OrderServicePlusImpl extends AbstractService implements OrderPlusService {
+@Service(session = "demo")
+public class OrderPlusServiceImpl extends AbstractService implements OrderPlusService {
 
     private final OrderPlusRepository orderRepository;
-    private final MaterialMediatorImpl materialMediator;
+    private final DemoMediator demoMediator;
 
     @Autowired
-    public OrderServicePlusImpl(OrderPlusRepository orderRepository, MaterialMediatorImpl materialMediator) {
+    public OrderPlusServiceImpl(OrderPlusRepository orderRepository, DemoMediator demoMediator) {
         this.orderRepository = orderRepository;
-        this.materialMediator = materialMediator;
+        this.demoMediator = demoMediator;
     }
 
     @Override
     @Affairs
     public int save(Order order) throws Exception {
         // Call Mediator to check and change relevant bill status.
-        Map<String, Object> mediatorArgs = new HashMap<>();
-        mediatorArgs.putIfAbsent("uuid", order.getRelevantBillUuid());
-        mediatorArgs.putIfAbsent("available", false);
-        this.materialMediator.call(MaterialMediator.UPDATE_RELEVANT_BILL_STATUS, mediatorArgs);
+        this.demoMediator.call(DemoMediatorConstant.MEDIATOR_UPDATE_RELEVANT_STATUS, order.getRelevantBillUuid(), false);
 
+        // Execute own job
         int numberOfRowsAffected = this.orderRepository.saveWithTrack(order, true, "ADMIN", "保存订单");
 
         // Call monitors
-        EvenCenter.getInstance().fireEven("order_save", numberOfRowsAffected, order.getUuid());
+        EvenCenter.getInstance().fireEven(EVEN_ORDER_SAVE, numberOfRowsAffected, order.getUuid(), "save");
         return numberOfRowsAffected;
     }
 
@@ -54,7 +54,7 @@ public class OrderServicePlusImpl extends AbstractService implements OrderPlusSe
         int numberOfRowsAffected = this.orderRepository.updateWithTrack(order, true, "ADMIN", "更新订单");
 
         // Call monitors
-        EvenCenter.getInstance().fireEven("order_update", numberOfRowsAffected, order.getUuid());
+        EvenCenter.getInstance().fireEven(EVEN_ORDER_UPDATE, numberOfRowsAffected, order.getUuid(), "update");
         return numberOfRowsAffected;
     }
 
