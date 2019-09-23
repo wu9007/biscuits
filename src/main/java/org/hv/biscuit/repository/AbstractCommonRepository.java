@@ -59,7 +59,7 @@ public abstract class AbstractCommonRepository<T extends BaseEntity> extends Abs
 
     @Override
     @Track(data = "#obj", operateName = "#trackDescription", operator = "#trackOperator", operate = OperateEnum.DELETE)
-    public int deleteWithTrack(T obj, String operator, String trackDescription) throws SQLException, IllegalAccessException {
+    public int deleteWithTrack(T obj, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException {
         return this.delete(obj);
     }
 
