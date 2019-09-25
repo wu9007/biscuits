@@ -95,7 +95,7 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-cache:2.1.1.RELEASE'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.1.1.RELEASE'
-    implementation 'org.hv:pocket:0.1.0'
+    implementation 'org.hv:pocket:0.1.1'
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
     implementation 'mysql:mysql-connector-java:8.0.13'

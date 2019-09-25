@@ -24,14 +24,12 @@ public class DemoMediator extends AbstractMediator implements Mediator {
          */
         super.installBusiness(MEDIATOR_UPDATE_RELEVANT_STATUS, RelevantBillService.class, (RelevantBillService service, Object... args) -> {
             service.updateStatus((String) args[0], (boolean) args[1]);
-            return null;
+            return service.findOne((String) args[0]);
         });
         /*
         根据数据标识查询订单.
          */
-        super.installBusiness(MEDIATOR_FIND_ORDER_BY_UUID, OrderPlusService.class, (OrderPlusService service, Object... args) -> {
-            return service.findOne((String) args[0]);
-        });
+        super.installBusiness(MEDIATOR_FIND_ORDER_BY_UUID, OrderPlusService.class, (OrderPlusService service, Object... args) -> service.findOne((String) args[0]));
         // Install other business functions witch you need in the future.
     }
 
