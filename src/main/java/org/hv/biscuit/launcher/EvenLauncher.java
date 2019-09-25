@@ -5,6 +5,7 @@ import org.hv.biscuit.even.Monitor;
 import org.hv.biscuit.utils.AopTargetUtils;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public class EvenLauncher implements CommandLineRunner {
 
     private final List<Monitor> monitors;
 
-    public EvenLauncher(List<Monitor> monitors) {
+    public EvenLauncher(@Nullable List<Monitor> monitors) {
         this.monitors = monitors;
     }
 
