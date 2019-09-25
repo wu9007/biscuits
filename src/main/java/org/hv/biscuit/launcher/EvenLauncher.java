@@ -31,7 +31,7 @@ public class EvenLauncher implements CommandLineRunner {
                 Object target = AopTargetUtils.getTarget(monitorProxy);
                 // install monitor
                 if (target instanceof Monitor) {
-                    EvenCenter.getInstance().installMonitor((Monitor) monitorProxy);
+                    EvenCenter.getInstance().installMonitor(monitorProxy);
                 }
             }
         }
