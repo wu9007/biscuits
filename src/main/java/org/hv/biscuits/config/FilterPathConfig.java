@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
  * @author wujianchuan
  */
 @Component(value = "BiscuitJwtAccountConfig")
-@ConfigurationProperties(prefix = "biscuit.filter")
+@ConfigurationProperties(prefix = "biscuits.filter")
 public class FilterPathConfig {
 
     private String excludeUrlPatterns;

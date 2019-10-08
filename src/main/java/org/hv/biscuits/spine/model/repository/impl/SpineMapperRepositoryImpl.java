@@ -10,7 +10,7 @@ import java.sql.SQLException;
 /**
  * @author wujianchuan 2019/2/21
  */
-@Service(session = "biscuit")
+@Service(session = "biscuits")
 public class SpineMapperRepositoryImpl extends AbstractRepository implements SpineMapperRepository {
     @Override
     public Mapper findOne(String uuid) throws SQLException {

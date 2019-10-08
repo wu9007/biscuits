@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
  * @author wujianchuan
  */
 @Component
-@ConfigurationProperties(prefix = "biscuit.token")
+@ConfigurationProperties(prefix = "biscuits.token")
 public class TokenConfig {
 
     private String secret;
