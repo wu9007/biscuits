@@ -1,6 +1,6 @@
 package org.hv.demo;
 
-import org.hv.biscuit.permission.AbstractPermission;
+import org.hv.biscuits.permission.AbstractPermission;
 import org.springframework.stereotype.Component;
 
 /**

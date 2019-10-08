@@ -1,11 +1,11 @@
 package org.hv.demo.controller;
 
-import org.hv.biscuit.annotation.Action;
-import org.hv.biscuit.annotation.Auth;
-import org.hv.biscuit.annotation.Controller;
-import org.hv.biscuit.controller.AbstractController;
-import org.hv.biscuit.controller.Body;
-import org.hv.biscuit.service.PageList;
+import org.hv.biscuits.annotation.Action;
+import org.hv.biscuits.annotation.Auth;
+import org.hv.biscuits.annotation.Controller;
+import org.hv.biscuits.controller.AbstractController;
+import org.hv.biscuits.controller.Body;
+import org.hv.biscuits.service.PageList;
 import org.hv.demo.model.Order;
 import org.hv.demo.service.OrderPlusService;
 import org.springframework.web.bind.annotation.RequestMethod;

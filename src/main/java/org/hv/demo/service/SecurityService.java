@@ -1,6 +1,6 @@
 package org.hv.demo.service;
 
-import org.hv.biscuit.spine.model.User;
+import org.hv.biscuits.spine.model.User;
 
 import java.sql.SQLException;
 

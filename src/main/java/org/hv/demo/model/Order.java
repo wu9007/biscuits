@@ -1,7 +1,7 @@
 package org.hv.demo.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.hv.biscuit.jsonserializer.LocalDateTimeDeserializer;
+import org.hv.biscuits.jsonserializer.LocalDateTimeDeserializer;
 import org.hv.pocket.annotation.Column;
 import org.hv.pocket.annotation.Entity;
 import org.hv.pocket.annotation.Join;

@@ -1,6 +1,6 @@
 package org.hv.demo;
 
-import org.hv.biscuit.bundle.AbstractBundle;
+import org.hv.biscuits.bundle.AbstractBundle;
 import org.springframework.stereotype.Component;
 
 /**

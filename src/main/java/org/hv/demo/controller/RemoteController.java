@@ -1,10 +1,10 @@
 package org.hv.demo.controller;
 
-import org.hv.biscuit.annotation.Action;
-import org.hv.biscuit.annotation.Controller;
-import org.hv.biscuit.controller.AbstractController;
-import org.hv.biscuit.remote.DesEncryption;
-import org.hv.biscuit.remote.Grab;
+import org.hv.biscuits.annotation.Action;
+import org.hv.biscuits.annotation.Controller;
+import org.hv.biscuits.controller.AbstractController;
+import org.hv.biscuits.remote.DesEncryption;
+import org.hv.biscuits.remote.Grab;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.io.IOException;

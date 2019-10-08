@@ -1,8 +1,8 @@
 package org.hv.demo.service;
 
-import org.hv.biscuit.controller.FilterView;
-import org.hv.biscuit.service.PageList;
-import org.hv.biscuit.service.Service;
+import org.hv.biscuits.controller.FilterView;
+import org.hv.biscuits.service.PageList;
+import org.hv.biscuits.service.Service;
 import org.hv.demo.model.Order;
 
 import java.sql.SQLException;

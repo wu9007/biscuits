@@ -1,6 +1,6 @@
 package org.hv.demo.repository.impl;
 
-import org.hv.biscuit.repository.AbstractCommonRepository;
+import org.hv.biscuits.repository.AbstractCommonRepository;
 import org.hv.demo.model.RelevantBill;
 import org.hv.demo.repository.RelevantBillRepository;
 import org.hv.pocket.criteria.Criteria;

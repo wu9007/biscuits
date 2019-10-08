@@ -1,7 +1,7 @@
 package org.hv.demo.repository;
 
-import org.hv.biscuit.repository.CommonRepository;
-import org.hv.biscuit.spine.model.User;
+import org.hv.biscuits.repository.CommonRepository;
+import org.hv.biscuits.spine.model.User;
 
 import java.sql.SQLException;
 

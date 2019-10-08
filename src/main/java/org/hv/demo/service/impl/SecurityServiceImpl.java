@@ -1,10 +1,10 @@
 package org.hv.demo.service.impl;
 
-import org.hv.biscuit.annotation.Service;
-import org.hv.biscuit.service.AbstractService;
-import org.hv.biscuit.spine.model.User;
-import org.hv.biscuit.spine.utils.EncodeUtil;
-import org.hv.biscuit.utils.TokenUtil;
+import org.hv.biscuits.annotation.Service;
+import org.hv.biscuits.service.AbstractService;
+import org.hv.biscuits.spine.model.User;
+import org.hv.biscuits.spine.utils.EncodeUtil;
+import org.hv.biscuits.utils.TokenUtil;
 import org.hv.demo.repository.UserRepository;
 import org.hv.demo.service.SecurityService;
 

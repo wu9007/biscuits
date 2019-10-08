@@ -1,7 +1,7 @@
 package org.hv.demo.repository.impl;
 
-import org.hv.biscuit.repository.AbstractCommonRepository;
-import org.hv.biscuit.spine.model.User;
+import org.hv.biscuits.repository.AbstractCommonRepository;
+import org.hv.biscuits.spine.model.User;
 import org.hv.demo.repository.UserRepository;
 import org.hv.pocket.criteria.Criteria;
 import org.hv.pocket.criteria.Restrictions;

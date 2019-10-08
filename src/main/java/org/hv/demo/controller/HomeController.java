@@ -1,10 +1,10 @@
 package org.hv.demo.controller;
 
-import org.hv.biscuit.annotation.Action;
-import org.hv.biscuit.annotation.Controller;
-import org.hv.biscuit.controller.AbstractController;
-import org.hv.biscuit.controller.Body;
-import org.hv.biscuit.spine.model.User;
+import org.hv.biscuits.annotation.Action;
+import org.hv.biscuits.annotation.Controller;
+import org.hv.biscuits.controller.AbstractController;
+import org.hv.biscuits.controller.Body;
+import org.hv.biscuits.spine.model.User;
 import org.hv.demo.service.SecurityService;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
