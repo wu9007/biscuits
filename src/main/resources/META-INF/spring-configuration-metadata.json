@@ -16,32 +16,32 @@
       "description": "cache size."
     },
     {
-      "name": "biscuit.cache.hostName",
+      "name": "biscuits.cache.hostName",
       "type": "java.lang.String",
       "description": "base cache hostName."
     },
     {
-      "name": "biscuit.cache.password",
+      "name": "biscuits.cache.password",
       "type": "java.lang.String",
       "description": "base cache password."
     },
     {
-      "name": "biscuit.token.secret",
+      "name": "biscuits.token.secret",
       "type": "java.lang.String",
       "description": "token secret code."
     },
     {
-      "name": "biscuit.token.expiration",
+      "name": "biscuits.token.expiration",
       "type": "java.lang.Long",
       "description": "token expiration."
     },
     {
-      "name": "biscuit.token.tokenHead",
+      "name": "biscuits.token.tokenHead",
       "type": "java.lang.String",
       "description": "token head."
     },
     {
-      "name": "biscuit.filter.excludeUrlPatterns",
+      "name": "biscuits.filter.excludeUrlPatterns",
       "type": "java.lang.String",
       "description": "application filter exclude url patterns."
     }

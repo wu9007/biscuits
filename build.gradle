@@ -6,7 +6,7 @@ apply plugin: 'build-dashboard'
 apply plugin: 'maven-publish'
 
 group = 'org.hv'
-version = '0.1.0'
+version = '0.1.1'
 sourceCompatibility = 1.8
 
 compileJava {
@@ -23,8 +23,8 @@ jar {
                 'Implementation-Version': version
     }
 
-    exclude "org/hunter/demo"
-    exclude "org/hunter/Application.class"
+    exclude "org/hv/demo"
+    exclude "org/hv/Application.class"
     exclude "application*.yml"
     exclude "biscuits.sql"
     exclude "./biscuits.png"
