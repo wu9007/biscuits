@@ -1,6 +1,5 @@
-package org.hv.biscuits.launcher;
+package org.hv.biscuits.domain.mediator;
 
-import org.hv.biscuits.domain.mediator.Mediator;
 import org.hv.biscuits.service.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;

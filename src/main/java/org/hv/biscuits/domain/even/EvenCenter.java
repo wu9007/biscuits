@@ -26,7 +26,7 @@ public class EvenCenter {
         }
     }
 
-    public void installMonitor(Monitor monitor) {
+    void installMonitor(Monitor monitor) {
         String[] evenSourceIds = monitor.evenSourceIds();
         for (String evenSourceId : evenSourceIds) {
             if (!this.monitorsMap.containsKey(evenSourceId)) {
