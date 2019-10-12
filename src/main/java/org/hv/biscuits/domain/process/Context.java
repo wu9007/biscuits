@@ -35,6 +35,13 @@ public interface Context {
     void setCurrentNode(Node node);
 
     /**
+     * 获取当前节点
+     *
+     * @return 当前节点
+     */
+    Node getCurrentNode();
+
+    /**
      * 根据节点名称获取节点
      *
      * @param nodeName 节点名称

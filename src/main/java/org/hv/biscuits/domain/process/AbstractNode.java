@@ -6,6 +6,8 @@ package org.hv.biscuits.domain.process;
 public abstract class AbstractNode implements Node {
     private Node preNode;
     private Node nextNode;
+    private boolean isTop;
+    private boolean isTail;
 
     /**
      * 流程通过时执行的操作
@@ -29,19 +31,55 @@ public abstract class AbstractNode implements Node {
     }
 
     @Override
+    public Node getPreNode() {
+        return this.preNode;
+    }
+
+    @Override
     public void setNextNode(Node nextNode) {
         this.nextNode = nextNode;
     }
 
     @Override
+    public Node getNextNode() {
+        return this.nextNode;
+    }
+
+    @Override
+    public void beTop() {
+        this.isTop = true;
+    }
+
+    @Override
+    public boolean isTop() {
+        return this.isTop;
+    }
+
+    @Override
+    public void beTail() {
+        this.isTail = true;
+    }
+
+    @Override
+    public boolean isTail() {
+        return this.isTail;
+    }
+
+    @Override
     public boolean accept(Context context) {
-        context.setCurrentNode(nextNode);
-        return this.doAccept(context.getDataUuid());
+        boolean success = this.doAccept(context.getDataUuid());
+        if (success) {
+            context.setCurrentNode(nextNode);
+        }
+        return success;
     }
 
     @Override
     public boolean rejection(Context context) {
-        context.setCurrentNode(preNode);
-        return this.doRejection(context.getDataUuid());
+        boolean success = this.doRejection(context.getDataUuid());
+        if (success) {
+            context.setCurrentNode(preNode);
+        }
+        return success;
     }
 }

@@ -40,7 +40,10 @@ public class ProcessContext implements Context {
             node.setPreNode(preNode);
 
             if (index == 0) {
+                node.beTop();
                 this.setCurrentNode(node);
+            } else if (index == sortedNodeNames.length - 1) {
+                node.beTail();
             }
 
             if (preNode != null) {
@@ -65,6 +68,11 @@ public class ProcessContext implements Context {
     }
 
     @Override
+    public Node getCurrentNode() {
+        return this.currentNode;
+    }
+
+    @Override
     public Node getNodeByName(String nodeName) {
         return this.nodeMapper.get(nodeName);
     }
@@ -72,7 +80,7 @@ public class ProcessContext implements Context {
     @Override
     public boolean accept() throws Exception {
         if (this.enable) {
-            if (currentNode != null) {
+            if (currentNode != null && !currentNode.isTail()) {
                 return this.currentNode.accept(this);
             } else {
                 throw new Exception("Sorry, there are no more nodes.");
@@ -84,8 +92,8 @@ public class ProcessContext implements Context {
 
     @Override
     public boolean rejection() throws Exception {
-        if (!this.enable) {
-            if (this.currentNode != null) {
+        if (this.enable) {
+            if (this.currentNode != null && !currentNode.isTop()) {
                 return this.currentNode.rejection(this);
             } else {
                 throw new Exception("Sorry, there are no more nodes.");

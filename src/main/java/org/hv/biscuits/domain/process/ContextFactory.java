@@ -23,6 +23,9 @@ public class ContextFactory {
     }
 
     public Context buildProcessContext(String processName, String dataUuid, String[] sortedNodeNames) throws Exception {
+        if (processName == null || dataUuid == null) {
+            throw new Exception("Make sure that the process name and data identifier are in the correct format.");
+        }
         String contextPoolKey = processName + "_" + dataUuid;
         if (this.contextPool.containsKey(contextPoolKey)) {
             throw new Exception("This process already exists. Please don't create it again.");

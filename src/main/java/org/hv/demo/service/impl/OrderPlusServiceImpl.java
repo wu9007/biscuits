@@ -78,8 +78,14 @@ public class OrderPlusServiceImpl extends AbstractService implements OrderPlusSe
     public boolean audit(String uuid, boolean accept) throws Exception {
         Context auditProcessContext = ContextFactory.getInstance().getProcessContext("orderAuditProcessor", uuid);
         if (accept) {
+            if (auditProcessContext.getCurrentNode().isTail()) {
+                throw new Exception("该节点为最后一个节点故无法再进行审核。");
+            }
             return auditProcessContext.accept();
         } else {
+            if (auditProcessContext.getCurrentNode().isTop()) {
+                throw new Exception("该节点为第一个节点故无法再进行撤销。");
+            }
             return auditProcessContext.rejection();
         }
     }

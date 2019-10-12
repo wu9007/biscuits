@@ -1,6 +1,40 @@
 package org.hv.biscuits.domain.process;
 
+/**
+ * @author wujianchuan
+ */
 public interface Node {
+
+    /**
+     * 节点名称
+     *
+     * @return 节点名称
+     */
+    String getSurName();
+
+    /**
+     * 将该节点设置为头节点
+     */
+    void beTop();
+
+    /**
+     * 获取该节点是否为头节点
+     *
+     * @return 是否为头节点
+     */
+    boolean isTop();
+
+    /**
+     * 将该节点设置为尾节点
+     */
+    void beTail();
+
+    /**
+     * 获取该节点是否为尾节点
+     *
+     * @return 是否为尾节点
+     */
+    boolean isTail();
 
     /**
      * 设置上一个节点
@@ -10,11 +44,25 @@ public interface Node {
     void setPreNode(Node preNode);
 
     /**
+     * 获取前一个结点
+     *
+     * @return 前一个结点
+     */
+    Node getPreNode();
+
+    /**
      * 设置下一个节点
      *
      * @param nextNode 下一个节点
      */
     void setNextNode(Node nextNode);
+
+    /**
+     * 获取下一个节点
+     *
+     * @return 下一个节点
+     */
+    Node getNextNode();
 
     /**
      * 流程通过时执行的操作
