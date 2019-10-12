@@ -7,6 +7,10 @@ import java.util.Map;
  */
 public class ProcessContext implements Context {
     /**
+     * 业务数据的数据标识
+     */
+    private String dataUuid;
+    /**
      * 通常保存后改流程才可用
      */
     private boolean enable = false;
@@ -43,6 +47,16 @@ public class ProcessContext implements Context {
                 preNode.setNextNode(node);
             }
         }
+    }
+
+    @Override
+    public void setDataUuid(String dataUuid) {
+        this.dataUuid = dataUuid;
+    }
+
+    @Override
+    public String getDataUuid() {
+        return this.dataUuid;
     }
 
     @Override
@@ -83,11 +97,13 @@ public class ProcessContext implements Context {
 
     @Override
     public void enable() {
+        //TODO 将当前流程的信息持久化
         this.enable = true;
     }
 
     @Override
     public void disable() {
+        //TODO 将当前流程信息从持久层数据中清除
         this.enable = false;
     }
 }

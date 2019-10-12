@@ -9,16 +9,16 @@ import org.hv.biscuits.domain.process.Transfer;
 @Transfer(processorName = "orderAuditProcessor", nodeName = "groupAuditNode")
 public class GroupAuditNode extends AbstractNode {
     @Override
-    public boolean doAccept() {
+    public boolean doAccept(String dataUuid) {
         // do something ...
-        System.out.println("小组审核通过 进入下一个节点。");
+        System.out.println(String.format("单据：%s, 小组审核通过 进入下一个节点。", dataUuid));
         return true;
     }
 
     @Override
-    public boolean doRejection() {
+    public boolean doRejection(String dataUuid) {
         // do something ...
-        System.out.println("小组审核驳回 进入上一个节点。");
+        System.out.println(String.format("单据：%s, 小组审核驳回 进入上一个节点。", dataUuid));
         return true;
     }
 }

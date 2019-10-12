@@ -30,7 +30,6 @@ public class OrderPlusServiceImpl extends AbstractService implements OrderPlusSe
     private final OrderPlusRepository orderRepository;
     private final RelevantBillService relevantBillService;
     private final DemoMediator demoMediator;
-    private Context auditProcessContext;
 
     @Autowired
     public OrderPlusServiceImpl(OrderPlusRepository orderRepository, DemoMediator demoMediator, RelevantBillService relevantBillService) {
@@ -54,13 +53,13 @@ public class OrderPlusServiceImpl extends AbstractService implements OrderPlusSe
         // Call monitors
         EvenCenter.getInstance().fireEven(EVEN_ORDER_SAVE, numberOfRowsAffected, order.getUuid(), "save");
 
-        // Init process context and Set to available
-        this.auditProcessContext = ContextFactory.getInstance()
-                .getContext(
-                        "orderAuditProcessor",
-                        new String[]{"directLeaderAuditNode", "departmentAuditNode", "groupAuditNode"}
-                );
-        this.auditProcessContext.enable();
+        // Build process context and Set to available
+        Context auditProcessContext = ContextFactory.getInstance().buildProcessContext(
+                "orderAuditProcessor",
+                order.getUuid(),
+                new String[]{"directLeaderAuditNode", "departmentAuditNode", "groupAuditNode"}
+        );
+        auditProcessContext.enable();
 
         return numberOfRowsAffected;
     }
@@ -77,10 +76,11 @@ public class OrderPlusServiceImpl extends AbstractService implements OrderPlusSe
 
     @Override
     public boolean audit(String uuid, boolean accept) throws Exception {
+        Context auditProcessContext = ContextFactory.getInstance().getProcessContext("orderAuditProcessor", uuid);
         if (accept) {
-            return this.auditProcessContext.accept();
+            return auditProcessContext.accept();
         } else {
-            return this.auditProcessContext.rejection();
+            return auditProcessContext.rejection();
         }
     }
 

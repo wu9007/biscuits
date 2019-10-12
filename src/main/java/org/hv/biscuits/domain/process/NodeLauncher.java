@@ -24,7 +24,8 @@ public class NodeLauncher implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // 将所有节点(Node)分组并创建作用域（Context） 将所有的作用域（Context）放入作用域工厂（ContextFactory）
+        //TODO 从持久化数据中获取所有流程中的节点，并进行恢复
+
         if (nodeList != null) {
             Map<String, List<Node>> nodesMapper = nodeList.parallelStream().collect(Collectors.groupingBy(node -> {
                 Transfer transfer = node.getClass().getAnnotation(Transfer.class);
@@ -41,8 +42,7 @@ public class NodeLauncher implements CommandLineRunner {
                             transfer = node.getClass().getAnnotation(Transfer.class);
                             nodeMapper.put(transfer.nodeName(), node);
                         }
-                        Context context = new ProcessContext(nodeMapper);
-                        contextFactory.putContext(entry.getKey(), context);
+                        contextFactory.putNodeMapper(entry.getKey(), nodeMapper);
                     });
         }
     }

@@ -14,6 +14,20 @@ public interface Context {
     void setSortedNodeNames(String[] sortedNodeNames) throws Exception;
 
     /**
+     * 设置业务数据的数据标识
+     *
+     * @param dataUuid 业务数据的数据标识
+     */
+    void setDataUuid(String dataUuid);
+
+    /**
+     * 获取业务数据的数据标识
+     *
+     * @return 业务数据的数据标识
+     */
+    String getDataUuid();
+
+    /**
      * 设置当前节点
      *
      * @param node 节点
