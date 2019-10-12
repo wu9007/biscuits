@@ -1,7 +1,7 @@
 package org.hv.demo;
 
-import org.hv.biscuits.mediator.AbstractMediator;
-import org.hv.biscuits.mediator.Mediator;
+import org.hv.biscuits.domain.mediator.AbstractMediator;
+import org.hv.biscuits.domain.mediator.Mediator;
 import org.hv.demo.service.OrderPlusService;
 import org.hv.demo.service.RelevantBillService;
 import org.springframework.stereotype.Component;

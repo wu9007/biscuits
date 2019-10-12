@@ -1,6 +1,6 @@
 package org.hv.demo.monitor;
 
-import org.hv.biscuits.even.Monitor;
+import org.hv.biscuits.domain.even.Monitor;
 import org.hv.demo.DemoMediator;
 import org.hv.demo.model.Order;
 import org.springframework.stereotype.Component;

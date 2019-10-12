@@ -1,4 +1,4 @@
-package org.hv.biscuits.mediator;
+package org.hv.biscuits.domain.mediator;
 
 /**
  * @author wujianchuan

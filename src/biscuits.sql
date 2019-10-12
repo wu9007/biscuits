@@ -1,19 +1,3 @@
-/*
- Navicat Premium Data Transfer
-
- Source Server         : Home
- Source Server Type    : MySQL
- Source Server Version : 80015
- Source Host           : localhost:3306
- Source Schema         : home
-
- Target Server Type    : MySQL
- Target Server Version : 80015
- File Encoding         : 65001
-
- Date: 21/09/2019 00:05:12
-*/
-
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
@@ -33,8 +17,9 @@ CREATE TABLE `t_auth_mapper`  (
 -- ----------------------------
 -- Records of t_auth_mapper
 -- ----------------------------
-INSERT INTO `t_auth_mapper` VALUES ('1011010', 'BISCUIT', '1011020', '1011033');
-INSERT INTO `t_auth_mapper` VALUES ('1011011', 'BISCUIT', '1011021', '1011034');
+INSERT INTO `t_auth_mapper` VALUES ('1011010', 'BISCUITS-SERVER', '1011020', '1011033');
+INSERT INTO `t_auth_mapper` VALUES ('1011011', 'BISCUITS-SERVER', '1011021', '1011034');
+INSERT INTO `t_auth_mapper` VALUES ('1011012', 'BISCUITS-SERVER', '1011020', '1011035');
 
 -- ----------------------------
 -- Table structure for t_authority
@@ -54,8 +39,8 @@ CREATE TABLE `t_authority`  (
 -- ----------------------------
 -- Records of t_authority
 -- ----------------------------
-INSERT INTO `t_authority` VALUES ('1011020', 'BISCUIT', 'order_read', '读取', '读取订单数据的权限', 'order');
-INSERT INTO `t_authority` VALUES ('1011021', 'BISCUIT', 'order_manage', '管理', '管理订单数据的权限', 'order');
+INSERT INTO `t_authority` VALUES ('1011020', 'BISCUITS-SERVER', 'order_manage', '管理', '管理订单数据的权限', 'order');
+INSERT INTO `t_authority` VALUES ('1011021', 'BISCUITS-SERVER', 'order_read', '读取', '读取订单数据的权限', 'order');
 
 -- ----------------------------
 -- Table structure for t_bundle
@@ -75,7 +60,16 @@ CREATE TABLE `t_bundle`  (
 -- ----------------------------
 INSERT INTO `t_bundle` VALUES ('1011080', 'home', '主页', 'BISCUIT', 0);
 INSERT INTO `t_bundle` VALUES ('1011081', 'order', '订单', 'BISCUIT', 1);
+INSERT INTO `t_bundle` VALUES ('10110810', 'order', '订单', 'SKELETON-SERVER', 1);
+INSERT INTO `t_bundle` VALUES ('10110811', 'remote', '远程调用', 'SKELETON-SERVER', 0);
 INSERT INTO `t_bundle` VALUES ('1011082', 'remote', '远程调用', 'BISCUIT', 0);
+INSERT INTO `t_bundle` VALUES ('1011083', 'home', '主页', 'BISCUITS-SERVER', 0);
+INSERT INTO `t_bundle` VALUES ('1011084', 'order', '订单', 'BISCUITS-SERVER', 1);
+INSERT INTO `t_bundle` VALUES ('1011085', 'remote', '远程调用', 'BISCUITS-SERVER', 0);
+INSERT INTO `t_bundle` VALUES ('1011086', 'home', '主页', 'DEMO', 0);
+INSERT INTO `t_bundle` VALUES ('1011087', 'order', '订单', 'DEMO', 1);
+INSERT INTO `t_bundle` VALUES ('1011088', 'remote', '远程调用', 'DEMO', 0);
+INSERT INTO `t_bundle` VALUES ('1011089', 'home', '主页', 'SKELETON-SERVER', 0);
 
 -- ----------------------------
 -- Table structure for t_bundle_group
@@ -100,7 +94,7 @@ CREATE TABLE `t_bundle_group_relation`  (
   `sort` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`uuid`) USING BTREE,
   UNIQUE INDEX `key_sort`(`sort`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 194 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 193 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for t_department
@@ -135,11 +129,6 @@ CREATE TABLE `t_history`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of t_history
--- ----------------------------
-INSERT INTO `t_history` VALUES ('1011111', 'add', 'ADMIN', '2019-09-21 00:04:33', '10101', '{\"业务\": \"保存订单\", \"关键数据\": {\"类型\": \"---\"}, \"操作对象\": \"单据\", \"新增的数据\": {\"单价\": 1.1, \"日期\": \"---\", \"时间\": \"---\", \"状态\": \"---\", \"类型\": \"---\", \"编号\": \"DEMO-1568995473402\", \"排序码\": 0, \"订单支付方式\": \"---\", \"关联单据的数据标识\": \"10130\"}}');
-
--- ----------------------------
 -- Table structure for t_mapper
 -- ----------------------------
 DROP TABLE IF EXISTS `t_mapper`;
@@ -157,12 +146,13 @@ CREATE TABLE `t_mapper`  (
 -- ----------------------------
 -- Records of t_mapper
 -- ----------------------------
-INSERT INTO `t_mapper` VALUES ('1011030', '1011080', 'POST', '/register', 'BISCUIT', 'home');
-INSERT INTO `t_mapper` VALUES ('1011031', '1011080', 'GET', '/welcome', 'BISCUIT', 'home');
-INSERT INTO `t_mapper` VALUES ('1011032', '1011080', 'POST', '/login', 'BISCUIT', 'home');
-INSERT INTO `t_mapper` VALUES ('1011033', '1011081', 'GET', 'list_order', 'BISCUIT', 'order');
-INSERT INTO `t_mapper` VALUES ('1011034', '1011081', 'POST', 'save', 'BISCUIT', 'order');
-INSERT INTO `t_mapper` VALUES ('1011035', '1011082', 'GET', '/bai_du_dom', 'BISCUIT', 'remote');
+INSERT INTO `t_mapper` VALUES ('1011030', '1011083', 'POST', 'register', 'BISCUITS-SERVER', 'home');
+INSERT INTO `t_mapper` VALUES ('1011031', '1011083', 'POST', 'login', 'BISCUITS-SERVER', 'home');
+INSERT INTO `t_mapper` VALUES ('1011032', '1011083', 'GET', 'welcome', 'BISCUITS-SERVER', 'home');
+INSERT INTO `t_mapper` VALUES ('1011033', '1011084', 'POST', 'audit', 'BISCUITS-SERVER', 'order');
+INSERT INTO `t_mapper` VALUES ('1011034', '1011084', 'GET', 'list_order', 'BISCUITS-SERVER', 'order');
+INSERT INTO `t_mapper` VALUES ('1011035', '1011084', 'POST', 'save', 'BISCUITS-SERVER', 'order');
+INSERT INTO `t_mapper` VALUES ('1011036', '1011085', 'GET', 'bai_du_dom', 'BISCUITS-SERVER', 'remote');
 
 -- ----------------------------
 -- Table structure for t_role
@@ -200,8 +190,8 @@ CREATE TABLE `t_role_auth`  (
 -- ----------------------------
 -- Records of t_role_auth
 -- ----------------------------
-INSERT INTO `t_role_auth` VALUES ('0001', '001', '1011020');
-INSERT INTO `t_role_auth` VALUES ('0002', '001', '1011021');
+INSERT INTO `t_role_auth` VALUES ('001', '001', '1011020');
+INSERT INTO `t_role_auth` VALUES ('002', '001', '1011021');
 
 -- ----------------------------
 -- Table structure for t_user
@@ -268,7 +258,49 @@ CREATE TABLE `tbl_order`  (
 -- ----------------------------
 -- Records of tbl_order
 -- ----------------------------
-INSERT INTO `tbl_order` VALUES ('10101', '10130', 'DEMO-1568995473402', 1.10, NULL, NULL, NULL, NULL, 0, NULL);
+INSERT INTO `tbl_order` VALUES ('10101', '10130', 'DEMO-1568995473402', 1.10, NULL, NULL, NULL, '002', 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101010', NULL, 'C-006', 50.25, '2019-09-21', '2019-09-21 00:10:39', 0, '002', 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101011', NULL, 'C-001', 500.50, '2019-09-24', '2019-09-21 00:10:39', NULL, '002', 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101012', '10130', 'DEMO-1568996507289', 1.10, NULL, NULL, NULL, '002', 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101013', '10130', 'DEMO-1568996804537', 1.10, NULL, NULL, NULL, '002', 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101015', NULL, 'C-006', 50.25, '2019-09-23', '2019-09-23 19:20:41', 0, '002', 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101016', NULL, 'C-001', 500.50, '2019-09-24', '2019-09-23 19:20:41', NULL, '002', 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101018', NULL, 'C-006', 50.25, '2019-09-23', '2019-09-23 19:21:15', 0, '002', 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101019', NULL, 'C-001', 500.50, '2019-09-24', '2019-09-23 19:21:15', NULL, '002', 0, NULL);
+INSERT INTO `tbl_order` VALUES ('10102', '10130', 'DEMO-1568995661235', 1.10, NULL, NULL, NULL, '002', 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101021', NULL, 'C-006', 50.25, '2019-09-23', '2019-09-23 19:24:08', 0, '002', 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101022', NULL, 'C-001', 500.50, '2019-09-24', '2019-09-23 19:24:08', NULL, '002', 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101024', NULL, 'C-006', 50.25, '2019-09-24', '2019-09-24 09:53:07', 0, '002', 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101025', NULL, 'C-001', 500.50, '2019-09-24', '2019-09-24 09:53:07', NULL, '002', 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101027', NULL, 'C-006', 50.25, '2019-09-24', '2019-09-24 10:15:30', 0, '002', 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101028', NULL, 'C-001', 500.50, '2019-09-24', '2019-09-24 10:15:30', NULL, '002', 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101030', NULL, 'C-006', 50.25, '2019-09-24', '2019-09-24 11:05:08', 0, '002', 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101031', NULL, 'C-001', 500.50, '2019-09-24', '2019-09-24 11:05:08', NULL, '002', 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101033', NULL, 'C-006', 50.25, '2019-09-24', '2019-09-24 11:10:19', 0, '002', 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101034', NULL, 'C-001', 500.50, '2019-09-24', '2019-09-24 11:10:19', NULL, NULL, 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101035', '10130', 'DEMO-1569397824628', 1.10, NULL, NULL, NULL, NULL, 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101036', '10130', 'DEMO-1569397839986', 1.10, NULL, NULL, NULL, NULL, 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101037', '10130', 'DEMO-1569397892903', 1.10, NULL, NULL, NULL, NULL, 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101038', '10130', 'DEMO-1569398150136', 1.10, NULL, NULL, NULL, NULL, 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101039', '10130', 'DEMO-1569398163349', 1.10, NULL, NULL, NULL, NULL, 0, NULL);
+INSERT INTO `tbl_order` VALUES ('10104', NULL, 'C-006', 50.25, '2019-09-21', '2019-09-21 00:08:22', 0, '002', 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101040', '10130', 'DEMO-1569398230141', 1.10, NULL, NULL, NULL, NULL, 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101041', '10130', 'DEMO-1569398230996', 1.10, NULL, NULL, NULL, NULL, 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101042', '10130', 'DEMO-1569398231728', 1.10, NULL, NULL, NULL, NULL, 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101043', '10130', 'DEMO-1569398232253', 1.10, NULL, NULL, NULL, NULL, 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101044', '10130', 'DEMO-1569398232744', 1.10, NULL, NULL, NULL, NULL, 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101045', '10130', 'DEMO-1569398233452', 1.10, NULL, NULL, NULL, NULL, 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101046', '10130', 'DEMO-1569398330462', 1.10, NULL, NULL, NULL, NULL, 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101047', '10130', 'DEMO-1570518213688', 1.10, NULL, NULL, NULL, NULL, 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101048', '10130', 'DEMO-1570851423305', 1.10, NULL, NULL, NULL, NULL, 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101049', '10130', 'DEMO-1570851510076', 1.10, NULL, NULL, NULL, NULL, 0, NULL);
+INSERT INTO `tbl_order` VALUES ('10105', NULL, 'C-001', 500.50, '2019-09-24', '2019-09-21 00:08:22', NULL, '002', 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101050', '10130', 'DEMO-1570851536152', 1.10, NULL, NULL, NULL, NULL, 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101051', '10130', 'DEMO-1570851714688', 1.10, NULL, NULL, NULL, NULL, 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101052', '10130', 'DEMO-1570854853681', 1.10, NULL, NULL, NULL, NULL, 0, NULL);
+INSERT INTO `tbl_order` VALUES ('101053', '10130', 'DEMO-1570855606445', 1.10, NULL, NULL, NULL, NULL, 0, NULL);
+INSERT INTO `tbl_order` VALUES ('10107', NULL, 'C-006', 50.25, '2019-09-21', '2019-09-21 00:10:10', 0, '002', 0, NULL);
+INSERT INTO `tbl_order` VALUES ('10108', NULL, 'C-001', 500.50, '2019-09-24', '2019-09-21 00:10:11', NULL, '002', 0, NULL);
 
 -- ----------------------------
 -- Table structure for tbl_order_type
@@ -294,7 +326,7 @@ CREATE TABLE `tbl_relevant_bill`  (
 -- ----------------------------
 -- Records of tbl_relevant_bill
 -- ----------------------------
-INSERT INTO `tbl_relevant_bill` VALUES ('10130', 'R-001', 0);
+INSERT INTO `tbl_relevant_bill` VALUES ('10130', 'Hello-001', 0);
 
 -- ----------------------------
 -- Table structure for tbl_relevant_bill_detail
@@ -308,5 +340,11 @@ CREATE TABLE `tbl_relevant_bill_detail`  (
   `type` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
   PRIMARY KEY (`uuid`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of tbl_relevant_bill_detail
+-- ----------------------------
+INSERT INTO `tbl_relevant_bill_detail` VALUES ('001', '测试明细001', 14.00, 10130, '');
+INSERT INTO `tbl_relevant_bill_detail` VALUES ('002', '测试明细002', 24.00, 10130, NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;

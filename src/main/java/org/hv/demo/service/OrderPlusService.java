@@ -13,6 +13,8 @@ public interface OrderPlusService extends Service {
 
     int update(Order order) throws Exception;
 
+    boolean audit(String uuid, boolean accept) throws Exception;
+
     Order findOne(String uuid) throws SQLException;
 
     PageList loadPageList(FilterView filterView) throws SQLException;

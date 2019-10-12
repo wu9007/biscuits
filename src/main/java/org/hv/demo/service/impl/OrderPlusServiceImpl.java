@@ -3,7 +3,9 @@ package org.hv.demo.service.impl;
 import org.hv.biscuits.annotation.Affairs;
 import org.hv.biscuits.annotation.Service;
 import org.hv.biscuits.controller.FilterView;
-import org.hv.biscuits.even.EvenCenter;
+import org.hv.biscuits.domain.even.EvenCenter;
+import org.hv.biscuits.domain.process.Context;
+import org.hv.biscuits.domain.process.ContextFactory;
 import org.hv.biscuits.service.AbstractService;
 import org.hv.biscuits.service.PageList;
 import org.hv.demo.DemoMediator;
@@ -28,6 +30,7 @@ public class OrderPlusServiceImpl extends AbstractService implements OrderPlusSe
     private final OrderPlusRepository orderRepository;
     private final RelevantBillService relevantBillService;
     private final DemoMediator demoMediator;
+    private Context auditProcessContext;
 
     @Autowired
     public OrderPlusServiceImpl(OrderPlusRepository orderRepository, DemoMediator demoMediator, RelevantBillService relevantBillService) {
@@ -50,6 +53,15 @@ public class OrderPlusServiceImpl extends AbstractService implements OrderPlusSe
 
         // Call monitors
         EvenCenter.getInstance().fireEven(EVEN_ORDER_SAVE, numberOfRowsAffected, order.getUuid(), "save");
+
+        // Init process context and Set to available
+        this.auditProcessContext = ContextFactory.getInstance()
+                .getContext(
+                        "orderAuditProcessor",
+                        new String[]{"directLeaderAuditNode", "departmentAuditNode", "groupAuditNode"}
+                );
+        this.auditProcessContext.enable();
+
         return numberOfRowsAffected;
     }
 
@@ -61,6 +73,15 @@ public class OrderPlusServiceImpl extends AbstractService implements OrderPlusSe
         // Call monitors
         EvenCenter.getInstance().fireEven(EVEN_ORDER_UPDATE, numberOfRowsAffected, order.getUuid(), "update");
         return numberOfRowsAffected;
+    }
+
+    @Override
+    public boolean audit(String uuid, boolean accept) throws Exception {
+        if (accept) {
+            return this.auditProcessContext.accept();
+        } else {
+            return this.auditProcessContext.rejection();
+        }
     }
 
     @Override

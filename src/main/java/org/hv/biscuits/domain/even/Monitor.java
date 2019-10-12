@@ -1,4 +1,4 @@
-package org.hv.biscuits.even;
+package org.hv.biscuits.domain.even;
 
 /**
  * @author wujianchuan

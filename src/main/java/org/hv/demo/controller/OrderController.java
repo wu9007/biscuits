@@ -9,6 +9,7 @@ import org.hv.biscuits.service.PageList;
 import org.hv.demo.model.Order;
 import org.hv.demo.service.OrderPlusService;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 
@@ -37,5 +38,12 @@ public class OrderController extends AbstractController {
         order.setRelevantBillUuid("10130");
         this.orderPlusService.save(order);
         return Body.newSuccessInstance("o o o o ok!");
+    }
+
+    @Auth(value = "order_manage")
+    @Action(actionId = "audit", method = RequestMethod.POST)
+    public Body<String> audit(@RequestParam String uuid, @RequestParam boolean accept) throws Exception {
+        this.orderPlusService.audit(uuid, accept);
+        return Body.newSuccessInstance(accept ? "审核成功。" : "撤销审核成功。");
     }
 }

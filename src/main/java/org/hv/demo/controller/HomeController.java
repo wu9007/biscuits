@@ -22,17 +22,17 @@ public class HomeController extends AbstractController {
         this.securityService = securityService;
     }
 
-    @Action(actionId = "/welcome", method = RequestMethod.GET)
+    @Action(actionId = "welcome", method = RequestMethod.GET)
     public String welcome() {
         return "welcome to my home!";
     }
 
-    @Action(actionId = "/login", method = RequestMethod.POST)
+    @Action(actionId = "login", method = RequestMethod.POST)
     public String login(@RequestParam String avatar, @RequestParam String password) throws SQLException {
         return securityService.generateToken(avatar, password);
     }
 
-    @Action(actionId = "/register", method = RequestMethod.POST)
+    @Action(actionId = "register", method = RequestMethod.POST)
     public Body<User> register(@RequestParam String avatar, @RequestParam String name, @RequestParam String password) throws SQLException, IllegalAccessException {
         if (avatar == null || password == null || name == null) {
             return Body.newWaringInstance("失败", "请正确填写信息", null);

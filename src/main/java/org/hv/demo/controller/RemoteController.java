@@ -15,7 +15,7 @@ import java.io.IOException;
 @Controller(bundleId = "remote", auth = false)
 public class RemoteController extends AbstractController {
 
-    @Action(actionId = "/bai_du_dom", method = RequestMethod.GET)
+    @Action(actionId = "bai_du_dom", method = RequestMethod.GET)
     public String baiDuDom() throws IOException {
         Grab<String> grab = Grab.newInstance("http://www.baidu.com");
         return grab.setConnectionRequestTimeout(100)

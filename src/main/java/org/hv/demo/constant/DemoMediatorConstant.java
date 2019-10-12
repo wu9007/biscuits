@@ -1,6 +1,6 @@
 package org.hv.demo.constant;
 
-import org.hv.biscuits.mediator.Mediator;
+import org.hv.biscuits.domain.mediator.Mediator;
 import org.hv.demo.model.RelevantBill;
 
 /**

@@ -1,7 +1,7 @@
 package org.hv.demo.service;
 
 import org.hv.biscuits.controller.FilterView;
-import org.hv.biscuits.even.Monitor;
+import org.hv.biscuits.domain.even.Monitor;
 import org.hv.biscuits.service.PageList;
 import org.hv.biscuits.service.Service;
 import org.hv.demo.model.RelevantBill;
