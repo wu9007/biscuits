@@ -6,6 +6,13 @@ package org.hv.biscuits.domain.process;
 public interface Node {
 
     /**
+     * 获取节点标识
+     *
+     * @return 节点标识
+     */
+    String getIdentify();
+
+    /**
      * 节点名称
      *
      * @return 节点名称

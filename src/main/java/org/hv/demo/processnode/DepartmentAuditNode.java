@@ -1,13 +1,18 @@
 package org.hv.demo.processnode;
 
 import org.hv.biscuits.domain.process.AbstractNode;
-import org.hv.biscuits.domain.process.Transfer;
+import org.hv.biscuits.domain.process.State;
 
 /**
  * @author wujianchuan
  */
-@Transfer(processorName = "orderAuditProcessor", nodeName = "departmentAuditNode")
+@State(group = "orderAuditProcessor")
 public class DepartmentAuditNode extends AbstractNode {
+
+    @Override
+    public String getIdentify() {
+        return "departmentAuditNode";
+    }
 
     @Override
     public String getSurName() {

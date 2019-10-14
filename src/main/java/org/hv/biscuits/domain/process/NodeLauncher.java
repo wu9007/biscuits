@@ -28,8 +28,8 @@ public class NodeLauncher implements CommandLineRunner {
 
         if (nodeList != null) {
             Map<String, List<Node>> nodesMapper = nodeList.parallelStream().collect(Collectors.groupingBy(node -> {
-                Transfer transfer = node.getClass().getAnnotation(Transfer.class);
-                return transfer.processorName();
+                State state = node.getClass().getAnnotation(State.class);
+                return state.group();
             }));
 
             ContextFactory contextFactory = ContextFactory.getInstance();
@@ -37,10 +37,8 @@ public class NodeLauncher implements CommandLineRunner {
                     .forEach(entry -> {
                         List<Node> nodeList = entry.getValue();
                         Map<String, Node> nodeMapper = new HashMap<>();
-                        Transfer transfer;
                         for (Node node : nodeList) {
-                            transfer = node.getClass().getAnnotation(Transfer.class);
-                            nodeMapper.put(transfer.nodeName(), node);
+                            nodeMapper.put(node.getIdentify(), node);
                         }
                         contextFactory.putNodeMapper(entry.getKey(), nodeMapper);
                     });

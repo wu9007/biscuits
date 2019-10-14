@@ -13,8 +13,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Component
-public @interface Transfer {
-    String processorName();
-
-    String nodeName();
+public @interface State {
+    String group();
 }
