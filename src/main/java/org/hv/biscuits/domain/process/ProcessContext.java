@@ -1,15 +1,32 @@
 package org.hv.biscuits.domain.process;
 
+import org.hv.biscuits.spine.model.Process;
+import org.hv.pocket.criteria.Criteria;
+import org.hv.pocket.criteria.Modern;
+import org.hv.pocket.criteria.Restrictions;
+import org.hv.pocket.session.Session;
+import org.hv.pocket.session.SessionFactory;
+
+import java.sql.SQLException;
 import java.util.Map;
 
 /**
  * @author wujianchuan
  */
 public class ProcessContext implements Context {
+    private final Session session = SessionFactory.getSession("biscuits");
+    /**
+     * 流程标识
+     */
+    private String processIdentify;
     /**
      * 业务数据的数据标识
      */
     private String dataUuid;
+    /**
+     * 指定的流程顺序
+     */
+    private String[] sortedNodeNames;
     /**
      * 通常保存后改流程才可用
      */
@@ -23,26 +40,29 @@ public class ProcessContext implements Context {
      */
     private Node currentNode;
 
-    ProcessContext(Map<String, Node> nodeMapper) {
+    ProcessContext(String processIdentify, String dataUuid, String[] sortedNodeNames, Map<String, Node> nodeMapper) throws Exception {
+        this.processIdentify = processIdentify;
+        this.dataUuid = dataUuid;
         this.nodeMapper = nodeMapper;
+        this.sortedNodeNames = sortedNodeNames;
+        this.init();
     }
 
-    @Override
-    public void setSortedNodeNames(String[] sortedNodeNames) throws Exception {
+    public void init() throws Exception {
         Node node = null;
         // 节点排序
-        for (int index = 0; index < sortedNodeNames.length; index++) {
+        for (int index = 0; index < this.sortedNodeNames.length; index++) {
             Node preNode = node;
-            node = this.getNodeByName(sortedNodeNames[index]);
+            node = this.getNodeByIdentify(this.sortedNodeNames[index]);
             if (node == null) {
-                throw new Exception(String.format("Can not find the node named <<%s>>", sortedNodeNames[index]));
+                throw new Exception(String.format("Can not find the node named <<%s>>", this.sortedNodeNames[index]));
             }
             node.setPreNode(preNode);
 
             if (index == 0) {
                 node.beTop();
                 this.setCurrentNode(node);
-            } else if (index == sortedNodeNames.length - 1) {
+            } else if (index == this.sortedNodeNames.length - 1) {
                 node.beTail();
             }
 
@@ -63,8 +83,15 @@ public class ProcessContext implements Context {
     }
 
     @Override
-    public void setCurrentNode(Node node) {
+    public void setCurrentNode(Node node) throws SQLException {
         this.currentNode = node;
+        this.session.open();
+        Criteria criteria = this.session.createCriteria(Process.class);
+        criteria.add(Restrictions.equ("processId", this.processIdentify))
+                .add(Restrictions.equ("dataUuid", this.dataUuid))
+                .add(Modern.set("currentNodeId", node.getIdentify()));
+        criteria.update();
+        this.session.close();
     }
 
     @Override
@@ -73,8 +100,8 @@ public class ProcessContext implements Context {
     }
 
     @Override
-    public Node getNodeByName(String nodeName) {
-        return this.nodeMapper.get(nodeName);
+    public Node getNodeByIdentify(String nodeIdentify) {
+        return this.nodeMapper.get(nodeIdentify);
     }
 
     @Override
@@ -104,14 +131,29 @@ public class ProcessContext implements Context {
     }
 
     @Override
-    public void enable() {
-        //TODO 将当前流程的信息持久化
-        this.enable = true;
+    public void enable() throws SQLException {
+        // 将当前流程的信息持久化
+        Process process = Process.newInstance(this.processIdentify, this.dataUuid, this.currentNode.getIdentify(), this.sortedNodeNames);
+        this.session.open();
+        this.session.save(process);
+        this.session.close();
+        this.setEnable(true);
     }
 
     @Override
-    public void disable() {
-        //TODO 将当前流程信息从持久层数据中清除
-        this.enable = false;
+    public void setEnable(boolean enable) {
+        this.enable = enable;
+    }
+
+    @Override
+    public void disable() throws SQLException {
+        // 将当前流程信息从持久层数据中清除
+        this.session.open();
+        Criteria criteria = this.session.createCriteria(Process.class);
+        criteria.add(Restrictions.equ("processId", this.processIdentify))
+                .add(Restrictions.equ("dataUuid", this.dataUuid));
+        criteria.delete();
+        this.session.close();
+        this.setEnable(false);
     }
 }

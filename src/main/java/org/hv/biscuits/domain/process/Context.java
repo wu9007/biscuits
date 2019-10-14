@@ -1,17 +1,11 @@
 package org.hv.biscuits.domain.process;
 
+import java.sql.SQLException;
+
 /**
  * @author wujianchuan
  */
 public interface Context {
-
-    /**
-     * 创建流程作用域
-     *
-     * @param sortedNodeNames 排序后的流程节点名称
-     * @throws Exception e
-     */
-    void setSortedNodeNames(String[] sortedNodeNames) throws Exception;
 
     /**
      * 设置业务数据的数据标识
@@ -32,7 +26,7 @@ public interface Context {
      *
      * @param node 节点
      */
-    void setCurrentNode(Node node);
+    void setCurrentNode(Node node) throws SQLException;
 
     /**
      * 获取当前节点
@@ -44,10 +38,10 @@ public interface Context {
     /**
      * 根据节点名称获取节点
      *
-     * @param nodeName 节点名称
+     * @param nodeIdentify 节点标识
      * @return 节点
      */
-    Node getNodeByName(String nodeName);
+    Node getNodeByIdentify(String nodeIdentify);
 
     /**
      * 流程通过
@@ -66,12 +60,19 @@ public interface Context {
     boolean rejection() throws Exception;
 
     /**
-     * 将本作用域置为可用
+     * 将本作用域置为可用同时向数据库中保存数据
      */
-    void enable();
+    void enable() throws SQLException;
 
     /**
-     * 将本作用域置为不可用
+     * 设置可用性
+     *
+     * @param enable 是否可用
      */
-    void disable();
+    void setEnable(boolean enable);
+
+    /**
+     * 将本作用域置为不可用同时删除数据库中的数据
+     */
+    void disable() throws SQLException;
 }

@@ -6,6 +6,7 @@ import org.hv.biscuits.service.PageList;
 
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * @author wujianchuan
@@ -18,7 +19,14 @@ public interface CommonRepository<T extends BaseEntity> extends Repository {
      * @return T
      * @throws SQLException e
      */
-    Object findOne(Serializable uuid) throws SQLException;
+    T findOne(Serializable uuid) throws SQLException;
+
+    /**
+     * Load all data
+     *
+     * @return List<T
+     */
+    List<T> findAll();
 
     /**
      * Save

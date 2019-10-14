@@ -22,18 +22,16 @@ public class ContextFactory {
         this.nodeMapperPool.put(name, nodeMapper);
     }
 
-    public Context buildProcessContext(String processName, String dataUuid, String[] sortedNodeNames) throws Exception {
-        if (processName == null || dataUuid == null) {
+    public Context buildProcessContext(String processIdentify, String dataUuid, String[] sortedNodeNames) throws Exception {
+        if (processIdentify == null || dataUuid == null) {
             throw new Exception("Make sure that the process name and data identifier are in the correct format.");
         }
-        String contextPoolKey = processName + "_" + dataUuid;
+        String contextPoolKey = processIdentify + "_" + dataUuid;
         if (this.contextPool.containsKey(contextPoolKey)) {
             throw new Exception("This process already exists. Please don't create it again.");
         }
-        Map<String, Node> nodeMapper = this.nodeMapperPool.get(processName);
-        Context context = new ProcessContext(nodeMapper);
-        context.setSortedNodeNames(sortedNodeNames);
-        context.setDataUuid(dataUuid);
+        Map<String, Node> nodeMapper = this.nodeMapperPool.get(processIdentify);
+        Context context = new ProcessContext(processIdentify, dataUuid, sortedNodeNames, nodeMapper);
         this.contextPool.putIfAbsent(contextPoolKey, context);
         return context;
     }

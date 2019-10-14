@@ -1,5 +1,7 @@
 package org.hv.biscuits.domain.process;
 
+import java.sql.SQLException;
+
 /**
  * @author wujianchuan
  */
@@ -66,7 +68,7 @@ public abstract class AbstractNode implements Node {
     }
 
     @Override
-    public boolean accept(Context context) {
+    public boolean accept(Context context) throws SQLException {
         boolean success = this.doAccept(context.getDataUuid());
         if (success) {
             context.setCurrentNode(nextNode);
@@ -75,7 +77,7 @@ public abstract class AbstractNode implements Node {
     }
 
     @Override
-    public boolean rejection(Context context) {
+    public boolean rejection(Context context) throws SQLException {
         boolean success = this.doRejection(context.getDataUuid());
         if (success) {
             context.setCurrentNode(preNode);

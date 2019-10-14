@@ -1,5 +1,8 @@
 package org.hv.biscuits.domain.process;
 
+import org.hv.biscuits.spine.model.Process;
+import org.hv.pocket.session.Session;
+import org.hv.pocket.session.SessionFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.lang.Nullable;
@@ -24,7 +27,6 @@ public class NodeLauncher implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        //TODO 从持久化数据中获取所有流程中的节点，并进行恢复
 
         if (nodeList != null) {
             Map<String, List<Node>> nodesMapper = nodeList.parallelStream().collect(Collectors.groupingBy(node -> {
@@ -42,6 +44,17 @@ public class NodeLauncher implements CommandLineRunner {
                         }
                         contextFactory.putNodeMapper(entry.getKey(), nodeMapper);
                     });
+
+            // 从持久化数据中获取所有流程中的节点，并进行恢复
+            Session session = SessionFactory.getSession("biscuits");
+            session.open();
+            List<Process> processList = session.list(Process.class);
+            session.close();
+            for (Process process : processList) {
+                Context context = contextFactory.buildProcessContext(process.getProcessId(), process.getDataUuid(), process.getCustomizedProcesses().split(","));
+                context.setEnable(true);
+                context.setCurrentNode(context.getNodeByIdentify(process.getCurrentNodeId()));
+            }
         }
     }
 }

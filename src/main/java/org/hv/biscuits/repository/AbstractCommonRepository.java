@@ -26,8 +26,13 @@ public abstract class AbstractCommonRepository<T extends BaseEntity> extends Abs
     }
 
     @Override
-    public Object findOne(Serializable uuid) throws SQLException {
-        return super.getSession().findDirect(this.genericClazz, uuid);
+    public T findOne(Serializable uuid) throws SQLException {
+        return (T) super.getSession().findOne(this.genericClazz, uuid);
+    }
+
+    @Override
+    public List<T> findAll() {
+        return super.getSession().list(this.genericClazz);
     }
 
     @Override
