@@ -38,6 +38,8 @@ test {
     exclude '*'
 }
 
+def pocketVersion = '0.1.1'
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -61,7 +63,7 @@ publishing {
                 def pocketDependencyNode = dependenciesNode.appendNode('dependency')
                 pocketDependencyNode.appendNode('groupId', 'org.hv')
                 pocketDependencyNode.appendNode('artifactId', 'pocket')
-                pocketDependencyNode.appendNode('version', '0.1.0')
+                pocketDependencyNode.appendNode('version', pocketVersion)
             }
         }
     }
@@ -95,7 +97,7 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-cache:2.1.1.RELEASE'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.1.1.RELEASE'
-    implementation 'org.hv:pocket:0.1.1'
+    implementation 'org.hv:pocket:' + pocketVersion
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
     implementation 'mysql:mysql-connector-java:8.0.13'
