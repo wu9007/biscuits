@@ -1,7 +1,5 @@
 package org.hv.biscuits.domain.process;
 
-import java.sql.SQLException;
-
 /**
  * @author wujianchuan
  */
@@ -74,18 +72,26 @@ public interface Node {
     Node getNextNode();
 
     /**
-     * 流程通过时执行的操作
+     * 通过
      *
      * @param context 流程作用域
      * @return 是否执行成功
      */
-    boolean accept(Context context) throws SQLException;
+    boolean accept(Context context) throws Exception;
 
     /**
-     * 流程驳回时执行的操作
+     * 驳回到前一个状态
      *
      * @param context 流程作用域
      * @return 是否执行成功
      */
-    boolean rejection(Context context) throws SQLException;
+    boolean rejection(Context context) throws Exception;
+
+    /**
+     * 驳回到初始状态
+     *
+     * @param context 流程作用域
+     * @return 是否执行成功
+     */
+    boolean rejectionToInitial(Context context) throws Exception;
 }

@@ -66,7 +66,7 @@ public class DesEncryption implements EncryptionComputing {
         return encoder.encodeToString(s);
     }
 
-    private static byte[] base64Decode(String s) throws IOException {
+    private static byte[] base64Decode(String s) {
         if (s == null) {
             return null;
         }

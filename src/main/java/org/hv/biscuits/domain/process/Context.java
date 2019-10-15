@@ -36,6 +36,12 @@ public interface Context {
     Node getCurrentNode();
 
     /**
+     * 获取首节点
+     * @return 首节点
+     */
+    Node getFirstNode();
+
+    /**
      * 根据节点名称获取节点
      *
      * @param nodeIdentify 节点标识
@@ -60,9 +66,21 @@ public interface Context {
     boolean rejection() throws Exception;
 
     /**
+     * 驳回到初始状态
+     *
+     * @return 是否执行成功
+     */
+    boolean rejectionInitial() throws Exception;
+
+    /**
      * 将本作用域置为可用同时向数据库中保存数据
      */
     void enable() throws SQLException;
+
+    /**
+     * 将本作用域置为不可用同时删除数据库中的数据
+     */
+    void disable() throws SQLException;
 
     /**
      * 设置可用性
@@ -70,9 +88,4 @@ public interface Context {
      * @param enable 是否可用
      */
     void setEnable(boolean enable);
-
-    /**
-     * 将本作用域置为不可用同时删除数据库中的数据
-     */
-    void disable() throws SQLException;
 }

@@ -1,13 +1,17 @@
 package org.hv.demo.processnode;
 
-import org.hv.biscuits.domain.process.AbstractNode;
 import org.hv.biscuits.domain.process.State;
+import org.hv.demo.service.OrderPlusService;
 
 /**
  * @author wujianchuan
  */
 @State(group = "orderAuditProcessor")
-public class GroupAuditNode extends AbstractNode {
+public class GroupAuditNode extends AbstractOrderAuditNode {
+
+    public GroupAuditNode(OrderPlusService orderPlusService) {
+        super(orderPlusService);
+    }
 
     @Override
     public String getIdentify() {

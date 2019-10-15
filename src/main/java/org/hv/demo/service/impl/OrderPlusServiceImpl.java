@@ -53,7 +53,7 @@ public class OrderPlusServiceImpl extends AbstractService implements OrderPlusSe
         // Call monitors
         EvenCenter.getInstance().fireEven(EVEN_ORDER_SAVE, numberOfRowsAffected, order.getUuid(), "save");
 
-        // Build process context and Set to available
+        // Build process context and Set to available and set initial function.
         Context auditProcessContext = ContextFactory.getInstance().buildProcessContext(
                 "orderAuditProcessor",
                 order.getUuid(),
@@ -75,24 +75,35 @@ public class OrderPlusServiceImpl extends AbstractService implements OrderPlusSe
     }
 
     @Override
-    public boolean audit(String uuid, boolean accept) throws Exception {
+    public boolean audit(String uuid) throws Exception {
         Context auditProcessContext = ContextFactory.getInstance().getProcessContext("orderAuditProcessor", uuid);
-        if (accept) {
-            if (auditProcessContext.getCurrentNode().isTail()) {
-                throw new Exception("该节点为最后一个节点故无法再进行审核。");
-            }
-            return auditProcessContext.accept();
-        } else {
-            if (auditProcessContext.getCurrentNode().isTop()) {
-                throw new Exception("该节点为第一个节点故无法再进行撤销。");
-            }
-            return auditProcessContext.rejection();
+        if (auditProcessContext.getCurrentNode().isTail()) {
+            throw new Exception("该节点为最后一个节点故无法再进行审核。");
         }
+        return auditProcessContext.accept();
+    }
+
+    @Override
+    public boolean rejectionPreviousNode(String uuid) throws Exception {
+        Context auditProcessContext = ContextFactory.getInstance().getProcessContext("orderAuditProcessor", uuid);
+        if (auditProcessContext.getCurrentNode().isTop()) {
+            throw new Exception("该节点为第一个节点故无法再进行撤销。");
+        }
+        return auditProcessContext.rejection();
+    }
+
+    @Override
+    public boolean rejectionInitialNode(String uuid) throws Exception {
+        Context auditProcessContext = ContextFactory.getInstance().getProcessContext("orderAuditProcessor", uuid);
+        if (auditProcessContext.getCurrentNode().isTop()) {
+            throw new Exception("该节点为第一个节点故无法再进行撤销。");
+        }
+        return auditProcessContext.rejectionInitial();
     }
 
     @Override
     public Order findOne(String uuid) throws SQLException {
-        return (Order) this.orderRepository.findOne(uuid);
+        return this.orderRepository.findOne(uuid);
     }
 
     @Override

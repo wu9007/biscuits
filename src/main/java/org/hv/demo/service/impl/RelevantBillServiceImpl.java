@@ -38,7 +38,7 @@ public class RelevantBillServiceImpl extends AbstractService implements Relevant
 
     @Override
     public RelevantBill findOne(String uuid) throws SQLException {
-        return (RelevantBill) this.relevantBillRepository.findOne(uuid);
+        return this.relevantBillRepository.findOne(uuid);
     }
 
     @Override

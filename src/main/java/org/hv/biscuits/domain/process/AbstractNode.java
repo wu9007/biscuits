@@ -1,7 +1,5 @@
 package org.hv.biscuits.domain.process;
 
-import java.sql.SQLException;
-
 /**
  * @author wujianchuan
  */
@@ -26,6 +24,14 @@ public abstract class AbstractNode implements Node {
      * @return 是否执行成功
      */
     public abstract boolean doRejection(String dataUuid);
+
+    /**
+     * 流程驳回到初始状态时执行的操作
+     *
+     * @param dataUuid 业务数据的数据标识
+     * @return 是否执行成功
+     */
+    public abstract boolean doRejectionToInitial(String dataUuid) throws Exception;
 
     @Override
     public void setPreNode(Node preNode) {
@@ -68,7 +74,7 @@ public abstract class AbstractNode implements Node {
     }
 
     @Override
-    public boolean accept(Context context) throws SQLException {
+    public boolean accept(Context context) throws Exception {
         boolean success = this.doAccept(context.getDataUuid());
         if (success) {
             context.setCurrentNode(nextNode);
@@ -77,10 +83,19 @@ public abstract class AbstractNode implements Node {
     }
 
     @Override
-    public boolean rejection(Context context) throws SQLException {
+    public boolean rejection(Context context) throws Exception {
         boolean success = this.doRejection(context.getDataUuid());
         if (success) {
             context.setCurrentNode(preNode);
+        }
+        return success;
+    }
+
+    @Override
+    public boolean rejectionToInitial(Context context) throws Exception {
+        boolean success = this.doRejectionToInitial(context.getDataUuid());
+        if (success) {
+            context.setCurrentNode(context.getFirstNode());
         }
         return success;
     }

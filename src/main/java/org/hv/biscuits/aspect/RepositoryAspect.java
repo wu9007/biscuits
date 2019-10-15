@@ -280,7 +280,7 @@ public class RepositoryAspect {
                 .collect(flagBusinessCollector);
     }
 
-    private class HistoryData {
+    private static class HistoryData {
         private final BaseEntity newEntity;
         private BaseEntity oldEntity;
         private final Field field;

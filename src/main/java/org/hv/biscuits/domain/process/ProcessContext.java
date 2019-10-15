@@ -100,6 +100,11 @@ public class ProcessContext implements Context {
     }
 
     @Override
+    public Node getFirstNode() {
+        return this.getNodeByIdentify(this.sortedNodeNames[0]);
+    }
+
+    @Override
     public Node getNodeByIdentify(String nodeIdentify) {
         return this.nodeMapper.get(nodeIdentify);
     }
@@ -131,6 +136,15 @@ public class ProcessContext implements Context {
     }
 
     @Override
+    public boolean rejectionInitial() throws Exception {
+        if (this.enable) {
+            return this.currentNode.rejectionToInitial(this);
+        } else {
+            throw new Exception("Accept with wrong state.");
+        }
+    }
+
+    @Override
     public void enable() throws SQLException {
         // 将当前流程的信息持久化
         Process process = Process.newInstance(this.processIdentify, this.dataUuid, this.currentNode.getIdentify(), this.sortedNodeNames);
@@ -138,11 +152,6 @@ public class ProcessContext implements Context {
         this.session.save(process);
         this.session.close();
         this.setEnable(true);
-    }
-
-    @Override
-    public void setEnable(boolean enable) {
-        this.enable = enable;
     }
 
     @Override
@@ -155,5 +164,10 @@ public class ProcessContext implements Context {
         criteria.delete();
         this.session.close();
         this.setEnable(false);
+    }
+
+    @Override
+    public void setEnable(boolean enable) {
+        this.enable = enable;
     }
 }

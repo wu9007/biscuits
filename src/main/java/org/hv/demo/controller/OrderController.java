@@ -42,8 +42,22 @@ public class OrderController extends AbstractController {
 
     @Auth(value = "order_manage")
     @Action(actionId = "audit", method = RequestMethod.POST)
-    public Body<String> audit(@RequestParam String uuid, @RequestParam boolean accept) throws Exception {
-        this.orderPlusService.audit(uuid, accept);
-        return Body.newSuccessInstance(accept ? "审核成功。" : "撤销审核成功。");
+    public Body<String> audit(@RequestParam String uuid) throws Exception {
+        this.orderPlusService.audit(uuid);
+        return Body.newSuccessInstance("审核成功");
+    }
+
+    @Auth(value = "order_manage")
+    @Action(actionId = "rejection", method = RequestMethod.POST)
+    public Body<String> rejection(@RequestParam String uuid) throws Exception {
+        this.orderPlusService.rejectionPreviousNode(uuid);
+        return Body.newSuccessInstance("撤销审核成功。");
+    }
+
+    @Auth(value = "order_manage")
+    @Action(actionId = "rejection_to_initial", method = RequestMethod.POST)
+    public Body<String> rejectionToInitial(@RequestParam String uuid) throws Exception {
+        this.orderPlusService.rejectionInitialNode(uuid);
+        return Body.newSuccessInstance("驳回成功。");
     }
 }
