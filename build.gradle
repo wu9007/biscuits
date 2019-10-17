@@ -64,6 +64,14 @@ publishing {
                 pocketDependencyNode.appendNode('groupId', 'com.github.leyan95')
                 pocketDependencyNode.appendNode('artifactId', 'pocket')
                 pocketDependencyNode.appendNode('version', pocketVersion)
+                def zxingCoreDependencyNode = dependenciesNode.appendNode('dependency')
+                zxingCoreDependencyNode.appendNode('groupId', 'com.google.zxing')
+                zxingCoreDependencyNode.appendNode('artifactId', 'core')
+                zxingCoreDependencyNode.appendNode('version', '3.4.0')
+                def zxingJavaseDependencyNode = dependenciesNode.appendNode('dependency')
+                zxingJavaseDependencyNode.appendNode('groupId', 'com.google.zxing')
+                zxingJavaseDependencyNode.appendNode('artifactId', 'javase')
+                zxingJavaseDependencyNode.appendNode('version', '3.4.0')
             }
         }
     }
@@ -90,6 +98,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.1.1.RELEASE'
     implementation 'com.github.leyan95:pocket:' + pocketVersion
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
+    implementation 'com.google.zxing:core:3.4.0'
+    implementation 'com.google.zxing:javase:3.4.0'
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
     implementation 'mysql:mysql-connector-java:8.0.13'
 
