@@ -9,26 +9,47 @@
   <meta name="viewport"
     content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
+  <link rel="stylesheet" href="//unpkg.com/gitalk/dist/gitalk.css">
+  <script src="//unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="//unpkg.com/docsify/lib/plugins/gitalk.min.js"></script>
 </head>
 
 <body>
   <nav>
     <a href="#/">Home</a>
-    <a href="#/pages/guide">Guide</a>
+    <a href="#/pages/get-start">Guide</a>
   </nav>
   <div id="app">Please wait...</div>
   <script>
     window.$docsify = {
+      loadSidebar: true,
+      subMaxLevel: 3,
       coverpage: true,
       onlyCover: true,
-      name: '',
-      repo: '',
+      name: '🍪 Biscuits',
+      repo: 'https://github.com/leyan95/biscuits',
       search: {
         maxAge: 86400000,               // 过期时间，单位毫秒，默认一天
         paths: [],                      // or 'auto'，匹配文件路径
         placeholder: 'Type to search',  // 搜索提示框文字， 支持本地化，例子在下面
         noData: 'No Results!',          // 找不到结果文字提示，支持本地化，例子在下面
         depth: 2,                       // 搜索标题的最大程级, 1 - 6
+      }
+    }
+
+    const gitalk = new Gitalk({
+      clientID: '835dd01b7022f43d51ee',
+      clientSecret: '74350737710b240decdaf712ca6a95b2a13145f2',
+      repo: 'biscuits',
+      owner: 'leyan95',
+      admin: ['leyan95'],
+      title: location.hash.match(/#(.*?)([?]|$)/)[1],
+      id: location.hash.match(/#(.*?)([?]|$)/)[1],
+    })
+
+    window.onhashchange = function (event) {
+      if (event.newURL.split('?')[0] !== event.oldURL.split('?')[0]) {
+        location.reload()
       }
     }
   </script>
