@@ -54,7 +54,8 @@ public class BiscuitAuthorityFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
         String path = request.getServletPath();
-        if (!matchExclude(path)) {
+        boolean filterTurnOn = this.filterPathConfig.getTurnOn() == null || this.filterPathConfig.getTurnOn();
+        if (filterTurnOn && !matchExclude(path)) {
             final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
             if (OPTIONS.equals(request.getMethod())) {
                 response.setStatus(HttpServletResponse.SC_OK);

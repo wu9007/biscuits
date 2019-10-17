@@ -10,7 +10,17 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "biscuits.filter")
 public class FilterPathConfig {
 
+    private Boolean turnOn;
+
     private String excludeUrlPatterns;
+
+    public Boolean getTurnOn() {
+        return turnOn;
+    }
+
+    public void setTurnOn(Boolean turnOn) {
+        this.turnOn = turnOn;
+    }
 
     public String getExcludeUrlPatterns() {
         return excludeUrlPatterns;

@@ -41,6 +41,11 @@
       "description": "token head."
     },
     {
+      "name": "biscuits.filter.turnOn",
+      "type": "java.lang.Boolean",
+      "description": "Do you want to turn on the filter."
+    },
+    {
       "name": "biscuits.filter.excludeUrlPatterns",
       "type": "java.lang.String",
       "description": "application filter exclude url patterns."
