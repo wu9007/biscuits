@@ -5,7 +5,7 @@ apply plugin: "jacoco"
 apply plugin: 'build-dashboard'
 apply plugin: 'maven-publish'
 
-group = 'org.hv'
+group = 'com.github.leyan95'
 version = '0.1.0'
 sourceCompatibility = 1.8
 
