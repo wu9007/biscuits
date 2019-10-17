@@ -74,7 +74,8 @@ public class BiscuitAuthorityFilter implements Filter {
     }
 
     private String getAvatar(String authHeader) throws ServletException {
-        if (authHeader == null || !authHeader.startsWith(this.tokenUtil.getTokenConfig().getTokenHead())) {
+        String tokenHead = this.tokenUtil.getTokenConfig().getTokenHead();
+        if (authHeader == null || tokenHead == null || !authHeader.startsWith(tokenHead)) {
             throw new ServletException("Missing or invalid Authorization header");
         }
         final String token = authHeader.substring(7);
