@@ -61,7 +61,7 @@ publishing {
                 aopDependencyNode.appendNode('artifactId', 'spring-boot-starter-aop')
                 aopDependencyNode.appendNode('version', '2.1.1.RELEASE')
                 def pocketDependencyNode = dependenciesNode.appendNode('dependency')
-                pocketDependencyNode.appendNode('groupId', 'org.hv')
+                pocketDependencyNode.appendNode('groupId', 'com.github.leyan95')
                 pocketDependencyNode.appendNode('artifactId', 'pocket')
                 pocketDependencyNode.appendNode('version', pocketVersion)
             }
