@@ -10,8 +10,6 @@
     content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
   <link rel="stylesheet" href="//unpkg.com/gitalk/dist/gitalk.css">
-  <script src="//unpkg.com/gitalk/dist/gitalk.min.js"></script>
-  <script src="//unpkg.com/docsify/lib/plugins/gitalk.min.js"></script>
 </head>
 
 <body>
@@ -36,7 +34,12 @@
         depth: 2,                       // 搜索标题的最大程级, 1 - 6
       }
     }
-
+  </script>
+  <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
+  <script src="//unpkg.com/docsify/lib/plugins/search.js"></script>
+  <script src="//unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="//unpkg.com/docsify/lib/plugins/gitalk.min.js"></script>
+  <script>
     const gitalk = new Gitalk({
       clientID: '835dd01b7022f43d51ee',
       clientSecret: '74350737710b240decdaf712ca6a95b2a13145f2',
@@ -53,8 +56,6 @@
       }
     }
   </script>
-  <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
-  <script src="//unpkg.com/docsify/lib/plugins/search.js"></script>
 </body>
 
 </html>
