@@ -28,6 +28,7 @@ jar {
     exclude "application*.yml"
     exclude "biscuits.sql"
     exclude "./biscuits.png"
+    exclude "./docs"
 }
 
 javadoc {
