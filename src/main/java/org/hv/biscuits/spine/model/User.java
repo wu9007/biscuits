@@ -37,6 +37,8 @@ public class User extends BaseEntity {
      */
     @Column(name = "LAST_ROLE_MODIFY_DATE", businessName = "角色最后分配时间")
     private Date lastRoleModifyDate;
+    @Column(name = "IS_MANAGER", businessName = "超级管理员")
+    private Boolean superAdmin;
 
     @OneToMany(clazz = UserRoleRelation.class, bridgeField = "userUuid")
     private List<UserRoleRelation> userRoleRelations;
@@ -119,6 +121,14 @@ public class User extends BaseEntity {
 
     public void setLastRoleModifyDate(Date lastRoleModifyDate) {
         this.lastRoleModifyDate = lastRoleModifyDate;
+    }
+
+    public Boolean getSuperAdmin() {
+        return superAdmin;
+    }
+
+    public void setSuperAdmin(Boolean superAdmin) {
+        this.superAdmin = superAdmin;
     }
 
     public List<UserRoleRelation> getUserRoleRelations() {

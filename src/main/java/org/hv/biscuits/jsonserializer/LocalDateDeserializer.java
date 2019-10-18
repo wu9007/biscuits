@@ -23,7 +23,7 @@ public class LocalDateDeserializer extends JsonDeserializer<LocalDate> {
         if (text.endsWith(ZULU)) {
             return LocalDateTime.ofInstant(Instant.parse(text), ZoneId.systemDefault()).toLocalDate();
         } else {
-            return LocalDateTime.parse(text, DateTimeFormatter.ISO_LOCAL_DATE_TIME).toLocalDate();
+            return LocalDateTime.parse(text, DateTimeFormatter.ISO_LOCAL_DATE).toLocalDate();
         }
     }
 }

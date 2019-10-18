@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
  * @version 1.0
  */
 @Component
-public class DemoBundle extends AbstractBundle {
+public class DemoBundleRegister extends AbstractBundle {
 
     @Override
     public void init() {

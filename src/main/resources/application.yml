@@ -25,4 +25,5 @@ biscuits:
     expiration: 1000
     tokenHead: Bearer
   filter:
-    excludeUrlPatterns: /home/login,/home/register
+#    excludeUrlPatterns: /home/login,/home/register
+    turnOn: true

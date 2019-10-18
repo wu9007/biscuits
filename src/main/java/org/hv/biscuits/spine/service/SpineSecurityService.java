@@ -1,4 +1,4 @@
-package org.hv.demo.service;
+package org.hv.biscuits.spine.service;
 
 import org.hv.biscuits.spine.model.User;
 
@@ -7,7 +7,7 @@ import java.sql.SQLException;
 /**
  * @author wujianchuan
  */
-public interface SecurityService {
+public interface SpineSecurityService {
 
     String generateToken(String avatar, String password) throws SQLException;
 

@@ -41,6 +41,11 @@ public abstract class AbstractCommonRepository<T extends BaseEntity> extends Abs
     }
 
     @Override
+    public int shallowSave(T obj, boolean cascade) throws SQLException, IllegalAccessException {
+        return super.getSession().shallowSave(obj, cascade);
+    }
+
+    @Override
     public int update(T obj, boolean cascade) throws SQLException, IllegalAccessException {
         return super.getSession().update(obj, cascade);
     }

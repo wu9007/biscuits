@@ -40,6 +40,17 @@ public interface CommonRepository<T extends BaseEntity> extends Repository {
     int save(T obj, boolean cascade) throws SQLException, IllegalAccessException;
 
     /**
+     * Shallow save
+     *
+     * @param obj     New object who extend {@link BaseEntity}
+     * @param cascade With save subsets
+     * @return Number of rows affected
+     * @throws SQLException           e
+     * @throws IllegalAccessException e
+     */
+    int shallowSave(T obj, boolean cascade) throws SQLException, IllegalAccessException;
+
+    /**
      * Update
      *
      * @param obj     Persisted object who extend {@link BaseEntity}

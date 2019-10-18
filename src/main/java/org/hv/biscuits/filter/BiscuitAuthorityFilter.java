@@ -54,23 +54,31 @@ public class BiscuitAuthorityFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
         String path = request.getServletPath();
+        String[] splitPath = path.split("/");
+        String bundleId = splitPath[splitPath.length - 2];
+        String actionId = splitPath[splitPath.length - 1];
         boolean filterTurnOn = this.filterPathConfig.getTurnOn() == null || this.filterPathConfig.getTurnOn();
-        if (filterTurnOn && !matchExclude(path)) {
-            final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-            if (OPTIONS.equals(request.getMethod())) {
-                response.setStatus(HttpServletResponse.SC_OK);
-                chain.doFilter(req, res);
-            } else {
-                String avatar = this.getAvatar(authHeader);
-                if (!this.canPass(avatar, path)) {
-                    throw new ServletException(String.format("You are not authorized to pass %s", path));
-                }
-                request.setAttribute("avatar", avatar);
-                chain.doFilter(req, res);
-            }
+        if (!filterTurnOn || this.freePath(bundleId) || matchExclude(path)) {
+            chain.doFilter(req, res);
+            return;
+        }
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (OPTIONS.equals(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            chain.doFilter(req, res);
         } else {
+            String avatar = this.getAvatar(authHeader);
+            if (!this.canPass(avatar, bundleId, actionId)) {
+                throw new ServletException(String.format("You are not authorized to pass %s", path));
+            }
+            request.setAttribute("avatar", avatar);
             chain.doFilter(req, res);
         }
+    }
+
+    @Override
+    public void destroy() {
+        this.excludeUrlPatterns.clear();
     }
 
     private String getAvatar(String authHeader) throws ServletException {
@@ -92,11 +100,61 @@ public class BiscuitAuthorityFilter implements Filter {
         return false;
     }
 
-    private boolean canPass(String avatar, String path) throws ServletException {
-        String[] splitPath = path.split("/");
-        String bundleId = splitPath[splitPath.length - 2];
-        String actionId = splitPath[splitPath.length - 1];
+    private boolean canPass(String avatar, String bundleId, String actionId) throws ServletException {
+        this.openSession();
+        String sql = "SELECT   " +
+                "   T6.UUID    " +
+                "FROM   " +
+                "   T_MAPPER T1   " +
+                "   LEFT JOIN T_AUTH_MAPPER T2 ON T1.UUID = T2.MAPPER_UUID   " +
+                "   LEFT JOIN T_AUTHORITY T3 ON T2.AUTH_UUID = T3.UUID   " +
+                "   LEFT JOIN T_ROLE_AUTH T4 ON T3.UUID = T4.AUTH_UUID   " +
+                "   LEFT JOIN T_ROLE T5 ON T4.ROLE_UUID = T5.UUID   " +
+                "   LEFT JOIN T_BUNDLE T6 ON T1.BUNDLE_UUID = T6.UUID   " +
+                "   LEFT JOIN T_USER_ROLE T7 ON T5.UUID = T7.ROLE_UUID   " +
+                "   LEFT JOIN T_USER T8 ON T7.USER_UUID = T8.UUID    " +
+                "WHERE   " +
+                "   (T8.IS_MANAGER = 1 AND T8.CODE = :USER_CODE) " +
+                " OR " +
+                "   (T1.BUNDLE_ID = :BUNDLE_ID AND T1.ACTION_ID = :ACTION_ID AND T8.CODE = :USER_CODE)";
 
+        SQLQuery query = this.session.createSQLQuery(sql)
+                .mapperColumn("uuid")
+                .setParameter("BUNDLE_ID", bundleId)
+                .setParameter("ACTION_ID", actionId)
+                .setParameter("USER_CODE", avatar);
+        try {
+            return query.list().size() > 0;
+        } catch (SQLException e) {
+            throw new ServletException(e.getMessage());
+        } finally {
+            this.closeSession();
+        }
+    }
+
+    private boolean freePath(String bundleId) throws ServletException {
+        this.openSession();
+        String sql = "SELECT   " +
+                "   UUID    " +
+                "FROM   " +
+                "   T_BUNDLE    " +
+                "WHERE   " +
+                "   WITH_AUTH = 0    " +
+                "   AND BUNDLE_ID = :BUNDLE_ID ";
+
+        SQLQuery query = this.session.createSQLQuery(sql)
+                .mapperColumn("uuid")
+                .setParameter("BUNDLE_ID", bundleId);
+        try {
+            return query.list().size() > 0;
+        } catch (SQLException e) {
+            throw new ServletException(e.getMessage());
+        } finally {
+            this.closeSession();
+        }
+    }
+
+    private void openSession() {
         if (this.session == null) {
             synchronized (this) {
                 if (this.session == null) {
@@ -111,51 +169,15 @@ public class BiscuitAuthorityFilter implements Filter {
                 }
             }
         }
-        String sql = "SELECT   " +
-                "   T6.UUID    " +
-                "FROM   " +
-                "   T_MAPPER T1   " +
-                "   LEFT JOIN T_AUTH_MAPPER T2 ON T1.UUID = T2.MAPPER_UUID   " +
-                "   LEFT JOIN T_AUTHORITY T3 ON T2.AUTH_UUID = T3.UUID   " +
-                "   LEFT JOIN T_ROLE_AUTH T4 ON T3.UUID = T4.AUTH_UUID   " +
-                "   LEFT JOIN T_ROLE T5 ON T4.ROLE_UUID = T5.UUID   " +
-                "   LEFT JOIN T_BUNDLE T6 ON T1.BUNDLE_UUID = T6.UUID   " +
-                "   LEFT JOIN T_USER_ROLE T7 ON T5.UUID = T7.ROLE_UUID   " +
-                "   LEFT JOIN T_USER T8 ON T7.USER_UUID = T8.UUID    " +
-                "WHERE   " +
-                "   T1.BUNDLE_ID = :BUNDLE_ID    " +
-                "   AND T1.ACTION_ID = :ACTION_ID    " +
-                "   AND T8.CODE = :USER_CODE UNION   " +
-                "SELECT   " +
-                "   UUID    " +
-                "FROM   " +
-                "   T_BUNDLE    " +
-                "WHERE   " +
-                "   WITH_AUTH = 0    " +
-                "   AND BUNDLE_ID = :BUNDLE_ID ";
+    }
 
-        SQLQuery query = this.session.createSQLQuery(sql)
-                .mapperColumn("uuid")
-                .setParameter("BUNDLE_ID", bundleId)
-                .setParameter("ACTION_ID", actionId)
-                .setParameter("USER_CODE", avatar);
-        try {
-            return query.list().size() > 0;
-        } catch (SQLException e) {
-            throw new ServletException(e.getMessage());
-        } finally {
-            if (!this.session.getClosed()) {
-                synchronized (this) {
-                    if (!this.session.getClosed()) {
-                        this.session.close();
-                    }
+    private void closeSession() {
+        if (!this.session.getClosed()) {
+            synchronized (this) {
+                if (!this.session.getClosed()) {
+                    this.session.close();
                 }
             }
         }
-    }
-
-    @Override
-    public void destroy() {
-        this.excludeUrlPatterns.clear();
     }
 }

@@ -1,5 +1,6 @@
 # 🗺 Get Start
 ## 1.Install
+> To create a `Spring-Boot` project, please check [link](https://spring.io/guides) for the detailed tutorial, which will not be repeated here.
 #### Add it in your root `build.gradle`:
 ```groovy
 repositories {

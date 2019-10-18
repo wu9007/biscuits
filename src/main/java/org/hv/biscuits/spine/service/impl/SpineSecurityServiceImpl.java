@@ -1,25 +1,26 @@
-package org.hv.demo.service.impl;
+package org.hv.biscuits.spine.service.impl;
 
 import org.hv.biscuits.annotation.Service;
 import org.hv.biscuits.service.AbstractService;
 import org.hv.biscuits.spine.model.User;
+import org.hv.biscuits.spine.service.SpineSecurityService;
 import org.hv.biscuits.spine.utils.EncodeUtil;
 import org.hv.biscuits.utils.TokenUtil;
 import org.hv.demo.repository.UserRepository;
-import org.hv.demo.service.SecurityService;
 
 import java.sql.SQLException;
+import java.util.Date;
 
 /**
  * @author wujianchuan
  */
 @Service(session = "demo")
-public class SecurityServiceImpl extends AbstractService implements SecurityService {
+public class SpineSecurityServiceImpl extends AbstractService implements SpineSecurityService {
     private final TokenUtil tokenUtil;
     private final EncodeUtil encodeUtil;
     private final UserRepository userRepository;
 
-    public SecurityServiceImpl(TokenUtil tokenUtil, EncodeUtil encodeUtil, UserRepository userRepository) {
+    public SpineSecurityServiceImpl(TokenUtil tokenUtil, EncodeUtil encodeUtil, UserRepository userRepository) {
         this.tokenUtil = tokenUtil;
         this.encodeUtil = encodeUtil;
         this.userRepository = userRepository;
@@ -41,7 +42,9 @@ public class SecurityServiceImpl extends AbstractService implements SecurityServ
         user.setName(name);
         user.setEnable(true);
         user.setPassword(encodeUtil.abcEncoder(password));
-        this.userRepository.save(user, false);
+        user.setLastPasswordResetDate(new Date());
+        user.setLastRoleModifyDate(new Date());
+        this.userRepository.shallowSave(user, false);
         return user;
     }
 }
