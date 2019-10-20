@@ -7,7 +7,7 @@ import java.sql.SQLException;
 /**
  * @author wujianchuan
  */
-public interface SpineSecurityService {
+public interface UserService {
 
     String generateToken(String avatar, String password) throws SQLException;
 
