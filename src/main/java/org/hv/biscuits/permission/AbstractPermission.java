@@ -12,7 +12,7 @@ public abstract class AbstractPermission implements Permission {
         return this;
     }
 
-    protected void register(String bundleId, String id, String name, String common) {
-        PermissionFactory.register(serverId, bundleId, id, name, common);
+    protected void register(String bundleId, String authId, String name, String common) {
+        PermissionFactory.register(serverId, bundleId, authId, name, common);
     }
 }

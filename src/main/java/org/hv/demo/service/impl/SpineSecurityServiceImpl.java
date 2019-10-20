@@ -1,9 +1,9 @@
-package org.hv.biscuits.spine.service.impl;
+package org.hv.demo.service.impl;
 
 import org.hv.biscuits.annotation.Service;
 import org.hv.biscuits.service.AbstractService;
 import org.hv.biscuits.spine.model.User;
-import org.hv.biscuits.spine.service.SpineSecurityService;
+import org.hv.demo.service.SpineSecurityService;
 import org.hv.biscuits.spine.utils.EncodeUtil;
 import org.hv.biscuits.utils.TokenUtil;
 import org.hv.demo.repository.UserRepository;

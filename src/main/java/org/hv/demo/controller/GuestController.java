@@ -1,11 +1,11 @@
-package org.hv.biscuits.spine.controller;
+package org.hv.demo.controller;
 
 import org.hv.biscuits.annotation.Action;
 import org.hv.biscuits.annotation.Controller;
 import org.hv.biscuits.controller.AbstractController;
 import org.hv.biscuits.controller.Body;
 import org.hv.biscuits.spine.model.User;
-import org.hv.biscuits.spine.service.SpineSecurityService;
+import org.hv.demo.service.SpineSecurityService;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -15,10 +15,10 @@ import java.sql.SQLException;
  * @author wujianchuan
  */
 @Controller(bundleId = "guest", auth = false)
-public class SpineGuestController extends AbstractController {
+public class GuestController extends AbstractController {
     private final SpineSecurityService spineSecurityService;
 
-    public SpineGuestController(SpineSecurityService spineSecurityService) {
+    public GuestController(SpineSecurityService spineSecurityService) {
         this.spineSecurityService = spineSecurityService;
     }
 
