@@ -184,6 +184,8 @@ public class UserServiceImpl extends AbstractService implements UserService {
 }
 ```
 
+> At the same time you need add a session named `demo` in application.yml `session: biscuits,demo`
+
 ## 6.Register And Login (under the package named `controller`)
 ```java
 @Controller(bundleId = "guest", auth = false)
