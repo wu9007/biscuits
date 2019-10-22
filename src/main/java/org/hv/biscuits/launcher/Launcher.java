@@ -152,8 +152,11 @@ public class Launcher implements CommandLineRunner {
                 .collect(Collectors.toMap(authMapperRelation -> authMapperRelation.getAuthUuid() + UNDERLINE_DIVIDER + authMapperRelation.getMapperUuid(), i -> i));
 
         ActionFactory.getActionMap().forEach((bundleId, actionMap) -> actionMap.forEach((actionId, action) -> {
+            if (bundleId.startsWith(URL_DIVIDER)) {
+                throw new IllegalArgumentException(String.format("It's forbidden that contains character: %s in bundleId: %s.", URL_DIVIDER, bundleId));
+            }
             if (actionId.startsWith(URL_DIVIDER)) {
-                throw new IllegalArgumentException(String.format("It was forbid that contains character: %s in actionId.", URL_DIVIDER));
+                throw new IllegalArgumentException(String.format("It's forbidden that contains character: %s in actionId: %s.", URL_DIVIDER, actionId));
             }
             Action actionAnnotation = action.getAnnotation(Action.class);
             String requestMethod = actionAnnotation.method()[0].toString();
