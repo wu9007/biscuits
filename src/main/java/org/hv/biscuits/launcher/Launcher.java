@@ -151,42 +151,47 @@ public class Launcher implements CommandLineRunner {
         Map<String, AuthMapperRelation> authMapperRelationMap = authMapperRelations.stream()
                 .collect(Collectors.toMap(authMapperRelation -> authMapperRelation.getAuthUuid() + UNDERLINE_DIVIDER + authMapperRelation.getMapperUuid(), i -> i));
 
-        ActionFactory.getActionMap().forEach((bundleId, actionMap) -> actionMap.forEach((actionId, action) -> {
+        ActionFactory.getActionMap().forEach((bundleId, actionMap) -> {
             if (bundleId.startsWith(URL_DIVIDER)) {
                 throw new IllegalArgumentException(String.format("It's forbidden that contains character: %s in bundleId: %s.", URL_DIVIDER, bundleId));
             }
-            if (actionId.startsWith(URL_DIVIDER)) {
-                throw new IllegalArgumentException(String.format("It's forbidden that contains character: %s in actionId: %s.", URL_DIVIDER, actionId));
-            }
-            Action actionAnnotation = action.getAnnotation(Action.class);
-            String requestMethod = actionAnnotation.method()[0].toString();
-            String mapperIdentification = bundleId + UNDERLINE_DIVIDER + actionId + UNDERLINE_DIVIDER + requestMethod;
-            Mapper mapper;
-            if (!mapperMap.containsKey(mapperIdentification)) {
-                mapper = new Mapper(this.serverId, requestMethod, bundleId, actionId);
-                mapper.setBundleUuid(this.bundleMap.get(bundleId).getUuid());
-                try {
-                    session.save(mapper);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                mapper = mapperMap.get(mapperIdentification);
-            }
+            actionMap.forEach((actionId, action) -> {
 
-            Auth authAnnotation = action.getAnnotation(Auth.class);
-            if (authAnnotation != null) {
-                String authUuid = this.permissionMap.get(authAnnotation.value()).getUuid();
-                String mapperUuid = mapper.getUuid();
-                if (!authMapperRelationMap.containsKey(authUuid + UNDERLINE_DIVIDER + mapperUuid)) {
-                    AuthMapperRelation authMapperRelation = new AuthMapperRelation(this.serverId, authUuid, mapperUuid);
+                if (actionId.startsWith(URL_DIVIDER)) {
+                    throw new IllegalArgumentException(
+                            String.format("It's forbidden that contains character: %s in actionId: %s with bundleId: %s.", URL_DIVIDER, actionId, bundleId)
+                    );
+                }
+                Action actionAnnotation = action.getAnnotation(Action.class);
+                String requestMethod = actionAnnotation.method()[0].toString();
+                String mapperIdentification = bundleId + UNDERLINE_DIVIDER + actionId + UNDERLINE_DIVIDER + requestMethod;
+                Mapper mapper;
+                if (!mapperMap.containsKey(mapperIdentification)) {
+                    mapper = new Mapper(this.serverId, requestMethod, bundleId, actionId);
+                    mapper.setBundleUuid(this.bundleMap.get(bundleId).getUuid());
                     try {
-                        session.save(authMapperRelation);
+                        session.save(mapper);
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
+                } else {
+                    mapper = mapperMap.get(mapperIdentification);
                 }
-            }
-        }));
+
+                Auth authAnnotation = action.getAnnotation(Auth.class);
+                if (authAnnotation != null) {
+                    String authUuid = this.permissionMap.get(authAnnotation.value()).getUuid();
+                    String mapperUuid = mapper.getUuid();
+                    if (!authMapperRelationMap.containsKey(authUuid + UNDERLINE_DIVIDER + mapperUuid)) {
+                        AuthMapperRelation authMapperRelation = new AuthMapperRelation(this.serverId, authUuid, mapperUuid);
+                        try {
+                            session.save(authMapperRelation);
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+        });
     }
 }
