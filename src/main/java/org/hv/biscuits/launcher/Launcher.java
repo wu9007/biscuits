@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 public class Launcher implements CommandLineRunner {
 
     private static final String UNDERLINE_DIVIDER = "_";
+    private static final String URL_DIVIDER = "/";
 
     private final String serverId;
     private final List<AbstractBundle> bundleContainers;
@@ -151,6 +152,9 @@ public class Launcher implements CommandLineRunner {
                 .collect(Collectors.toMap(authMapperRelation -> authMapperRelation.getAuthUuid() + UNDERLINE_DIVIDER + authMapperRelation.getMapperUuid(), i -> i));
 
         ActionFactory.getActionMap().forEach((bundleId, actionMap) -> actionMap.forEach((actionId, action) -> {
+            if (actionId.startsWith(URL_DIVIDER)) {
+                throw new IllegalArgumentException(String.format("It was forbid that contains character: %s in actionId.", URL_DIVIDER));
+            }
             Action actionAnnotation = action.getAnnotation(Action.class);
             String requestMethod = actionAnnotation.method()[0].toString();
             String mapperIdentification = bundleId + UNDERLINE_DIVIDER + actionId + UNDERLINE_DIVIDER + requestMethod;
