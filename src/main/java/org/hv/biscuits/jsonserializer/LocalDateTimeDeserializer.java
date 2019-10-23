@@ -11,6 +11,8 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 /**
+ * 时区矫正
+ *
  * @author wujianchuan
  */
 public class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {
