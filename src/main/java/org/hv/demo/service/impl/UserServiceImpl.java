@@ -44,7 +44,7 @@ public class UserServiceImpl extends AbstractService implements UserService {
         user.setPassword(encodeUtil.abcEncoder(password));
         user.setLastPasswordResetDate(new Date());
         user.setLastRoleModifyDate(new Date());
-        this.userRepository.shallowSave(user, false);
+        this.userRepository.save(user, false);
         return user;
     }
 }

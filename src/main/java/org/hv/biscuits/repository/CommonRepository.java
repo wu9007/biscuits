@@ -40,7 +40,7 @@ public interface CommonRepository<T extends BaseEntity> extends Repository {
     int save(T obj, boolean cascade) throws SQLException, IllegalAccessException;
 
     /**
-     * Shallow save
+     * forcible save
      *
      * @param obj     New object who extend {@link BaseEntity}
      * @param cascade With save subsets
@@ -48,7 +48,7 @@ public interface CommonRepository<T extends BaseEntity> extends Repository {
      * @throws SQLException           e
      * @throws IllegalAccessException e
      */
-    int shallowSave(T obj, boolean cascade) throws SQLException, IllegalAccessException;
+    int forcibleSave(T obj, boolean cascade) throws SQLException, IllegalAccessException;
 
     /**
      * Update
@@ -86,7 +86,7 @@ public interface CommonRepository<T extends BaseEntity> extends Repository {
 
 
     /**
-     * Shallow Save With Track
+     * Forcible Save With Track
      *
      * @param obj              New object who extend {@link BaseEntity}
      * @param cascade          With save subsets
@@ -96,7 +96,7 @@ public interface CommonRepository<T extends BaseEntity> extends Repository {
      * @throws SQLException           e
      * @throws IllegalAccessException e
      */
-    int shallowSaveWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException;
+    int forcibleSaveWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException;
 
     /**
      * Update With Track

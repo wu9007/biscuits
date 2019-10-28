@@ -41,8 +41,8 @@ public abstract class AbstractCommonRepository<T extends BaseEntity> extends Abs
     }
 
     @Override
-    public int shallowSave(T obj, boolean cascade) throws SQLException, IllegalAccessException {
-        return super.getSession().shallowSave(obj, cascade);
+    public int forcibleSave(T obj, boolean cascade) throws SQLException, IllegalAccessException {
+        return super.getSession().forcibleSave(obj, cascade);
     }
 
     @Override
@@ -63,8 +63,8 @@ public abstract class AbstractCommonRepository<T extends BaseEntity> extends Abs
 
     @Override
     @Track(data = "#obj", operateName = "#trackDescription", operator = "#trackOperator", operate = OperateEnum.ADD)
-    public int shallowSaveWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException {
-        return this.shallowSave(obj, cascade);
+    public int forcibleSaveWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException {
+        return this.forcibleSave(obj, cascade);
     }
 
     @Override
