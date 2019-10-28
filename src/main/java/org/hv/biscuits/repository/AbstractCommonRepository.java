@@ -62,6 +62,12 @@ public abstract class AbstractCommonRepository<T extends BaseEntity> extends Abs
     }
 
     @Override
+    @Track(data = "#obj", operateName = "#trackDescription", operator = "#trackOperator", operate = OperateEnum.ADD)
+    public int shallowSaveWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException {
+        return this.shallowSave(obj, cascade);
+    }
+
+    @Override
     @Track(data = "#obj", operateName = "#trackDescription", operator = "#trackOperator", operate = OperateEnum.EDIT)
     public int updateWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException {
         return this.update(obj, cascade);

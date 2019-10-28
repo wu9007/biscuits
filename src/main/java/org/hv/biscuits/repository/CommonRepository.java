@@ -84,6 +84,20 @@ public interface CommonRepository<T extends BaseEntity> extends Repository {
      */
     int saveWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException;
 
+
+    /**
+     * Shallow Save With Track
+     *
+     * @param obj              New object who extend {@link BaseEntity}
+     * @param cascade          With save subsets
+     * @param trackOperator    Track Operator
+     * @param trackDescription Track Description
+     * @return Number of rows affected
+     * @throws SQLException           e
+     * @throws IllegalAccessException e
+     */
+    int shallowSaveWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException;
+
     /**
      * Update With Track
      *
