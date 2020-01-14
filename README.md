@@ -14,7 +14,9 @@ If you have any improvement, I will be happy to get a pull request from you.
 
 ## Showcase
 
-![Framework diagram](./biscuits.png)
+![structural diagram](https://cdn.nlark.com/yuque/0/2020/png/196328/1578965449602-a66e9f6a-ac75-4708-9255-d6695373a3b3.png?x-oss-process=image/resize,w_746)
+
+![Framework diagram](https://cdn.nlark.com/yuque/0/2020/png/196328/1578893821600-0fc6cafa-2adc-42ce-8d0d-d04318ef315a.png)
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
