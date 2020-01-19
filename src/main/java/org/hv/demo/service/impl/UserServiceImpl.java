@@ -16,23 +16,12 @@ import java.util.Date;
  */
 @Service(session = "demo")
 public class UserServiceImpl extends AbstractService implements UserService {
-    private final TokenUtil tokenUtil;
     private final EncodeUtil encodeUtil;
     private final UserRepository userRepository;
 
-    public UserServiceImpl(TokenUtil tokenUtil, EncodeUtil encodeUtil, UserRepository userRepository) {
-        this.tokenUtil = tokenUtil;
+    public UserServiceImpl(EncodeUtil encodeUtil, UserRepository userRepository) {
         this.encodeUtil = encodeUtil;
         this.userRepository = userRepository;
-    }
-
-    @Override
-    public String generateToken(String avatar, String password) throws SQLException {
-        User user = this.userRepository.findByAvatarAndPassword(avatar, this.encodeUtil.abcEncoder(password));
-        if (user == null) {
-            throw new IllegalArgumentException("The username or password is incorrect. Please fill in again.");
-        }
-        return this.tokenUtil.generateToken(user);
     }
 
     @Override

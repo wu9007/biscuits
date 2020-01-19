@@ -9,7 +9,5 @@ import java.sql.SQLException;
  */
 public interface UserService {
 
-    String generateToken(String avatar, String password) throws SQLException;
-
     User register(String avatar, String name, String password) throws SQLException, IllegalAccessException;
 }

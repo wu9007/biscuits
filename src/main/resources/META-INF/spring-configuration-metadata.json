@@ -36,6 +36,11 @@
       "description": "token expiration."
     },
     {
+      "name": "biscuits.token.refreshTime",
+      "type": "java.lang.Long",
+      "description": "token refresh time."
+    },
+    {
       "name": "biscuits.token.tokenHead",
       "type": "java.lang.String",
       "description": "token head."
@@ -49,6 +54,16 @@
       "name": "biscuits.filter.excludeUrlPatterns",
       "type": "java.lang.String",
       "description": "application filter exclude url patterns."
+    },
+    {
+      "name": "biscuits.ws.port",
+      "type": "java.lang.Integer",
+      "description": "ws port."
+    },
+    {
+      "name": "biscuits.ws.single",
+      "type": "java.lang.Boolean",
+      "description": "ws single online."
     }
   ]
 }

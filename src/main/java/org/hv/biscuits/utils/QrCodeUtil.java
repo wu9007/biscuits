@@ -51,7 +51,7 @@ public class QrCodeUtil {
         return pngOutputStream.toByteArray();
     }
 
-    public BufferedImage encodeToBufferedImage(String code, int width, int height) throws WriterException, IOException {
+    public BufferedImage encodeToBufferedImage(String code, int width, int height) throws WriterException {
         BitMatrix bitMatrix = this.encode(code, width, height);
         return MatrixToImageWriter.toBufferedImage(bitMatrix, new MatrixToImageConfig(Color.BLACK.getRGB(), Color.WHITE.getRGB()));
     }

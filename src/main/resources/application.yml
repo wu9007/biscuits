@@ -2,7 +2,7 @@ spring:
   application:
     name: biscuits-server
 server:
-  port: 8089
+  port: 8090
 
 pocket:
   datasource:
@@ -22,8 +22,12 @@ pocket:
 biscuits:
   token:
     secret: biscuit-secret
-    expiration: 1000
+    expiration: 600000
+    refreshTime: 300000
     tokenHead: Bearer
   filter:
 #    excludeUrlPatterns: /home/login,/home/register
     turnOn: true
+  ws:
+    port: 8091
+    single: true

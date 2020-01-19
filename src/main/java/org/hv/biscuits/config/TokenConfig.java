@@ -16,6 +16,8 @@ public class TokenConfig {
 
     private String tokenHead;
 
+    private Long refreshTime;
+
     public String getSecret() {
         return secret;
     }
@@ -38,5 +40,13 @@ public class TokenConfig {
 
     public void setTokenHead(String tokenHead) {
         this.tokenHead = tokenHead;
+    }
+
+    public Long getRefreshTime() {
+        return refreshTime;
+    }
+
+    public void setRefreshTime(Long refreshTime) {
+        this.refreshTime = refreshTime;
     }
 }

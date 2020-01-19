@@ -49,7 +49,6 @@ public class Launcher implements CommandLineRunner {
     private Map<String, Bundle> bundleMap = null;
     private Map<String, Authority> permissionMap = null;
 
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
     public Launcher(@Nullable List<AbstractBundle> bundleContainers, ApplicationContext context, @Nullable List<AbstractController> controllerList,
                     @Nullable List<AbstractPermission> permissionContainers) {

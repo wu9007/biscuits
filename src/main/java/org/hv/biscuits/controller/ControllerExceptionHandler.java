@@ -18,7 +18,7 @@ public class ControllerExceptionHandler {
     public Body handler(Exception e) {
         e.printStackTrace();
         if (e.getMessage() == null) {
-            return Body.newWaringInstance("失败", e.toString(), e.getStackTrace());
+            return Body.warning().title("失败").message(e.toString());
         }
         String message;
         if (e.getMessage().contains(UNIQUE_KEY)) {
@@ -29,6 +29,6 @@ public class ControllerExceptionHandler {
         } else {
             message = e.getMessage();
         }
-        return Body.newWaringInstance("失败", message, e.getStackTrace());
+        return Body.warning().title("失败").message(message);
     }
 }

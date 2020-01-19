@@ -5,138 +5,97 @@ import java.io.Serializable;
 /**
  * @author wujianchuan 2019/2/20
  */
-public class Body<T> implements Serializable {
+public class Body implements Serializable {
     private static final long serialVersionUID = -7606557226712921098L;
-    private Boolean success;
-    private String code;
+    private boolean success;
     private String category;
+    private Object data;
     private String title;
     private String message;
-    private String msg;
-    private T object;
+    private boolean resend;
+    private String token;
+    private boolean reLogin;
 
-    private Body() {
+    public static Body success() {
+        return new Body(true, CategoryTypes.SUCCESS);
     }
 
-    private Body(String title, String message, T object) {
+    public static Body info() {
+        return new Body(true, CategoryTypes.INFO);
+    }
+
+    public static Body warning() {
+        return new Body(true, CategoryTypes.WARING);
+    }
+
+    public static Body error() {
+        return new Body(false, CategoryTypes.ERROR);
+    }
+
+    public Body title(String title) {
         this.title = title;
+        return this;
+    }
+
+    public Body message(String message) {
         this.message = message;
-        this.object = object;
+        return this;
     }
 
-    private Body(T object) {
-        this.object = object;
+    public Body data(Object data) {
+        this.data = data;
+        return this;
     }
 
-    public static <E> Body<E> newDefaultInstance(String title, String message, E object) {
-        Body<E> instance = new Body<>(title, message, object);
-        instance.setSuccess(true);
-        instance.setCode("200");
-        instance.setCategory(CategoryTypes.DEFAULT);
-        return instance;
+    public Body resend() {
+        this.resend = true;
+        return this;
     }
 
-    public static <E> Body<E> newPrimaryInstance(String title, String message, E object) {
-        Body<E> instance = new Body<>(title, message, object);
-        instance.setSuccess(true);
-        instance.setCode("200");
-        instance.setCategory(CategoryTypes.PRIMARY);
-        return instance;
+    public Body token(String token) {
+        this.token = token;
+        return this;
     }
 
-    public static <E> Body<E> newSuccessInstance(String title, String message, E object) {
-        Body<E> instance = new Body<>(title, message, object);
-        instance.setSuccess(true);
-        instance.setCode("200");
-        instance.setCategory(CategoryTypes.SUCCESS);
-        return instance;
+    public Body reLogin() {
+        this.reLogin = true;
+        return this;
     }
 
-    public static <E> Body<E> newSuccessInstance(E object) {
-        Body<E> instance = new Body<>(object);
-        instance.setSuccess(true);
-        return instance;
-    }
-
-    public static <E> Body<E> newInfoInstance(String title, String message, E object) {
-        Body<E> instance = new Body<>(title, message, object);
-        instance.setSuccess(true);
-        instance.setCode("200");
-        instance.setCategory(CategoryTypes.INFO);
-        return instance;
-    }
-
-    public static <E> Body<E> newWaringInstance(String title, String message, E object) {
-        Body<E> instance = new Body<>(title, message, object);
-        instance.setSuccess(false);
-        instance.setCode("500");
-        instance.setMsg(message);
-        instance.setCategory(CategoryTypes.WARING);
-        return instance;
-    }
-
-    public static <E> Body<E> newErrorInstance(String title, String message, E object) {
-        Body<E> instance = new Body<>(title, message, object);
-        instance.setSuccess(false);
-        instance.setCode("500");
-        instance.setMsg(message);
-        instance.setCategory(CategoryTypes.ERROR);
-        return instance;
-    }
-
-    public Boolean getSuccess() {
-        return success;
-    }
-
-    public void setSuccess(Boolean success) {
+    private Body(boolean success, String category) {
         this.success = success;
+        this.category = category;
+    }
+
+    public boolean isSuccess() {
+        return success;
     }
 
     public String getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public Object getData() {
+        return data;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public String getToken() {
+        return token;
     }
 
-    public T getObject() {
-        return object;
+    public boolean isResend() {
+        return resend;
     }
 
-    public void setObject(T object) {
-        this.object = object;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
+    public boolean getReLogin() {
+        return reLogin;
     }
 }

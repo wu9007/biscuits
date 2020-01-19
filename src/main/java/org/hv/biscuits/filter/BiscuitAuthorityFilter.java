@@ -1,8 +1,7 @@
 package org.hv.biscuits.filter;
 
-import org.hv.pocket.query.SQLQuery;
-import org.hv.pocket.session.Session;
-import org.hv.pocket.session.SessionFactory;
+import io.jsonwebtoken.Claims;
+import org.hv.biscuits.config.TokenConfig;
 import org.hv.biscuits.config.FilterPathConfig;
 import org.hv.biscuits.utils.PathMatcher;
 import org.hv.biscuits.utils.TokenUtil;
@@ -19,26 +18,30 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+import static org.hv.biscuits.utils.TokenUtil.CLAIM_KEY_AUTH;
+import static org.hv.biscuits.utils.TokenUtil.CLAIM_KEY_AVATAR;
 
 /**
  * @author wujianchuan
  */
 @Component
 @Order(Integer.MIN_VALUE + 1)
-public class BiscuitAuthorityFilter implements Filter {
+public class BiscuitAuthorityFilter extends AbstractPathFilter implements Filter {
     private static final String OPTIONS = "OPTIONS";
     private Set<String> excludeUrlPatterns = new LinkedHashSet<>();
     private final FilterPathConfig filterPathConfig;
     private final TokenUtil tokenUtil;
-    private volatile Session session;
 
-    public BiscuitAuthorityFilter(FilterPathConfig filterPathConfig, TokenUtil tokenUtil) {
+    private String tokenHead;
+
+    public BiscuitAuthorityFilter(FilterPathConfig filterPathConfig, TokenConfig tokenConfig, TokenUtil tokenUtil) {
         this.filterPathConfig = filterPathConfig;
         this.tokenUtil = tokenUtil;
+        this.tokenHead = tokenConfig.getTokenHead();
     }
 
     @Override
@@ -59,15 +62,37 @@ public class BiscuitAuthorityFilter implements Filter {
         String actionId = splitPath[splitPath.length - 1];
         boolean filterTurnOn = this.filterPathConfig.getTurnOn() == null || this.filterPathConfig.getTurnOn();
         if (!filterTurnOn || this.freePath(bundleId) || matchExclude(path)) {
-            chain.doFilter(req, res);
+            freeRequest(req, res, chain, request, response);
             return;
         }
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (OPTIONS.equals(request.getMethod())) {
             response.setStatus(HttpServletResponse.SC_OK);
             chain.doFilter(req, res);
         } else {
-            String avatar = this.getAvatar(authHeader);
+            String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+            if (token == null || !token.startsWith(tokenHead)) {
+                super.reLogin(response, "Missing or invalid Authorization header");
+                return;
+            }
+            Claims claims = tokenUtil.getClaimsFromToken(token.replace(tokenHead, ""));
+            if (claims == null) {
+                super.reLogin(response, "Login status timed out");
+                return;
+            }
+            if (tokenUtil.shouldRefresh(claims)) {
+                super.refreshToken(response, tokenUtil.refreshToken(claims));
+                return;
+            }
+            String avatar = (String) claims.get(CLAIM_KEY_AVATAR);
+            if (avatar == null) {
+                super.reLogin(response, "Login user not found");
+                return;
+            }
+            String ownAuthIdsStr = (String) claims.get(CLAIM_KEY_AUTH);
+            if (ownAuthIdsStr == null) {
+                super.refuseWithMessage(response, "没有权限", "您没有访问权限");
+                return;
+            }
             if (!this.canPass(avatar, bundleId, actionId)) {
                 throw new ServletException(String.format("You are not authorized to pass %s", path));
             }
@@ -81,15 +106,6 @@ public class BiscuitAuthorityFilter implements Filter {
         this.excludeUrlPatterns.clear();
     }
 
-    private String getAvatar(String authHeader) throws ServletException {
-        String tokenHead = this.tokenUtil.getTokenConfig().getTokenHead();
-        if (authHeader == null || tokenHead == null || !authHeader.startsWith(tokenHead)) {
-            throw new ServletException("Missing or invalid Authorization header");
-        }
-        final String token = authHeader.substring(7);
-        return this.tokenUtil.getAvatarByToken(token);
-    }
-
     private boolean matchExclude(String path) {
         PathMatcher pathMatcher = new PathMatcher();
         for (String excludeUrlPattern : this.excludeUrlPatterns) {
@@ -100,84 +116,21 @@ public class BiscuitAuthorityFilter implements Filter {
         return false;
     }
 
-    private boolean canPass(String avatar, String bundleId, String actionId) throws ServletException {
-        this.openSession();
-        String sql = "SELECT   " +
-                "   T6.UUID    " +
-                "FROM   " +
-                "   T_MAPPER T1   " +
-                "   LEFT JOIN T_AUTH_MAPPER T2 ON T1.UUID = T2.MAPPER_UUID   " +
-                "   LEFT JOIN T_AUTHORITY T3 ON T2.AUTH_UUID = T3.UUID   " +
-                "   LEFT JOIN T_ROLE_AUTH T4 ON T3.UUID = T4.AUTH_UUID   " +
-                "   LEFT JOIN T_ROLE T5 ON T4.ROLE_UUID = T5.UUID   " +
-                "   LEFT JOIN T_BUNDLE T6 ON T1.BUNDLE_UUID = T6.UUID   " +
-                "   LEFT JOIN T_USER_ROLE T7 ON T5.UUID = T7.ROLE_UUID   " +
-                "   LEFT JOIN T_USER T8 ON T7.USER_UUID = T8.UUID    " +
-                "WHERE   " +
-                "   (T8.IS_MANAGER = 1 AND T8.CODE = :USER_CODE) " +
-                " OR " +
-                "   (T1.BUNDLE_ID = :BUNDLE_ID AND T1.ACTION_ID = :ACTION_ID AND T8.CODE = :USER_CODE)";
-
-        SQLQuery query = this.session.createSQLQuery(sql)
-                .mapperColumn("uuid")
-                .setParameter("BUNDLE_ID", bundleId)
-                .setParameter("ACTION_ID", actionId)
-                .setParameter("USER_CODE", avatar);
-        try {
-            return query.list().size() > 0;
-        } catch (SQLException e) {
-            throw new ServletException(e.getMessage());
-        } finally {
-            this.closeSession();
-        }
-    }
-
-    private boolean freePath(String bundleId) throws ServletException {
-        this.openSession();
-        String sql = "SELECT   " +
-                "   UUID    " +
-                "FROM   " +
-                "   T_BUNDLE    " +
-                "WHERE   " +
-                "   WITH_AUTH = 0    " +
-                "   AND BUNDLE_ID = :BUNDLE_ID ";
-
-        SQLQuery query = this.session.createSQLQuery(sql)
-                .mapperColumn("uuid")
-                .setParameter("BUNDLE_ID", bundleId);
-        try {
-            return query.list().size() > 0;
-        } catch (SQLException e) {
-            throw new ServletException(e.getMessage());
-        } finally {
-            this.closeSession();
-        }
-    }
-
-    private void openSession() {
-        if (this.session == null) {
-            synchronized (this) {
-                if (this.session == null) {
-                    this.session = SessionFactory.getSession("biscuits");
-                }
+    private void freeRequest(ServletRequest req, ServletResponse res, FilterChain chain, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (token != null && token.startsWith(tokenHead)) {
+            Claims claims = tokenUtil.getClaimsFromToken(token.replace(tokenHead, ""));
+            if (claims == null) {
+                super.reLogin(response, "Login status timed out");
+                return;
             }
-        }
-        if (this.session.getClosed()) {
-            synchronized (this) {
-                if (this.session.getClosed()) {
-                    this.session.open();
-                }
+            if (tokenUtil.shouldRefresh(claims)) {
+                super.refreshToken(response, tokenUtil.refreshToken(claims));
+                return;
             }
+            String avatar = (String) claims.get(CLAIM_KEY_AVATAR);
+            request.setAttribute("avatar", avatar);
         }
-    }
-
-    private void closeSession() {
-        if (!this.session.getClosed()) {
-            synchronized (this) {
-                if (!this.session.getClosed()) {
-                    this.session.close();
-                }
-            }
-        }
+        chain.doFilter(req, res);
     }
 }
