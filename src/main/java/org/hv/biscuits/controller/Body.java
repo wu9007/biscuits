@@ -16,6 +16,9 @@ public class Body implements Serializable {
     private String token;
     private boolean reLogin;
 
+    public Body() {
+    }
+
     public static Body success() {
         return new Body(true, CategoryTypes.SUCCESS);
     }
