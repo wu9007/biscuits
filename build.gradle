@@ -52,8 +52,7 @@ allprojects {
     }
 }
 
-def pocketVersion = '0.1.1'
-def siriusVersion = '0.1.1'
+def pocketVersion = '0.1.2'
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web:2.1.1.RELEASE'
