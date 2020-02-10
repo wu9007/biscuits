@@ -79,6 +79,9 @@ public class TokenUtil {
     }
 
     public boolean shouldRefresh(Claims claims) {
+        if (!claims.containsKey(CLAIM_KEY_CREATED)) {
+            return false;
+        }
         long createTime = (long) claims.get(CLAIM_KEY_CREATED);
         long plusTimeMillis = tokenExpiration - refreshTime;
         if (plusTimeMillis <= 0) {

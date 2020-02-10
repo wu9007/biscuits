@@ -120,16 +120,11 @@ public class BiscuitAuthorityFilter extends AbstractPathFilter implements Filter
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (token != null && token.startsWith(tokenHead)) {
             Claims claims = tokenUtil.getClaimsFromToken(token.replace(tokenHead, ""));
-            if (claims == null) {
-                super.reLogin(response, "Login status timed out");
-                return;
+
+            if (claims != null && !tokenUtil.shouldRefresh(claims)) {
+                String avatar = (String) claims.get(CLAIM_KEY_AVATAR);
+                request.setAttribute("avatar", avatar);
             }
-            if (tokenUtil.shouldRefresh(claims)) {
-                super.refreshToken(response, tokenUtil.refreshToken(claims));
-                return;
-            }
-            String avatar = (String) claims.get(CLAIM_KEY_AVATAR);
-            request.setAttribute("avatar", avatar);
         }
         chain.doFilter(req, res);
     }
