@@ -6,6 +6,7 @@ import org.hv.pocket.criteria.Sort;
 import org.hv.pocket.session.Session;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,7 +22,13 @@ public class FilterView implements Serializable {
     private static final Map<String, Function<Filter, Restrictions>> RESTRICTIONS_FACTORY = new ConcurrentHashMap<>(4);
 
     static {
-        RESTRICTIONS_FACTORY.put(Operate.EQU, (item) -> Restrictions.equ(item.getKey(), item.getValue()));
+        RESTRICTIONS_FACTORY.put(Operate.EQU, (item) -> {
+            if (item.getValue() != null) {
+                return Restrictions.equ(item.getKey(), item.getValue());
+            } else {
+                return Restrictions.isNull(item.getKey());
+            }
+        });
         RESTRICTIONS_FACTORY.put(Operate.NO_EQU, (item) -> Restrictions.ne(item.getKey(), item.getValue()));
         RESTRICTIONS_FACTORY.put(Operate.GT, (item) -> Restrictions.gt(item.getKey(), item.getValue()));
         RESTRICTIONS_FACTORY.put(Operate.GTE, (item) -> Restrictions.gte(item.getKey(), item.getValue()));
@@ -35,26 +42,23 @@ public class FilterView implements Serializable {
     }
 
     private Map<String, Object> filter;
-    /**
-     * key-> 属性名
-     * value-> 排序方式 `SortDirection`
-     */
-    private Map<String, String> sort;
     private Integer limit;
     private Integer page;
     private Integer start;
     private List<Filter> filters;
+    private List<FilterSort> sorts;
 
     public Criteria createCriteria(Session session, Class clazz) {
         Criteria criteria = session.createCriteria(clazz);
         if (filters != null && filters.size() > 0) {
             for (Filter item : filters) {
                 String operate = item.getOperate();
-                Object value = item.getValue();
+//                Object value = item.getValue();
                 // 过滤空字符串 bad request!!!
-                if (value instanceof String && ((String) value).length() == 0) {
-                    continue;
-                }
+//                if (value instanceof String && ((String) value).length() == 0) {
+//                    continue;
+//                }
+
                 // 默认操作为 `Operate.EQU`
                 if (operate != null && operate.trim().length() > 0) {
                     criteria.add(RESTRICTIONS_FACTORY.get(item.getOperate()).apply(item));
@@ -63,12 +67,12 @@ public class FilterView implements Serializable {
                 }
             }
         }
-        if (this.sort != null && this.sort.size() > 0) {
-            this.sort.forEach((key, value) -> {
-                if (SortDirection.ASC.equals(value)) {
-                    criteria.add(Sort.asc(key));
+        if (this.sorts != null && this.sorts.size() > 0) {
+            this.sorts.stream().sorted(Comparator.comparing(FilterSort::getIdx)).forEach((order) -> {
+                if (FilterSortDirection.ASC.equals(order.getDirection())) {
+                    criteria.add(Sort.asc(order.getKey()));
                 } else {
-                    criteria.add(Sort.desc(key));
+                    criteria.add(Sort.desc(order.getKey()));
                 }
             });
         }
@@ -128,12 +132,12 @@ public class FilterView implements Serializable {
         this.start = start;
     }
 
-    public Map<String, String> getSort() {
-        return sort;
+    public List<FilterSort> getSorts() {
+        return sorts;
     }
 
-    public void setSort(Map<String, String> sort) {
-        this.sort = sort;
+    public void setSorts(List<FilterSort> sorts) {
+        this.sorts = sorts;
     }
 
     public interface Operate {
@@ -148,10 +152,5 @@ public class FilterView implements Serializable {
         String LIKE = "like";
         String IS_NULL = "isNull";
         String IS_NOT_NULL = "isNotNull";
-    }
-
-    public interface SortDirection {
-        String DESC = "desc";
-        String ASC = "asc";
     }
 }
