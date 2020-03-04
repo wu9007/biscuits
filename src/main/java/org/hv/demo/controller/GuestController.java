@@ -11,6 +11,7 @@ import org.hv.demo.service.UserService;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class GuestController extends AbstractController {
     }
 
     @Action(actionId = "login", method = RequestMethod.POST)
+    @ResponseBody
     public Body login(@RequestBody Map<String, String> encodeAppUserInfo) throws SQLException {
         UserView userView = UserView.newInstance()
                 .setAvatar("ADMIN")

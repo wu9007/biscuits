@@ -8,16 +8,15 @@ pocket:
   datasource:
     serverId: 101
     node:
-      - url: jdbc:mysql://localhost:3306/home?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8
+      - url: jdbc:mysql://127.0.0.1:3306/lsplogin?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8
         nodeName: mysql-01
         driverName: com.mysql.cj.jdbc.Driver
         showSql: true
         user: root
         password: root
-        poolMiniSize: 10
-        poolMaxSize: 100
+        poolMiniSize: 5
+        poolMaxSize: 50
         timeout: 1000
-        cacheSize: 1000
         session: biscuits,demo
 biscuits:
   token:

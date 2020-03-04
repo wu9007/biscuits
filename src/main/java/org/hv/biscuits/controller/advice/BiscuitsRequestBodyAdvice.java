@@ -17,8 +17,9 @@ import java.nio.charset.StandardCharsets;
 /**
  * @author wujianchuan 2020/3/4
  * @version 1.0
+ * 对请求体中的数据进行解密操作
  */
-@RestControllerAdvice
+//@RestControllerAdvice
 public class BiscuitsRequestBodyAdvice implements RequestBodyAdvice {
     @Override
     public boolean supports(MethodParameter methodParameter, Type type, Class<? extends HttpMessageConverter<?>> aClass) {
