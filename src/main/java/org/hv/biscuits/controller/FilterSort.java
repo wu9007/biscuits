@@ -21,6 +21,12 @@ public class FilterSort {
     public FilterSort() {
     }
 
+    public FilterSort(String key, String direction, int idx) {
+        this.key = key;
+        this.direction = direction;
+        this.idx = idx;
+    }
+
     public String getKey() {
         return key;
     }
