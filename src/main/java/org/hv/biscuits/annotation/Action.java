@@ -27,4 +27,6 @@ public @interface Action {
 
     @AliasFor(annotation = RequestMapping.class)
     String[] produces() default {"application/json; charset=UTF-8"};
+
+    boolean responseEncrypt() default false;
 }
