@@ -2,7 +2,9 @@ package org.hv.biscuits.spine.model;
 
 import org.hv.pocket.annotation.Column;
 import org.hv.pocket.annotation.Entity;
+import org.hv.pocket.annotation.Join;
 import org.hv.pocket.annotation.OneToMany;
+import org.hv.pocket.constant.JoinMethod;
 import org.hv.pocket.model.BaseEntity;
 
 import java.util.Date;
@@ -24,6 +26,8 @@ public class User extends BaseEntity {
     private String password;
     @Column(name = "DEPT_UUID", businessName = "部门")
     private String departmentUuid;
+    @Join(columnName = "DEPT_UUID", columnSurname = "DEPT_NAME", businessName = "部门名称", joinTable = "T_DEPARTMENT", joinTableSurname = "T1",joinMethod = JoinMethod.LEFT,bridgeColumn = "UUID", destinationColumn = "NAME")
+    private String departmentName;
     @Column(name = "MEMO", businessName = "备注")
     private String memo;
     @Column(name = "ENABLE", businessName = "状态")
@@ -81,6 +85,14 @@ public class User extends BaseEntity {
 
     public void setDepartmentUuid(String departmentUuid) {
         this.departmentUuid = departmentUuid;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
     }
 
     public String getMemo() {

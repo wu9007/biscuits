@@ -12,8 +12,6 @@ import org.hv.pocket.session.SessionFactory;
 import org.hv.pocket.session.Transaction;
 import org.hv.biscuits.annotation.Auth;
 import org.hv.biscuits.annotation.Controller;
-import org.hv.biscuits.bundle.AbstractBundle;
-import org.hv.biscuits.bundle.BundleFactory;
 import org.hv.biscuits.controller.AbstractController;
 import org.hv.biscuits.permission.AbstractPermission;
 import org.hv.biscuits.permission.PermissionFactory;
@@ -21,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
@@ -42,18 +39,15 @@ public class Launcher implements CommandLineRunner {
     private static final String URL_DIVIDER = "/";
 
     private final String serverId;
-    private final List<AbstractBundle> bundleContainers;
     private final List<AbstractPermission> permissionContainers;
     private final List<AbstractController> controllerList;
 
     private Map<String, Bundle> bundleMap = null;
     private Map<String, Authority> permissionMap = null;
 
-    @Autowired
-    public Launcher(@Nullable List<AbstractBundle> bundleContainers, ApplicationContext context, @Nullable List<AbstractController> controllerList,
-                    @Nullable List<AbstractPermission> permissionContainers) {
+    @Autowired(required = false)
+    public Launcher(ApplicationContext context,  List<AbstractController> controllerList, List<AbstractPermission> permissionContainers) {
         this.serverId = Objects.requireNonNull(context.getEnvironment().getProperty("spring.application.name")).toUpperCase();
-        this.bundleContainers = bundleContainers;
         this.controllerList = controllerList;
         this.permissionContainers = permissionContainers;
     }
@@ -64,7 +58,7 @@ public class Launcher implements CommandLineRunner {
         session.open();
         Transaction transaction = session.getTransaction();
         transaction.begin();
-        if (this.bundleContainers != null && this.bundleContainers.size() > 0) {
+        if (this.controllerList != null) {
             this.operateBundle(session, transaction);
         }
         if (this.permissionContainers != null && this.permissionContainers.size() > 0) {
@@ -78,7 +72,6 @@ public class Launcher implements CommandLineRunner {
     }
 
     private void operateBundle(Session session, Transaction transaction) {
-        this.bundleContainers.forEach(bundleContainer -> bundleContainer.init());
         Criteria criteria = session.createCriteria(Bundle.class)
                 .add(Restrictions.equ("serverId", serverId));
         List<Bundle> bundleList = criteria.list();
@@ -87,20 +80,16 @@ public class Launcher implements CommandLineRunner {
         this.controllerList.forEach(controller -> {
             Controller controllerAnnotation = controller.getClass().getAnnotation(Controller.class);
             String bundleId = controllerAnnotation.bundleId()[0];
+            String bundleName = controllerAnnotation.name();
+            boolean bundleAuth = controllerAnnotation.auth();
             if (!this.bundleMap.containsKey(bundleId)) {
-                String bundleName = BundleFactory.getBundleName(bundleId);
-                if (bundleName != null) {
-                    Bundle bundle = new Bundle(bundleId, BundleFactory.getBundleName(bundleId), serverId, controllerAnnotation.auth());
+                    Bundle bundle = new Bundle(bundleId, bundleName, serverId, bundleAuth);
                     try {
                         session.save(bundle);
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
                     this.bundleMap.put(bundleId, bundle);
-                } else {
-                    transaction.rollBack();
-                    throw new IllegalArgumentException(String.format("缺少 Bundle: %s", bundleId));
-                }
             }
         });
     }
