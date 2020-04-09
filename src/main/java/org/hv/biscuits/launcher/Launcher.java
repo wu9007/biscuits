@@ -22,6 +22,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -50,6 +51,20 @@ public class Launcher implements CommandLineRunner {
         this.serverId = Objects.requireNonNull(context.getEnvironment().getProperty("spring.application.name")).toUpperCase();
         this.controllerList = controllerList;
         this.permissionContainers = permissionContainers;
+    }
+
+    @Autowired(required = false)
+    public Launcher(ApplicationContext context,  List<AbstractController> controllerList) {
+        this.serverId = Objects.requireNonNull(context.getEnvironment().getProperty("spring.application.name")).toUpperCase();
+        this.controllerList = controllerList;
+        this.permissionContainers = new ArrayList<>();
+    }
+
+    @Autowired(required = false)
+    public Launcher(ApplicationContext context) {
+        this.serverId = Objects.requireNonNull(context.getEnvironment().getProperty("spring.application.name")).toUpperCase();
+        this.controllerList = new ArrayList<>();
+        this.permissionContainers = new ArrayList<>();
     }
 
     @Override
