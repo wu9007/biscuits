@@ -1,6 +1,7 @@
 package org.hv.biscuits.filter;
 
 import io.jsonwebtoken.Claims;
+import org.apache.http.HttpStatus;
 import org.hv.biscuits.config.TokenConfig;
 import org.hv.biscuits.config.FilterPathConfig;
 import org.hv.biscuits.utils.PathMatcher;
@@ -74,6 +75,7 @@ public class BiscuitAuthorityFilter extends AbstractPathFilter implements Filter
         } else {
             String token = request.getHeader(HttpHeaders.AUTHORIZATION);
             if (token == null || !token.startsWith(tokenHead)) {
+                response.setStatus(HttpStatus.SC_UNAUTHORIZED);
                 super.reLogin(response, "Missing or invalid Authorization header");
                 return;
             }
@@ -88,12 +90,14 @@ public class BiscuitAuthorityFilter extends AbstractPathFilter implements Filter
             }
             String avatar = (String) claims.get(CLAIM_KEY_AVATAR);
             if (avatar == null) {
+                response.setStatus(HttpStatus.SC_UNAUTHORIZED);
                 super.reLogin(response, "Login user not found");
                 return;
             }
             String ownAuthIdsStr = (String) claims.get(CLAIM_KEY_AUTH);
             if (ownAuthIdsStr == null || !this.canPass(avatar, bundleId, actionId)) {
                 log.warn("{} has not authorized to pass {}", avatar, path);
+                response.setStatus(HttpStatus.SC_UNAUTHORIZED);
                 super.refuseWithMessage(response, "没有权限", "您没有访问权限");
                 return;
             }
