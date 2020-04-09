@@ -26,4 +26,6 @@ public @interface Controller {
     String[] bundleId() default "";
 
     boolean auth() default true;
+
+    String name() default "";
 }

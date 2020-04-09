@@ -6,7 +6,7 @@ apply plugin: 'build-dashboard'
 apply plugin: 'maven-publish'
 
 group = 'com.github.leyan95'
-version = '0.1.8'
+version = '0.1.9'
 sourceCompatibility = 1.8
 
 compileJava {
@@ -52,23 +52,19 @@ allprojects {
     }
 }
 
-def pocketVersion = '0.1.2'
+def pocketVersion = '0.1.4'
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web:2.1.1.RELEASE'
     implementation 'org.springframework.boot:spring-boot-starter-aop:2.1.1.RELEASE'
 
-    implementation 'org.springframework.boot:spring-boot-starter-cache:2.1.1.RELEASE'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.1.1.RELEASE'
     implementation 'com.github.leyan95:pocket:' + pocketVersion
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
     implementation 'com.google.zxing:core:3.4.0'
     implementation 'com.google.zxing:javase:3.4.0'
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
     implementation 'mysql:mysql-connector-java:8.0.13'
-
     implementation 'org.apache.httpcomponents:httpclient:4.5.2'
-
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor:2.1.1.RELEASE")
     testImplementation('org.springframework.boot:spring-boot-starter-test:2.1.1.RELEASE')
 }
@@ -106,6 +102,15 @@ publishing {
                 zxingJavaseDependencyNode.appendNode('artifactId', 'javase')
                 zxingJavaseDependencyNode.appendNode('version', '3.4.0')
             }
+        }
+    }
+    repositories {
+        maven {
+            credentials {
+                username "shinowupload"
+                password "shinowupload"
+            }
+            url "http://c4:8081/repository/thirdparty/org.gradle.daemon=true"
         }
     }
 }
