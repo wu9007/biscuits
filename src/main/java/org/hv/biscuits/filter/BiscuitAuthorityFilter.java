@@ -93,7 +93,7 @@ public class BiscuitAuthorityFilter extends AbstractPathFilter implements Filter
             }
             String ownAuthIdsStr = (String) claims.get(CLAIM_KEY_AUTH);
             if (ownAuthIdsStr == null || !this.canPass(avatar, bundleId, actionId)) {
-                log.warn("%s has not authorized to pass %s", avatar, path);
+                log.warn("{} has not authorized to pass {}", avatar, path);
                 super.refuseWithMessage(response, "没有权限", "您没有访问权限");
                 return;
             }
