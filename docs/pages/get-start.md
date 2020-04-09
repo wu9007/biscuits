@@ -59,7 +59,8 @@ pocket:
 ```json
 biscuits:
   token:
-    secret: demo-secret
-    expiration: 1000
-    tokenHead: Bearer
+    secret: s-demo
+    expiration: 600000
+    refreshTime: 300000
+    tokenHead: Bearer 
 ```

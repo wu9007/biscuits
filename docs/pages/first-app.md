@@ -23,7 +23,7 @@ import org.hv.biscuits.controller.AbstractController;
 
 // This route can be accessed without any permission, 
 // because the `auth` attribute in the `@Controller` annotation has been set to `false`.
-@Controller(bundleId = "home", auth = false)
+@Controller(bundleId = "home", auth = false, name = "Home-Bundle")
 public class HomeController extends AbstractController {
 
     @Action(actionId = "welcome", method = RequestMethod.GET)
@@ -41,7 +41,7 @@ import org.hv.biscuits.annotation.Auth;
 import org.hv.biscuits.annotation.Controller;
 import org.hv.biscuits.controller.AbstractController;
 
-@Controller(bundleId = "demo", auth = true)
+@Controller(bundleId = "demo", auth = true, name = "Demo-Bundle")
 public class OrderController extends AbstractController {
 
     @Auth(value = "demo_read")
@@ -60,22 +60,7 @@ public class OrderController extends AbstractController {
 
 > At the same time, you need to manually register the `bunldeId` and `authId` into this app.
 
-## 3.Register Bundle And Authority (under the package called `demo`)
-#### Create a class for the app to register `bundles` named `DemoBundleRegister.java` as follows:
-```java
-import org.hv.biscuits.bundle.AbstractBundle;
-
-@Component
-public class DemoBundleRegister extends AbstractBundle {
-
-    @Override
-    public void init() {
-        // you can register all bundles in the app at this place.
-        this.register("home", "Home-Bundle");
-        this.register("demo", "Demo-Bundle");
-    }
-}
-```
+## 3.Register Authority (under the package called `demo`)
 #### Create a class for the app to register `authority` named `DemoAuthRegister.java` as follows:
 ```java
 import org.hv.biscuits.permission.AbstractPermission;
