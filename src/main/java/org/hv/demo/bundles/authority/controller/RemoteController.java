@@ -18,7 +18,9 @@ public class RemoteController extends AbstractController {
     @Action(actionId = "bai_du_dom", method = RequestMethod.GET)
     public String baiDuDom() throws IOException {
         Grab<String> grab = Grab.newInstance("http://www.baidu.com");
-        return grab.setConnectionRequestTimeout(100)
+        return grab.setConnectionRequestTimeout(1000)
+                .setConnectTimeout(1000)
+                .setSocketTimeout(2000)
                 .appendHeader("biscuits", "hello world!")
                 .appendParams("name", "guy")
                 .appendBody("alive", true)
