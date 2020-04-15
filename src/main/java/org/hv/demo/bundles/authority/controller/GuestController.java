@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 /**
  * @author wujianchuan
@@ -23,8 +24,8 @@ public class GuestController extends AbstractController {
     }
 
     @Action(actionId = "welcome", method = RequestMethod.GET)
-    public String welcome() {
-        return "welcome to my home!";
+    public String welcome() throws SQLIntegrityConstraintViolationException {
+        throw new SQLIntegrityConstraintViolationException("UK_");
     }
 
     @Action(actionId = "login", method = RequestMethod.POST)
