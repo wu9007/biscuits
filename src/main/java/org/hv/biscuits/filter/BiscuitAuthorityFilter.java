@@ -52,7 +52,7 @@ public class BiscuitAuthorityFilter extends AbstractPathFilter implements Filter
     public void init(FilterConfig filterConfig) {
         String excludeUrlStr = this.filterPathConfig.getExcludeUrlPatterns();
         if (excludeUrlStr != null && excludeUrlStr.length() > 0) {
-            this.excludeUrlPatterns.addAll(Arrays.asList(this.filterPathConfig.getExcludeUrlPatterns().trim().split(",")));
+            this.excludeUrlPatterns.addAll(Arrays.asList(this.filterPathConfig.getExcludeUrlPatterns().replaceAll(" ","").split(",")));
         }
     }
 
