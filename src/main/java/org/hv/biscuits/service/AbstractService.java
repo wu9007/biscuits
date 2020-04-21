@@ -1,5 +1,6 @@
 package org.hv.biscuits.service;
 
+import org.hv.biscuits.repository.CommonBaseEntityRepository;
 import org.hv.biscuits.repository.CommonRepository;
 import org.hv.biscuits.repository.Repository;
 import org.hv.pocket.session.Session;
@@ -12,7 +13,8 @@ import java.util.List;
 /**
  * @author wujianchuan 2019/1/31
  */
-public abstract class AbstractService implements Service {
+public abstract class AbstractService implements Service
+{
     /**
      * 在切面中进行了赋值操作，而后将 session 注入到所以来的 repository 中。
      */
@@ -21,10 +23,14 @@ public abstract class AbstractService implements Service {
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private final List<Field> repositoryFieldList = new ArrayList<>();
 
-    public AbstractService() {
-        for (Field field : this.getClass().getDeclaredFields()) {
-            for (Type genericInterface : field.getType().getGenericInterfaces()) {
-                if (genericInterface.equals(Repository.class) || genericInterface.getTypeName().contains(CommonRepository.class.getName())) {
+    public AbstractService()
+    {
+        for (Field field : this.getClass().getDeclaredFields())
+        {
+            for (Type genericInterface : field.getType().getGenericInterfaces())
+            {
+                if (genericInterface.equals(Repository.class) || genericInterface.getTypeName().contains(CommonRepository.class.getName()) || genericInterface.getTypeName().contains(CommonBaseEntityRepository.class.getName()))
+                {
                     this.repositoryFieldList.add(field);
                     break;
                 }
@@ -33,7 +39,8 @@ public abstract class AbstractService implements Service {
     }
 
     @Override
-    public Session getSession() {
+    public Session getSession()
+    {
         return this.sessionLocal.get();
     }
 
