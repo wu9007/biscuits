@@ -1,6 +1,6 @@
 package org.hv.biscuits.repository;
 
-import org.hv.pocket.model.BaseEntity;
+import org.hv.pocket.model.AbstractEntity;
 import org.hv.biscuits.controller.FilterView;
 import org.hv.biscuits.service.PageList;
 
@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author wujianchuan
  */
-public interface CommonRepository<T extends BaseEntity> extends Repository {
+public interface CommonRepository<T extends AbstractEntity> extends Repository {
     /**
      * Select data by identify (Default with querying subsets).
      *
@@ -31,7 +31,7 @@ public interface CommonRepository<T extends BaseEntity> extends Repository {
     /**
      * Save
      *
-     * @param obj     New object who extend {@link BaseEntity}
+     * @param obj     New object who extend {@link AbstractEntity}
      * @param cascade With save subsets
      * @return Number of rows affected
      * @throws SQLException           e
@@ -42,7 +42,7 @@ public interface CommonRepository<T extends BaseEntity> extends Repository {
     /**
      * forcible save
      *
-     * @param obj     New object who extend {@link BaseEntity}
+     * @param obj     New object who extend {@link AbstractEntity}
      * @param cascade With save subsets
      * @return Number of rows affected
      * @throws SQLException           e
@@ -53,7 +53,7 @@ public interface CommonRepository<T extends BaseEntity> extends Repository {
     /**
      * Update
      *
-     * @param obj     Persisted object who extend {@link BaseEntity}
+     * @param obj     Persisted object who extend {@link AbstractEntity}
      * @param cascade With update subsets
      * @return Number of rows affected
      * @throws SQLException           e
@@ -64,7 +64,7 @@ public interface CommonRepository<T extends BaseEntity> extends Repository {
     /**
      * Delete
      *
-     * @param obj Delete object who extend {@link BaseEntity}
+     * @param obj Delete object who extend {@link AbstractEntity}
      * @return Number of rows affected
      * @throws SQLException           e
      * @throws IllegalAccessException e
@@ -74,7 +74,7 @@ public interface CommonRepository<T extends BaseEntity> extends Repository {
     /**
      * Save With Track
      *
-     * @param obj              New object who extend {@link BaseEntity}
+     * @param obj              New object who extend {@link AbstractEntity}
      * @param cascade          With save subsets
      * @param trackOperator    Track Operator
      * @param trackDescription Track Description
@@ -88,7 +88,7 @@ public interface CommonRepository<T extends BaseEntity> extends Repository {
     /**
      * Forcible Save With Track
      *
-     * @param obj              New object who extend {@link BaseEntity}
+     * @param obj              New object who extend {@link AbstractEntity}
      * @param cascade          With save subsets
      * @param trackOperator    Track Operator
      * @param trackDescription Track Description
@@ -101,7 +101,7 @@ public interface CommonRepository<T extends BaseEntity> extends Repository {
     /**
      * Update With Track
      *
-     * @param obj              Persisted object who extend {@link BaseEntity}
+     * @param obj              Persisted object who extend {@link AbstractEntity}
      * @param cascade          With update subsets
      * @param operator         Operator
      * @param trackDescription Track Description
@@ -114,7 +114,7 @@ public interface CommonRepository<T extends BaseEntity> extends Repository {
     /**
      * Delete With Track
      *
-     * @param obj              Delete object who extend {@link BaseEntity}
+     * @param obj              Delete object who extend {@link AbstractEntity}
      * @param operator         Operator
      * @param trackDescription Track Description
      * @return Number of rows affected

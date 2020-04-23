@@ -4,10 +4,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.hv.biscuits.jsonserializer.LocalDateTimeDeserializer;
 import org.hv.pocket.annotation.Column;
 import org.hv.pocket.annotation.Entity;
+import org.hv.pocket.annotation.Identify;
 import org.hv.pocket.annotation.Join;
 import org.hv.pocket.constant.JoinMethod;
+import org.hv.pocket.model.AbstractEntity;
 import org.hv.pocket.model.BaseEntity;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,9 +19,12 @@ import java.time.LocalDateTime;
  * @author wujianchuan 2018/12/26
  */
 @Entity(table = "TBL_ORDER", tableId = 0, businessName = "单据")
-public class Order extends BaseEntity {
+public class Order extends AbstractEntity {
     private static final long serialVersionUID = 2560385391551524826L;
 
+    @Identify
+    @Column
+    private String uuid;
     @Column(name = "RELEVANT_BILL_UUID", businessName = "关联单据的数据标识")
     private String relevantBillUuid;
     @Column(name = "CODE", businessName = "编号")
@@ -44,6 +50,14 @@ public class Order extends BaseEntity {
         order.setCode(code);
         order.setPrice(price);
         return order;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public String getRelevantBillUuid() {
@@ -116,5 +130,15 @@ public class Order extends BaseEntity {
 
     public void setTypeName(String typeName) {
         this.typeName = typeName;
+    }
+
+    @Override
+    public Serializable getIdentify() {
+        return this.getUuid();
+    }
+
+    @Override
+    public void setIdentify(Serializable serializable) {
+        this.setUuid((String) serializable);
     }
 }

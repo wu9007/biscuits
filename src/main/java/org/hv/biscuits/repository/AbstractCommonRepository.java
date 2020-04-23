@@ -3,7 +3,7 @@ package org.hv.biscuits.repository;
 import org.hv.biscuits.constant.OperateEnum;
 import org.hv.biscuits.service.PageList;
 import org.hv.pocket.criteria.Criteria;
-import org.hv.pocket.model.BaseEntity;
+import org.hv.pocket.model.AbstractEntity;
 import org.hv.biscuits.annotation.Track;
 import org.hv.biscuits.controller.FilterView;
 
@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * @author wujianchuan
  */
-public abstract class AbstractCommonRepository<T extends BaseEntity> extends AbstractRepository implements CommonRepository<T> {
+public abstract class AbstractCommonRepository<T extends AbstractEntity> extends AbstractRepository implements CommonRepository<T> {
     protected Class<T> genericClazz;
 
     public AbstractCommonRepository() {
