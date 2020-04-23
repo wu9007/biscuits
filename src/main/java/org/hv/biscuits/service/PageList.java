@@ -1,31 +1,33 @@
 package org.hv.biscuits.service;
 
+import org.hv.pocket.model.AbstractEntity;
+
 import java.util.List;
 
 /**
  * @author wujianchuan
  */
-public class PageList {
-    private List result;
+public class PageList<T> {
+    private List<T> result;
     private Long count;
 
     public PageList() {
     }
 
-    private PageList(List result, Long count) {
+    private PageList(List<T> result, Long count) {
         this.result = result;
         this.count = count;
     }
 
-    public static PageList newInstance(List result, long count) {
-        return new PageList(result, count);
+    public static <T extends AbstractEntity> PageList<T> newInstance(List<T> result, long count) {
+        return new PageList<T>(result, count);
     }
 
-    public List getResult() {
+    public List<T> getResult() {
         return result;
     }
 
-    public void setResult(List result) {
+    public void setResult(List<T> result) {
         this.result = result;
     }
 

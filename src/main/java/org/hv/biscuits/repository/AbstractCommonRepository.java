@@ -17,12 +17,12 @@ import java.util.List;
  * @author wujianchuan
  */
 public abstract class AbstractCommonRepository<T extends BaseEntity> extends AbstractRepository implements CommonRepository<T> {
-    protected Class genericClazz;
+    protected Class<T> genericClazz;
 
     public AbstractCommonRepository() {
         Type genType = getClass().getGenericSuperclass();
         Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
-        this.genericClazz = (Class) params[0];
+        this.genericClazz = (Class<T>) params[0];
     }
 
     @Override
@@ -80,14 +80,14 @@ public abstract class AbstractCommonRepository<T extends BaseEntity> extends Abs
     }
 
     @Override
-    public PageList loadPage(FilterView filterView) throws SQLException {
+    public PageList<T> loadPage(FilterView filterView) throws SQLException {
         Criteria criteria;
         if (filterView == null) {
             criteria = this.getSession().createCriteria(this.genericClazz);
         } else {
             criteria = filterView.createCriteria(this.getSession(), this.genericClazz);
         }
-        List list = criteria.listNotCleanRestrictions();
+        List<T> list = criteria.listNotCleanRestrictions();
         return PageList.newInstance(list, criteria.count());
     }
 }

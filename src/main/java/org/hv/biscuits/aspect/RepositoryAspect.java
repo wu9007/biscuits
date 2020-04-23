@@ -13,7 +13,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.hv.pocket.annotation.Entity;
 import org.hv.pocket.constant.AnnotationType;
-import org.hv.pocket.model.BaseEntity;
+import org.hv.pocket.model.AbstractEntity;
 import org.hv.pocket.model.DetailInductiveBox;
 import org.hv.pocket.model.MapperFactory;
 import org.hv.pocket.session.Session;
@@ -65,8 +65,8 @@ public class RepositoryAspect {
                     MapperFactory.getBusinessName(entityData.getNewEntity() != null ? entityData.getNewEntity().getClass().getName() : entityData.getOldEntity().getClass().getName(), entityData.field.getName()),
             entityData -> {
                 try {
-                    BaseEntity newEntity = entityData.getNewEntity();
-                    BaseEntity oldEntity = entityData.getOldEntity();
+                    AbstractEntity newEntity = entityData.getNewEntity();
+                    AbstractEntity oldEntity = entityData.getOldEntity();
                     Field field = entityData.getField();
                     OperateEnum operateEnum = entityData.getOperateEnum();
                     field.setAccessible(true);
@@ -74,7 +74,7 @@ public class RepositoryAspect {
                         Object newValue = field.get(newEntity);
                         AnnotationType annotationType = MapperFactory.getAnnotationType(newEntity.getClass().getName(), field.getName());
                         if (AnnotationType.ONE_TO_MANY.equals(annotationType)) {
-                            List<BaseEntity> details = (List<BaseEntity>) newValue;
+                            List<AbstractEntity> details = (List<AbstractEntity>) newValue;
                             return details.stream()
                                     .map(detail -> this.getBusinessContent(detail, null))
                                     .collect(Collectors.toList());
@@ -85,8 +85,8 @@ public class RepositoryAspect {
                         AnnotationType annotationType = MapperFactory.getAnnotationType(newEntity.getClass().getName(), field.getName());
                         Object oldValue = field.get(oldEntity);
                         if (AnnotationType.ONE_TO_MANY.equals(annotationType)) {
-                            List<BaseEntity> newDetails = (List<BaseEntity>) newValue;
-                            List<BaseEntity> oldDetails = (List<BaseEntity>) oldValue;
+                            List<AbstractEntity> newDetails = (List<AbstractEntity>) newValue;
+                            List<AbstractEntity> oldDetails = (List<AbstractEntity>) oldValue;
                             DetailInductiveBox detailInductiveBox = DetailInductiveBox.newInstance(newDetails, oldDetails);
                             List<Map> moribundDetailListContent = detailInductiveBox.getMoribund().stream()
                                     .map(moribund -> this.getBusinessContent(null, moribund))
@@ -94,10 +94,10 @@ public class RepositoryAspect {
                             List<Map> newbornDetailListContent = detailInductiveBox.getNewborn().stream()
                                     .map(newborn -> this.getBusinessContent(newborn, null))
                                     .collect(Collectors.toList());
-                            Map<String, BaseEntity> olderMapper = oldDetails.stream().collect(Collectors.toMap(BaseEntity::getUuid, detail -> detail));
+                            Map<String, AbstractEntity> olderMapper = oldDetails.stream().collect(Collectors.toMap(detail -> (String) detail.getIdentify(), detail -> detail));
                             List<Map> updateDetailListContent = detailInductiveBox.getUpdate().stream()
                                     .map(newDetail -> {
-                                        BaseEntity olderDetail = olderMapper.get(newDetail.getUuid());
+                                        AbstractEntity olderDetail = olderMapper.get(newDetail.getIdentify());
                                         return this.getBusinessContent(newDetail, olderDetail);
                                     })
                                     .collect(Collectors.toList());
@@ -112,7 +112,7 @@ public class RepositoryAspect {
                         Object oldValue = field.get(oldEntity);
                         AnnotationType annotationType = MapperFactory.getAnnotationType(oldEntity.getClass().getName(), field.getName());
                         if (AnnotationType.ONE_TO_MANY.equals(annotationType)) {
-                            List<BaseEntity> oldDetails = (List<BaseEntity>) oldValue;
+                            List<AbstractEntity> oldDetails = (List<AbstractEntity>) oldValue;
                             return oldDetails.stream()
                                     .map(oldDetail -> this.getBusinessContent(null, oldDetail))
                                     .collect(Collectors.toList());
@@ -164,11 +164,11 @@ public class RepositoryAspect {
         }
         Object dataValue = dataExpression.getValue(context);
         String operator;
-        BaseEntity entity;
+        AbstractEntity entity;
         String operateName;
         if (operatorValue != null && dataValue != null) {
             operator = operatorValue.toString();
-            entity = (BaseEntity) dataValue;
+            entity = (AbstractEntity) dataValue;
         } else {
             throw new IllegalArgumentException("can not found data and operator.");
         }
@@ -183,14 +183,14 @@ public class RepositoryAspect {
         sessionLocalField.setAccessible(true);
         ThreadLocal<Session> sessionLocal = (ThreadLocal<Session>) sessionLocalField.get(target);
         Session session = sessionLocal.get();
-        BaseEntity newEntity;
-        BaseEntity olderEntity = null;
-        if (entity.getUuid() != null) {
-            olderEntity = (BaseEntity) session.findDirect(entity.getClass(), entity.getUuid());
+        AbstractEntity newEntity;
+        AbstractEntity olderEntity = null;
+        if (entity.getIdentify() != null) {
+            olderEntity = session.findDirect(entity.getClass(), entity.getIdentify());
         }
         Object result = joinPoint.proceed();
-        if (entity.getUuid() != null) {
-            newEntity = (BaseEntity) session.findDirect(entity.getClass(), entity.getUuid());
+        if (entity.getIdentify() != null) {
+            newEntity = (AbstractEntity) session.findDirect(entity.getClass(), entity.getIdentify());
         } else {
             newEntity = entity;
         }
@@ -198,7 +198,7 @@ public class RepositoryAspect {
         return result;
     }
 
-    private void saveHistory(BaseEntity olderEntity, BaseEntity newEntity, Session session, String operateName, String operate, String operator) throws SQLException {
+    private void saveHistory(AbstractEntity olderEntity, AbstractEntity newEntity, Session session, String operateName, String operate, String operator) throws SQLException {
 
         Class clazz = newEntity != null ? newEntity.getClass() : olderEntity.getClass();
         Entity entityAnnotation = (Entity) clazz.getAnnotation(Entity.class);
@@ -232,7 +232,7 @@ public class RepositoryAspect {
 
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
-                Objects.requireNonNull(session).save(new History(operate, new Date(), operator, newEntity != null ? newEntity.getUuid() : olderEntity.getUuid(), objectMapper.writeValueAsString(operateContent)));
+                Objects.requireNonNull(session).save(new History(operate, new Date(), operator, newEntity != null ? (String) newEntity.getIdentify() : (String) olderEntity.getIdentify(), objectMapper.writeValueAsString(operateContent)));
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
@@ -246,7 +246,7 @@ public class RepositoryAspect {
      * @param olderEntity 老
      * @return business content
      */
-    private Map<String, Object> getBusinessContent(BaseEntity newEntity, BaseEntity olderEntity) {
+    private Map<String, Object> getBusinessContent(AbstractEntity newEntity, AbstractEntity olderEntity) {
         if (olderEntity == null) {
             // 新增
             return Arrays.stream(MapperFactory.getBusinessFields(newEntity.getClass().getName()))
@@ -274,36 +274,36 @@ public class RepositoryAspect {
      * @param newEntity 新
      * @return business content
      */
-    private Map<String, Object> getFlagBusinessContent(BaseEntity newEntity) {
+    private Map<String, Object> getFlagBusinessContent(AbstractEntity newEntity) {
         return Arrays.stream(MapperFactory.getKeyBusinessFields(newEntity.getClass().getName()))
                 .map(field -> new HistoryData(newEntity, field))
                 .collect(flagBusinessCollector);
     }
 
     private static class HistoryData {
-        private final BaseEntity newEntity;
-        private BaseEntity oldEntity;
+        private final AbstractEntity newEntity;
+        private AbstractEntity oldEntity;
         private final Field field;
         private OperateEnum operateEnum;
 
-        HistoryData(BaseEntity newEntity, BaseEntity oldEntity, Field field, OperateEnum operateEnum) {
+        HistoryData(AbstractEntity newEntity, AbstractEntity oldEntity, Field field, OperateEnum operateEnum) {
             this.newEntity = newEntity;
             this.oldEntity = oldEntity;
             this.field = field;
             this.operateEnum = operateEnum;
         }
 
-        HistoryData(BaseEntity newEntity, Field field) {
+        HistoryData(AbstractEntity newEntity, Field field) {
             this.newEntity = newEntity;
             this.field = field;
         }
 
-        private BaseEntity getNewEntity() {
+        private AbstractEntity getNewEntity() {
             return newEntity;
         }
 
 
-        private BaseEntity getOldEntity() {
+        private AbstractEntity getOldEntity() {
             return oldEntity;
         }
 

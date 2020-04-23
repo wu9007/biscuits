@@ -123,5 +123,5 @@ public interface CommonRepository<T extends BaseEntity> extends Repository {
      */
     int deleteWithTrack(T obj, String operator, String trackDescription) throws SQLException, IllegalAccessException;
 
-    PageList loadPage(FilterView filterView) throws SQLException;
+    PageList<T> loadPage(FilterView filterView) throws SQLException;
 }
