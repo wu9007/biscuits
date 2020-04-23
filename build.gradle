@@ -6,7 +6,7 @@ apply plugin: 'build-dashboard'
 apply plugin: 'maven-publish'
 
 group = 'com.github.leyan95'
-version = '0.1.13'
+version = '0.1.14'
 sourceCompatibility = 1.8
 
 compileJava {
@@ -52,7 +52,7 @@ allprojects {
     }
 }
 
-def pocketVersion = '0.1.4'
+def pocketVersion = '0.1.6'
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web:2.1.1.RELEASE'
