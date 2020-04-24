@@ -178,8 +178,9 @@ public class Grab<R> {
             }
         }
         HttpResponse httpResponse = CLIENT.execute(httpGet);
+        R r = this.getResult(httpResponse, callback);
         httpGet.releaseConnection();
-        return this.getResult(httpResponse, callback);
+        return r;
     }
 
     /**
@@ -206,8 +207,9 @@ public class Grab<R> {
             httpPost.setEntity(stringEntity);
         }
         HttpResponse httpResponse = CLIENT.execute(httpPost);
+        R r = this.getResult(httpResponse, callback);
         httpPost.releaseConnection();
-        return this.getResult(httpResponse, callback);
+        return r;
     }
 
 
