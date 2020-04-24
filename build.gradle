@@ -6,7 +6,7 @@ apply plugin: 'build-dashboard'
 apply plugin: 'maven-publish'
 
 group = 'com.github.leyan95'
-version = '0.1.17'
+version = '0.1.18'
 sourceCompatibility = 1.8
 
 compileJava {
@@ -46,13 +46,20 @@ repositories {
 
 compileJava.dependsOn(processResources)
 
-allprojects {
-    repositories {
-        maven { url 'https://jitpack.io' }
+repositories {
+    maven {
+        url "${download_url}"
+        credentials {
+            username "${download_username}"
+            password "${download_password}"
+        }
     }
+    mavenLocal()
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
-def pocketVersion = '0.1.6'
+def pocketVersion = '0.1.7'
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web:2.1.1.RELEASE'
@@ -95,12 +102,14 @@ publishing {
         }
     }
     repositories {
-        maven {
-            credentials {
-                username "shinowupload"
-                password "shinowupload"
+        repositories {
+            maven {
+                credentials {
+                    username "${upload_username}"
+                    password "${upload_password}"
+                }
+                url "${upload_url}"
             }
-            url "http://c4:8081/repository/thirdparty/org.gradle.daemon=true"
         }
     }
 }

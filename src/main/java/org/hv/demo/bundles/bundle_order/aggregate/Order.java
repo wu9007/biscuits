@@ -133,12 +133,12 @@ public class Order extends AbstractEntity {
     }
 
     @Override
-    public Serializable getIdentify() {
+    public Serializable loadIdentify() {
         return this.getUuid();
     }
 
     @Override
-    public void setIdentify(Serializable serializable) {
+    public void putIdentify(Serializable serializable) {
         this.setUuid((String) serializable);
     }
 }
