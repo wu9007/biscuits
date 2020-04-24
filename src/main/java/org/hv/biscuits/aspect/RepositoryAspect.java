@@ -94,10 +94,10 @@ public class RepositoryAspect {
                             List<Map> newbornDetailListContent = detailInductiveBox.getNewborn().stream()
                                     .map(newborn -> this.getBusinessContent(newborn, null))
                                     .collect(Collectors.toList());
-                            Map<String, AbstractEntity> olderMapper = oldDetails.stream().collect(Collectors.toMap(detail -> (String) detail.getIdentify(), detail -> detail));
+                            Map<String, AbstractEntity> olderMapper = oldDetails.stream().collect(Collectors.toMap(detail -> (String) detail.loadIdentify(), detail -> detail));
                             List<Map> updateDetailListContent = detailInductiveBox.getUpdate().stream()
                                     .map(newDetail -> {
-                                        AbstractEntity olderDetail = olderMapper.get(newDetail.getIdentify());
+                                        AbstractEntity olderDetail = olderMapper.get(newDetail.loadIdentify());
                                         return this.getBusinessContent(newDetail, olderDetail);
                                     })
                                     .collect(Collectors.toList());
@@ -185,12 +185,12 @@ public class RepositoryAspect {
         Session session = sessionLocal.get();
         AbstractEntity newEntity;
         AbstractEntity olderEntity = null;
-        if (entity.getIdentify() != null) {
-            olderEntity = session.findDirect(entity.getClass(), entity.getIdentify());
+        if (entity.loadIdentify() != null) {
+            olderEntity = session.findDirect(entity.getClass(), entity.loadIdentify());
         }
         Object result = joinPoint.proceed();
-        if (entity.getIdentify() != null) {
-            newEntity = (AbstractEntity) session.findDirect(entity.getClass(), entity.getIdentify());
+        if (entity.loadIdentify() != null) {
+            newEntity = (AbstractEntity) session.findDirect(entity.getClass(), entity.loadIdentify());
         } else {
             newEntity = entity;
         }
@@ -232,7 +232,7 @@ public class RepositoryAspect {
 
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
-                Objects.requireNonNull(session).save(new History(operate, new Date(), operator, newEntity != null ? (String) newEntity.getIdentify() : (String) olderEntity.getIdentify(), objectMapper.writeValueAsString(operateContent)));
+                Objects.requireNonNull(session).save(new History(operate, new Date(), operator, newEntity != null ? (String) newEntity.loadIdentify() : (String) olderEntity.loadIdentify(), objectMapper.writeValueAsString(operateContent)));
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
