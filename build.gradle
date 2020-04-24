@@ -52,13 +52,11 @@ allprojects {
     }
 }
 
-def pocketVersion = '0.1.6'
-
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web:2.1.1.RELEASE'
     implementation 'org.springframework.boot:spring-boot-starter-aop:2.1.1.RELEASE'
 
-    implementation 'com.github.leyan95:pocket:' + pocketVersion
+    implementation 'com.github.leyan95:pocket:0.1.6'
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
     implementation 'mysql:mysql-connector-java:8.0.13'
@@ -87,10 +85,6 @@ publishing {
                 aopDependencyNode.appendNode('groupId', 'org.springframework.boot')
                 aopDependencyNode.appendNode('artifactId', 'spring-boot-starter-aop')
                 aopDependencyNode.appendNode('version', '2.1.1.RELEASE')
-                def pocketDependencyNode = dependenciesNode.appendNode('dependency')
-                pocketDependencyNode.appendNode('groupId', 'com.github.leyan95')
-                pocketDependencyNode.appendNode('artifactId', 'pocket')
-                pocketDependencyNode.appendNode('version', pocketVersion)
             }
         }
     }
