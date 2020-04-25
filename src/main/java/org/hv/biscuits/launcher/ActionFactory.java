@@ -2,7 +2,6 @@ package org.hv.biscuits.launcher;
 
 import org.hv.biscuits.annotation.Action;
 import org.hv.biscuits.annotation.Controller;
-import org.hv.biscuits.controller.AbstractController;
 
 import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
@@ -15,10 +14,10 @@ import java.util.Map;
 class ActionFactory {
     private final static Map<String, Map<String, Method>> ACTION_MAP = new LinkedHashMap<>();
 
-    protected static void init(List<AbstractController> controllers) {
+    protected static void init(List<Object> controllers) {
         controllers.forEach(controller -> {
-            Class clazz = controller.getClass();
-            Controller controllerAnnotation = (Controller) clazz.getAnnotation(Controller.class);
+            Class<?> clazz = controller.getClass();
+            Controller controllerAnnotation = clazz.getAnnotation(Controller.class);
             String bundleId = controllerAnnotation.bundleId()[0];
             Map<String, Method> methodMap;
             if (ACTION_MAP.containsKey(bundleId)) {

@@ -12,10 +12,10 @@ import org.hv.pocket.session.SessionFactory;
 import org.hv.pocket.session.Transaction;
 import org.hv.biscuits.annotation.Auth;
 import org.hv.biscuits.annotation.Controller;
-import org.hv.biscuits.controller.AbstractController;
 import org.hv.biscuits.permission.AbstractPermission;
 import org.hv.biscuits.permission.PermissionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
@@ -25,13 +25,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
  * @author wujianchuan
  */
-@SuppressWarnings("unchecked")
 @Component
 @Order(1)
 public class Launcher implements CommandLineRunner {
@@ -39,32 +37,18 @@ public class Launcher implements CommandLineRunner {
     private static final String UNDERLINE_DIVIDER = "_";
     private static final String URL_DIVIDER = "/";
 
-    private final String serverId;
+    @Value("${spring.application.name}")
+    private String serverId;
     private final List<AbstractPermission> permissionContainers;
-    private final List<AbstractController> controllerList;
+    private final List<Object> controllerList;
 
     private Map<String, Bundle> bundleMap = null;
     private Map<String, Authority> permissionMap = null;
 
     @Autowired(required = false)
-    public Launcher(ApplicationContext context,  List<AbstractController> controllerList, List<AbstractPermission> permissionContainers) {
-        this.serverId = Objects.requireNonNull(context.getEnvironment().getProperty("spring.application.name")).toUpperCase();
-        this.controllerList = controllerList;
-        this.permissionContainers = permissionContainers;
-    }
-
-    @Autowired(required = false)
-    public Launcher(ApplicationContext context,  List<AbstractController> controllerList) {
-        this.serverId = Objects.requireNonNull(context.getEnvironment().getProperty("spring.application.name")).toUpperCase();
-        this.controllerList = controllerList;
-        this.permissionContainers = new ArrayList<>();
-    }
-
-    @Autowired(required = false)
     public Launcher(ApplicationContext context) {
-        this.serverId = Objects.requireNonNull(context.getEnvironment().getProperty("spring.application.name")).toUpperCase();
-        this.controllerList = new ArrayList<>();
-        this.permissionContainers = new ArrayList<>();
+        this.controllerList = new ArrayList<>(context.getBeansWithAnnotation(Controller.class).values());
+        this.permissionContainers = new ArrayList<>(context.getBeansOfType(AbstractPermission.class).values());
     }
 
     @Override
@@ -74,7 +58,7 @@ public class Launcher implements CommandLineRunner {
         Transaction transaction = session.getTransaction();
         transaction.begin();
         if (this.controllerList != null) {
-            this.operateBundle(session, transaction);
+            this.operateBundle(session);
         }
         if (this.permissionContainers != null && this.permissionContainers.size() > 0) {
             this.operateAuthority(session, transaction);
@@ -86,7 +70,7 @@ public class Launcher implements CommandLineRunner {
         session.close();
     }
 
-    private void operateBundle(Session session, Transaction transaction) {
+    private void operateBundle(Session session) {
         Criteria criteria = session.createCriteria(Bundle.class)
                 .add(Restrictions.equ("serverId", serverId));
         List<Bundle> bundleList = criteria.list();
@@ -98,18 +82,17 @@ public class Launcher implements CommandLineRunner {
             String bundleName = controllerAnnotation.name();
             boolean bundleAuth = controllerAnnotation.auth();
             if (!this.bundleMap.containsKey(bundleId)) {
-                    Bundle bundle = new Bundle(bundleId, bundleName, serverId, bundleAuth);
-                    try {
-                        session.save(bundle);
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                    this.bundleMap.put(bundleId, bundle);
+                Bundle bundle = new Bundle(bundleId, bundleName, serverId, bundleAuth);
+                try {
+                    session.save(bundle);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                this.bundleMap.put(bundleId, bundle);
             }
         });
     }
 
-    @SuppressWarnings("unchecked")
     private void operateAuthority(Session session, Transaction transaction) {
         this.permissionContainers.forEach(permissionContainer -> permissionContainer.setServerId(this.serverId).init());
         ActionFactory.init(controllerList);
