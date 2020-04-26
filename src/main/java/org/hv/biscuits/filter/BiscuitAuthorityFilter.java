@@ -64,11 +64,15 @@ public class BiscuitAuthorityFilter extends AbstractPathFilter implements Filter
         if (path == null) {
             path = request.getPathInfo();
         }
+        boolean filterTurnOn = this.filterPathConfig.getTurnOn() == null || this.filterPathConfig.getTurnOn();
+        if (!filterTurnOn || matchExclude(path)) {
+            freeRequest(req, res, chain, request, response);
+            return;
+        }
         String[] splitPath = path.split("/");
         String bundleId = splitPath[splitPath.length - 2];
         String actionId = splitPath[splitPath.length - 1];
-        boolean filterTurnOn = this.filterPathConfig.getTurnOn() == null || this.filterPathConfig.getTurnOn();
-        if (!filterTurnOn || this.freePath(bundleId) || matchExclude(path)) {
+        if (this.freePath(bundleId)) {
             freeRequest(req, res, chain, request, response);
             return;
         }
