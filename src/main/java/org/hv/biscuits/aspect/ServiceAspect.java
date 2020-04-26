@@ -1,5 +1,6 @@
 package org.hv.biscuits.aspect;
 
+import org.aspectj.lang.annotation.Pointcut;
 import org.hv.biscuits.annotation.Affairs;
 import org.hv.biscuits.annotation.Service;
 import org.hv.biscuits.repository.Repository;
@@ -47,8 +48,10 @@ public class ServiceAspect {
     public ServiceAspect(ApplicationContext context) {
         this.context = context;
     }
+    @Pointcut("execution(public * *(..)) && @within(org.hv.biscuits.annotation.Service)")
+    public void verify() {}
 
-    @Before("execution(public * *..*.service.*.*(..))")
+    @Before("verify()")
     public void before(JoinPoint joinPoint) {
         if (this.methodThreadLocal.get() == null) {
             this.methodThreadLocal.set(new LinkedList<>());
@@ -67,7 +70,7 @@ public class ServiceAspect {
         log.info("<<==Before==>> Call method: {}({})", method.getName(), StringUtils.join(joinPoint.getArgs(), ","));
     }
 
-    @AfterReturning("execution(public * *..*.service.*.*(..))")
+    @AfterReturning("verify()")
     public void afterReturning() {
         ThreadLocal<Session> sessionLocal = this.getSessionLocal();
         Method method = this.popMethod();
@@ -94,7 +97,7 @@ public class ServiceAspect {
         }
     }
 
-    @AfterThrowing(pointcut = "execution(public * *..*.service.*.*(..))", throwing = "exception")
+    @AfterThrowing(pointcut = "verify()", throwing = "exception")
     public void afterThrowing(Exception exception) throws Exception {
         ThreadLocal<Session> sessionLocal = this.getSessionLocal();
         if (sessionLocal != null && sessionLocal.get() != null && !sessionLocal.get().getClosed()) {
