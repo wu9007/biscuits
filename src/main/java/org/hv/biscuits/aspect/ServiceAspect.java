@@ -3,7 +3,7 @@ package org.hv.biscuits.aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.hv.biscuits.annotation.Affairs;
 import org.hv.biscuits.annotation.Service;
-import org.hv.biscuits.repository.Repository;
+import org.hv.biscuits.repository.AbstractRepository;
 import org.hv.biscuits.repository.RepositoryFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
@@ -67,7 +67,7 @@ public class ServiceAspect {
         this.pushMethod(method);
         // session 嵌套时只开启最外层session
         this.sessionOpen(method, target);
-        log.info("<<==Before==>> Call method: {}({})", method.getName(), StringUtils.join(joinPoint.getArgs(), ","));
+        log.info("[Before] {}({})", method.getName(), StringUtils.join(joinPoint.getArgs(), ","));
     }
 
     @AfterReturning("verify()")
@@ -75,7 +75,7 @@ public class ServiceAspect {
         ThreadLocal<Session> sessionLocal = this.getSessionLocal();
         Method method = this.popMethod();
         Object target = this.popTarget();
-        log.info("<<==After==>> Call method: {}.{}(-)", target.getClass().getSimpleName(), method.getName());
+        log.info("[After] {}.{}(-)", target.getClass().getSimpleName(), method.getName());
         if (sessionLocal.get() != null && !sessionLocal.get().getClosed()) {
             //锁定开启事务的方法，提交事务
             if (this.getTransOnIndex() != null && this.getMethodLocal().size() == this.getTransOnIndex() && this.getTransOn()) {
@@ -89,9 +89,9 @@ public class ServiceAspect {
                 this.remove();
             } else {
                 //清空service下repository们的thread local.
-                List<Repository> repositories = RepositoryFactory.getRepositories(target.getClass().getName());
+                List<AbstractRepository> repositories = RepositoryFactory.getRepositories(target.getClass().getName());
                 if (repositories != null && repositories.size() > 0) {
-                    repositories.forEach(Repository::pourSession);
+                    repositories.forEach(AbstractRepository::pourSession);
                 }
             }
         }
@@ -106,9 +106,9 @@ public class ServiceAspect {
                 this.setTransOn(false);
             }
             Object target = this.popTarget();
-            List<Repository> repositories = RepositoryFactory.getRepositories(target.getClass().getName());
+            List<AbstractRepository> repositories = RepositoryFactory.getRepositories(target.getClass().getName());
             if (repositories != null && repositories.size() > 0) {
-                repositories.forEach(Repository::pourSession);
+                repositories.forEach(AbstractRepository::pourSession);
             }
             sessionLocal.get().close();
             this.remove();
@@ -165,7 +165,7 @@ public class ServiceAspect {
             }
 
             //给service下的所有repository注入session
-            List<Repository> repositories = RepositoryFactory.getRepositories(target.getClass().getName());
+            List<AbstractRepository> repositories = RepositoryFactory.getRepositories(target.getClass().getName());
             if (repositories != null && repositories.size() > 0) {
                 repositories.forEach(repository -> repository.injectSession(sessionLocal.get()));
             }

@@ -9,22 +9,22 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author wujianchuan
  */
 public class RepositoryFactory {
-    private final static Map<String, List<Repository>> FACTORY = new ConcurrentHashMap<>();
+    private final static Map<String, List<AbstractRepository>> FACTORY = new ConcurrentHashMap<>();
 
-    public static void register(String serviceClazzName, Repository repository) {
+    public static void register(String serviceClazzName, AbstractRepository repository) {
         if (FACTORY.containsKey(serviceClazzName)) {
-            List<Repository> repositories = FACTORY.get(serviceClazzName);
+            List<AbstractRepository> repositories = FACTORY.get(serviceClazzName);
             if (!repositories.contains(repository)) {
                 repositories.add(repository);
             }
         } else {
-            List<Repository> repositories = new LinkedList<>();
+            List<AbstractRepository> repositories = new LinkedList<>();
             repositories.add(repository);
             FACTORY.put(serviceClazzName, repositories);
         }
     }
 
-    public static List<Repository> getRepositories(String serviceClazzName) {
+    public static List<AbstractRepository> getRepositories(String serviceClazzName) {
         return FACTORY.get(serviceClazzName);
     }
 }
