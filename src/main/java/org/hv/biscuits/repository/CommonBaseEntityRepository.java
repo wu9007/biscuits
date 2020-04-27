@@ -11,8 +11,7 @@ import java.util.List;
 /**
  * @author wujianchuan
  */
-public interface CommonBaseEntityRepository extends Repository
-{
+public interface CommonBaseEntityRepository {
     /**
      * Select data by identify (Default with querying subsets).
      *
@@ -21,13 +20,14 @@ public interface CommonBaseEntityRepository extends Repository
      * @return AbstractEntity
      * @throws SQLException e
      */
-    <T extends AbstractEntity> T  findOne(String className, Serializable uuid) throws SQLException, ClassNotFoundException;
+    <T extends AbstractEntity> T findOne(String className, Serializable uuid) throws SQLException, ClassNotFoundException;
 
     /**
      * Load all data
      *
      * @param className Object Class Name
      * @return List<AbstractEntity>
+     * @throws ClassNotFoundException e
      */
     <T extends AbstractEntity> List<T> findAll(String className) throws ClassNotFoundException;
 

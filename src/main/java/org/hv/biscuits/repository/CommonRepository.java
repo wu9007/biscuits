@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author wujianchuan
  */
-public interface CommonRepository<T extends AbstractEntity> extends Repository {
+public interface CommonRepository<T extends AbstractEntity> {
     /**
      * Select data by identify (Default with querying subsets).
      *

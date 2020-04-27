@@ -52,7 +52,7 @@ public class BiscuitAuthorityFilter extends AbstractPathFilter implements Filter
     public void init(FilterConfig filterConfig) {
         String excludeUrlStr = this.filterPathConfig.getExcludeUrlPatterns();
         if (excludeUrlStr != null && excludeUrlStr.length() > 0) {
-            this.excludeUrlPatterns.addAll(Arrays.asList(this.filterPathConfig.getExcludeUrlPatterns().replaceAll(" ","").split(",")));
+            this.excludeUrlPatterns.addAll(Arrays.asList(this.filterPathConfig.getExcludeUrlPatterns().replaceAll(" ", "").split(",")));
         }
     }
 
@@ -61,11 +61,18 @@ public class BiscuitAuthorityFilter extends AbstractPathFilter implements Filter
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
         String path = request.getServletPath();
+        if (path == null) {
+            path = request.getPathInfo();
+        }
+        boolean filterTurnOn = this.filterPathConfig.getTurnOn() == null || this.filterPathConfig.getTurnOn();
+        if (!filterTurnOn || matchExclude(path)) {
+            freeRequest(req, res, chain, request, response);
+            return;
+        }
         String[] splitPath = path.split("/");
         String bundleId = splitPath[splitPath.length - 2];
         String actionId = splitPath[splitPath.length - 1];
-        boolean filterTurnOn = this.filterPathConfig.getTurnOn() == null || this.filterPathConfig.getTurnOn();
-        if (!filterTurnOn || this.freePath(bundleId) || matchExclude(path)) {
+        if (this.freePath(bundleId)) {
             freeRequest(req, res, chain, request, response);
             return;
         }

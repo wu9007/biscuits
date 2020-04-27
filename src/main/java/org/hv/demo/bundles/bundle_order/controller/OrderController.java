@@ -3,7 +3,6 @@ package org.hv.demo.bundles.bundle_order.controller;
 import org.hv.biscuits.annotation.Action;
 import org.hv.biscuits.annotation.Auth;
 import org.hv.biscuits.annotation.Controller;
-import org.hv.biscuits.controller.AbstractController;
 import org.hv.biscuits.controller.Body;
 import org.hv.biscuits.service.PageList;
 import org.hv.demo.bundles.bundle_order.aggregate.Order;
@@ -17,7 +16,7 @@ import java.math.BigDecimal;
  * @author wujianchuan
  */
 @Controller(bundleId = "order", name = "订单")
-public class OrderController extends AbstractController {
+public class OrderController {
     private final OrderService orderPlusService;
 
     public OrderController(OrderService orderPlusService) {
