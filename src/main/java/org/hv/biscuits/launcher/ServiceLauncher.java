@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author wujianchuan
@@ -41,9 +42,20 @@ public class ServiceLauncher implements CommandLineRunner {
                 clazz = target.getClass();
                 clazzName = clazz.getName();
                 for (Field field : clazz.getDeclaredFields()) {
-                    Object bean = context.getBean(field.getType());
-                    if (bean instanceof AbstractRepository) {
-                        RepositoryFactory.register(clazzName, (AbstractRepository) bean);
+                    Map<String, ?> beanMap = this.context.getBeansOfType(field.getType());
+                    if (beanMap.size() > 0) {
+                        Object bean;
+                        if (beanMap.size() == 1) {
+                            bean = beanMap.values().toArray()[0];
+                        } else {
+                            bean = beanMap.get(field.getName());
+                            if (bean == null) {
+                                throw new NullPointerException(String.format("找不到 %s 中需要的Bean —— %s", clazzName, field.getName()));
+                            }
+                        }
+                        if (bean instanceof AbstractRepository) {
+                            RepositoryFactory.register(clazzName, (AbstractRepository) bean);
+                        }
                     }
                 }
             }
