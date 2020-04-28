@@ -1,19 +1,19 @@
 package org.hv.biscuits.spine.model;
 
 import org.hv.pocket.annotation.Column;
-import org.hv.pocket.annotation.Entity;
+import org.hv.pocket.annotation.View;
 
 import java.io.Serializable;
 
 /**
  * @author wujianchuan
  */
-@Entity(table = "", tableId = -1)
+@View
 public class Pair implements Serializable {
     private static final long serialVersionUID = 5656710925928861884L;
-    @Column(name = "label")
+    @Column
     private String label;
-    @Column(name = "value")
+    @Column
     private String value;
 
     public Pair() {
