@@ -22,7 +22,7 @@ public class OrderController {
         this.orderPlusService = orderPlusService;
     }
 
-    @Action(actionId = "list_order", method = RequestMethod.GET, authId = "order_manage")
+    @Action(actionId = "list_order", method = RequestMethod.GET, authId = "order_read")
     public Body listOrder() throws Exception {
         PageList<?> orders = this.orderPlusService.loadPageList(null);
         return Body.success().data(orders);

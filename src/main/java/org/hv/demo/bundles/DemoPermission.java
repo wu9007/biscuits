@@ -13,5 +13,6 @@ public class DemoPermission extends AbstractPermission {
     public void init() {
         super.register( "order_read", "读取", "读取订单数据的权限");
         super.register("order_manage", "管理", "管理订单数据的权限");
+        super.register("order_audit", "审核", "审核订单数据的权限");
     }
 }

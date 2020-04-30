@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -144,7 +145,7 @@ public class BiscuitsConfigDefault implements BiscuitsConfig {
                     // 数据库中已存在该action（更新）
                     if (actionMap.containsKey(actionView.getActionId())) {
                         action = actionMap.get(actionView.getActionId());
-                        if (!action.getRequestMethod().equals(actionView.getRequestMethod()) || !action.getAuthId().equals(actionView.getAuthId())) {
+                        if (!action.getRequestMethod().equals(actionView.getRequestMethod()) || !Objects.equals(actionView.getAuthId(), action.getAuthId())) {
                             action.setAuthId(actionView.getAuthId());
                             action.setRequestMethod(actionView.getRequestMethod());
                             this.session.update(action);
@@ -193,8 +194,10 @@ public class BiscuitsConfigDefault implements BiscuitsConfig {
     }
 
     private void producePersistenceMapper(String serviceId, Map<String, BundleView> bundleViewMap) {
+        // TODO 生产环境下如果不存就直接保存 如果存在就不进行任何修改（因为可能已经通过客户端进行了增加和编辑————记录了sql的脚本）
     }
 
     private void producePersistencePermission(String serviceId, Map<String, PermissionView> permissionViewMap) {
+        // TODO 生产环境下如果不存就直接保存 如果存在就不进行任何修改（因为可能已经通过客户端进行了增加和编辑————记录了sql的脚本）
     }
 }
