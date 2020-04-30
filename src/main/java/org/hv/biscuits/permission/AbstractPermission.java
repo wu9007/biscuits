@@ -8,11 +8,6 @@ import org.hv.biscuits.core.ActionFactory;
  */
 public abstract class AbstractPermission implements Permission {
 
-    @Deprecated
-    protected void register(String bundleId, String authId, String name, String common) {
-        ActionFactory.register(authId, name, common);
-    }
-
     protected void register(String authId, String name, String common) {
         ActionFactory.register(authId, name, common);
     }

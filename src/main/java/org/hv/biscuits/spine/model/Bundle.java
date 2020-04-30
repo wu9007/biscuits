@@ -18,6 +18,9 @@ public class Bundle extends BaseEntity {
     private String bundleId;
     @Column(name = "BUNDLE_NAME")
     private String bundleName;
+    /**
+     * 微服务ID
+     */
     @Column(name = "SERVER_ID")
     private String serverId;
     @Column(name = "WITH_AUTH")

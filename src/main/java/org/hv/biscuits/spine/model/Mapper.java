@@ -24,15 +24,18 @@ public class Mapper extends BaseEntity {
     private String bundleId;
     @Column(name = "ACTION_ID", businessName = "映射")
     private String actionId;
+    @Column
+    private String authId;
 
     public Mapper() {
     }
 
-    public Mapper(String serverId, String requestMethod, String bundleId, String actionId) {
+    public Mapper(String serverId, String requestMethod, String bundleId, String actionId, String authId) {
         this.serverId = serverId;
         this.requestMethod = requestMethod;
         this.bundleId = bundleId;
         this.actionId = actionId;
+        this.authId = authId;
     }
 
     public String getRequestMethod() {
@@ -73,6 +76,14 @@ public class Mapper extends BaseEntity {
 
     public void setBundleId(String bundleId) {
         this.bundleId = bundleId;
+    }
+
+    public String getAuthId() {
+        return authId;
+    }
+
+    public void setAuthId(String authId) {
+        this.authId = authId;
     }
 
     @JsonIgnore

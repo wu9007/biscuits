@@ -23,8 +23,10 @@ public class BundleView {
         return new BundleView(bundleId, bundleName, withAuth);
     }
 
-    public ActionView appendActionView(ActionView actionView) {
-        return this.actionViews.putIfAbsent(actionView.getActionId(), actionView);
+    public void appendActionView(ActionView actionView) {
+        if (this.actionViews.putIfAbsent(actionView.getActionId(), actionView) != null) {
+            throw new IllegalArgumentException(String.format("存在拥有相同映射的Action %s/%s", this.getBundleId(), actionView.getActionId()));
+        }
     }
 
     public String getBundleId() {

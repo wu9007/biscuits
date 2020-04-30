@@ -36,8 +36,8 @@ public interface BiscuitsConfig {
     /**
      * 根据运行环境对映射信息进行持久化操作
      *
-     * @param serviceId                 服务标识
-     * @param actionMap                 映射信息
+     * @param serviceId 服务标识
+     * @param actionMap 映射信息
      * @return biscuits config
      * @throws SQLException e
      */
@@ -46,8 +46,8 @@ public interface BiscuitsConfig {
     /**
      * 根据运行环境对权限信息进行持久化操作
      *
-     * @param serviceId                 服务标识
-     * @param permissionMap             权限信息
+     * @param serviceId     服务标识
+     * @param permissionMap 权限信息
      * @return biscuits config
      * @throws SQLException e
      */
@@ -59,4 +59,12 @@ public interface BiscuitsConfig {
      * @return biscuits config
      */
     BiscuitsConfig runWithDevelopEnvironment();
+
+    /**
+     * 设置数据库会话标识(该会话标识关联基础表所在的数据库)
+     *
+     * @param sessionId 数据库会话标识
+     * @return biscuits config
+     */
+    BiscuitsConfig setBiscuitsDatabaseSessionId(String sessionId);
 }

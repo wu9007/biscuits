@@ -1,11 +1,11 @@
 package org.hv.biscuits.core;
 
 import org.hv.biscuits.annotation.Action;
-import org.hv.biscuits.annotation.Auth;
 import org.hv.biscuits.annotation.Controller;
 import org.hv.biscuits.core.views.ActionView;
 import org.hv.biscuits.core.views.BundleView;
 import org.hv.biscuits.core.views.PermissionView;
+import org.hv.biscuits.permission.Permission;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -24,12 +24,15 @@ public class ActionFactory {
     private final static Map<String, PermissionView> PERMISSION_MAP = new ConcurrentHashMap<>();
 
     private final List<Object> bundleList;
+    private final List<Permission> permissions;
 
-    ActionFactory(ApplicationContext applicationContext) {
-        bundleList = Arrays.asList(applicationContext.getBeanNamesForAnnotation(Controller.class));
+    ActionFactory(ApplicationContext applicationContext, List<Permission> permissions) {
+        bundleList = Arrays.asList(applicationContext.getBeansWithAnnotation(Controller.class).values().toArray());
+        this.permissions = permissions;
     }
 
     protected void init() {
+        this.permissions.forEach(Permission::init);
         bundleList.forEach(controller -> {
             Class<?> clazz = controller.getClass();
             Controller controllerAnnotation = clazz.getAnnotation(Controller.class);
@@ -39,13 +42,16 @@ public class ActionFactory {
             ACTION_MAP.putIfAbsent(bundleId, BundleView.newInstance(bundleId, bundleName, withAuth));
             BundleView bundleView = ACTION_MAP.get(bundleId);
             for (Method method : clazz.getDeclaredMethods()) {
-                Auth authAnnotation = method.getAnnotation(Auth.class);
                 Action actionAnnotation = method.getAnnotation(Action.class);
                 if (actionAnnotation != null) {
-                    ActionView actionView = bundleView.appendActionView(ActionView.build(actionAnnotation.actionId()[0], actionAnnotation.method()[0].toString(), authAnnotation.value()));
-                    if (actionView != null) {
-                        throw new IllegalArgumentException(String.format("存在拥有相同映射的Action %s/%s", bundleView.getBundleId(), actionView.getActionId()));
+                    String authId = actionAnnotation.authId();
+                    if (authId.isEmpty()) {
+                        authId = null;
                     }
+                    if (authId != null && !PERMISSION_MAP.containsKey(authId)) {
+                        throw new IllegalArgumentException(String.format("未找到权限信息 %s", authId));
+                    }
+                    bundleView.appendActionView(ActionView.build(actionAnnotation.actionId()[0], actionAnnotation.method()[0].toString(), authId));
                 }
             }
         });

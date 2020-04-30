@@ -26,10 +26,11 @@ public class Application {
 
             @Override
             public void run(String... args) throws Exception {
-                this.biscuitsConfig.init(false)
+                this.biscuitsConfig.init(true)
                         .runWithDevelopEnvironment()
-                        .persistenceMapper("", this.biscuitsConfig.getActionMap())
-                        .resetPersistencePermission("", this.biscuitsConfig.getPermissionMap());
+                        .setBiscuitsDatabaseSessionId("biscuits")
+                        .resetPersistencePermission("test1", this.biscuitsConfig.getPermissionMap())
+                        .persistenceMapper("test1", this.biscuitsConfig.getActionMap());
             }
         };
     }
