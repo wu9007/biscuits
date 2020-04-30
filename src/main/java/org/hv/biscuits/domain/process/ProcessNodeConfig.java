@@ -17,16 +17,14 @@ import java.util.stream.Collectors;
  * @author wujianchuan
  */
 @Component
-@Order(5)
-public class NodeLauncher implements CommandLineRunner {
+public class ProcessNodeConfig {
     private final List<Node> nodeList;
 
-    public NodeLauncher(@Nullable List<Node> nodeList) {
+    public ProcessNodeConfig(@Nullable List<Node> nodeList) {
         this.nodeList = nodeList;
     }
 
-    @Override
-    public void run(String... args) throws Exception {
+    public void init() throws Exception {
 
         if (nodeList != null) {
             Map<String, List<Node>> nodesMapper = nodeList.parallelStream().collect(Collectors.groupingBy(node -> {
@@ -45,7 +43,7 @@ public class NodeLauncher implements CommandLineRunner {
                         contextFactory.putNodeMapper(entry.getKey(), nodeMapper);
                     });
 
-            // 从持久化数据中获取所有流程中的节点，并进行恢复
+            // 从持久化数据中获取所有流程中的节点顺序及当前状态，并进行恢复
             Session session = SessionFactory.getSession("biscuits");
             session.open();
             List<Process> processList = session.list(Process.class);

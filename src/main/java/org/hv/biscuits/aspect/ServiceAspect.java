@@ -48,7 +48,7 @@ public class ServiceAspect {
     public ServiceAspect(ApplicationContext context) {
         this.context = context;
     }
-    @Pointcut("execution(public * *(..)) && @within(org.hv.biscuits.annotation.Service)")
+    @Pointcut("execution(public * *(..)) && @within(org.hv.biscuits.annotation.Service) && !execution(public String[] evenSourceIds())")
     public void verify() {}
 
     @Before("verify()")

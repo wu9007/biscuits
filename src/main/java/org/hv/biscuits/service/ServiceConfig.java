@@ -1,13 +1,11 @@
-package org.hv.biscuits.launcher;
+package org.hv.biscuits.service;
 
 import org.hv.biscuits.repository.AbstractRepository;
 import org.hv.biscuits.repository.RepositoryFactory;
 import org.hv.biscuits.service.AbstractService;
 import org.hv.biscuits.utils.AopTargetUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.annotation.Order;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
@@ -19,20 +17,18 @@ import java.util.Map;
  * @author wujianchuan
  */
 @Component
-@Order(2)
-public class ServiceLauncher implements CommandLineRunner {
+public class ServiceConfig {
 
     private final ApplicationContext context;
     private final List<AbstractService> serviceList;
 
     @Autowired
-    public ServiceLauncher(ApplicationContext context, @Nullable List<AbstractService> serviceList) {
+    public ServiceConfig(ApplicationContext context, @Nullable List<AbstractService> serviceList) {
         this.context = context;
         this.serviceList = serviceList;
     }
 
-    @Override
-    public void run(String... args) throws Exception {
+    public void init() throws Exception {
         Class<?> clazz;
         String clazzName;
         if (serviceList != null && serviceList.size() > 0) {
