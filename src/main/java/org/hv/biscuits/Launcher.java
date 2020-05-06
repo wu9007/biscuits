@@ -27,7 +27,7 @@ public class Launcher implements CommandLineRunner {
         this.biscuitsConfig.init(true)
                 .runWithDevelopEnvironment()
                 .setBiscuitsDatabaseSessionId("biscuits")
-                .resetPersistencePermission(serverId, this.biscuitsConfig.getPermissionMap())
-                .persistenceMapper(serverId, this.biscuitsConfig.getActionMap());
+                .resetPersistencePermission(serverId.toUpperCase(), this.biscuitsConfig.getPermissionMap())
+                .persistenceMapper(serverId.toUpperCase(), this.biscuitsConfig.getActionMap());
     }
 }
