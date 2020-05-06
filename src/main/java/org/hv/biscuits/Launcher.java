@@ -3,6 +3,7 @@ package org.hv.biscuits;
 import org.hv.biscuits.core.BiscuitsConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component;
  * @author wujianchuan
  */
 @Component
-@Order
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class Launcher implements CommandLineRunner {
 
     private final BiscuitsConfig biscuitsConfig;
