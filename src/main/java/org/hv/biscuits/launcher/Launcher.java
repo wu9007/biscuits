@@ -53,6 +53,9 @@ public class Launcher implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        if (this.controllerList != null) {
+            ActionFactory.init(controllerList);
+        }
         Session session = SessionFactory.getSession("biscuits");
         session.open();
         Transaction transaction = session.getTransaction();
@@ -72,7 +75,7 @@ public class Launcher implements CommandLineRunner {
 
     private void operateBundle(Session session) {
         Criteria criteria = session.createCriteria(Bundle.class)
-                .add(Restrictions.equ("serverId", serverId));
+                .add(Restrictions.equ("serverId", serverId.toUpperCase()));
         List<Bundle> bundleList = criteria.list();
         this.bundleMap = bundleList.stream().collect(Collectors.toMap(Bundle::getBundleId, i -> i));
 
@@ -82,7 +85,7 @@ public class Launcher implements CommandLineRunner {
             String bundleName = controllerAnnotation.name();
             boolean bundleAuth = controllerAnnotation.auth();
             if (!this.bundleMap.containsKey(bundleId)) {
-                Bundle bundle = new Bundle(bundleId, bundleName, serverId, bundleAuth);
+                Bundle bundle = new Bundle(bundleId, bundleName, serverId.toUpperCase(), bundleAuth);
                 try {
                     session.save(bundle);
                 } catch (SQLException e) {
@@ -94,10 +97,9 @@ public class Launcher implements CommandLineRunner {
     }
 
     private void operateAuthority(Session session, Transaction transaction) {
-        this.permissionContainers.forEach(permissionContainer -> permissionContainer.setServerId(this.serverId).init());
-        ActionFactory.init(controllerList);
+        this.permissionContainers.forEach(permissionContainer -> permissionContainer.setServerId(this.serverId.toUpperCase()).init());
         Criteria criteria = session.createCriteria(Authority.class)
-                .add(Restrictions.equ("serverId", this.serverId));
+                .add(Restrictions.equ("serverId", this.serverId.toUpperCase()));
         List<Authority> permissions = criteria.list();
         permissionMap = permissions.stream().collect(Collectors.toMap(Authority::getId, i -> i));
 
@@ -126,13 +128,13 @@ public class Launcher implements CommandLineRunner {
 
     private void operateMapper(Session session) {
         Criteria criteria = session.createCriteria(Mapper.class)
-                .add(Restrictions.equ("serverId", this.serverId));
+                .add(Restrictions.equ("serverId", this.serverId.toUpperCase()));
         List<Mapper> mappers = criteria.list();
         Map<String, Mapper> mapperMap = mappers.stream()
                 .collect(Collectors.toMap(mapper -> mapper.getBundleId() + UNDERLINE_DIVIDER + mapper.getActionId() + UNDERLINE_DIVIDER + mapper.getRequestMethod(), i -> i));
 
         Criteria relationCriteria = session.createCriteria(AuthMapperRelation.class)
-                .add(Restrictions.equ("serverId", this.serverId));
+                .add(Restrictions.equ("serverId", this.serverId.toUpperCase()));
         List<AuthMapperRelation> authMapperRelations = relationCriteria.list();
         Map<String, AuthMapperRelation> authMapperRelationMap = authMapperRelations.stream()
                 .collect(Collectors.toMap(authMapperRelation -> authMapperRelation.getAuthUuid() + UNDERLINE_DIVIDER + authMapperRelation.getMapperUuid(), i -> i));
@@ -153,7 +155,7 @@ public class Launcher implements CommandLineRunner {
                 String mapperIdentification = bundleId + UNDERLINE_DIVIDER + actionId + UNDERLINE_DIVIDER + requestMethod;
                 Mapper mapper;
                 if (!mapperMap.containsKey(mapperIdentification)) {
-                    mapper = new Mapper(this.serverId, requestMethod, bundleId, actionId);
+                    mapper = new Mapper(this.serverId.toUpperCase(), requestMethod, bundleId, actionId);
                     mapper.setBundleUuid(this.bundleMap.get(bundleId).getUuid());
                     try {
                         session.save(mapper);
@@ -169,7 +171,7 @@ public class Launcher implements CommandLineRunner {
                     String authUuid = this.permissionMap.get(authAnnotation.value()).getUuid();
                     String mapperUuid = mapper.getUuid();
                     if (!authMapperRelationMap.containsKey(authUuid + UNDERLINE_DIVIDER + mapperUuid)) {
-                        AuthMapperRelation authMapperRelation = new AuthMapperRelation(this.serverId, authUuid, mapperUuid);
+                        AuthMapperRelation authMapperRelation = new AuthMapperRelation(this.serverId.toUpperCase(), authUuid, mapperUuid);
                         try {
                             session.save(authMapperRelation);
                         } catch (SQLException e) {
