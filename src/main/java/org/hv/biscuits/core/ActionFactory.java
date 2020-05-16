@@ -6,6 +6,7 @@ import org.hv.biscuits.core.views.ActionView;
 import org.hv.biscuits.core.views.BundleView;
 import org.hv.biscuits.core.views.PermissionView;
 import org.hv.biscuits.permission.Permission;
+import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
@@ -38,7 +39,7 @@ public class ActionFactory {
     protected void init() {
         this.permissions.forEach(Permission::init);
         bundleList.forEach(controller -> {
-            Class<?> clazz = controller.getClass();
+            Class<?> clazz = AopProxyUtils.ultimateTargetClass(controller);
             Controller controllerAnnotation = clazz.getAnnotation(Controller.class);
             String bundleId = controllerAnnotation.bundleId()[0];
             String bundleName = controllerAnnotation.name();
