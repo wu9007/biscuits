@@ -17,6 +17,8 @@ public class Launcher implements CommandLineRunner {
     private final BiscuitsConfig biscuitsConfig;
     @Value("${spring.application.name}")
     private String serverId;
+    @Value("${biscuits.withPersistence:true}")
+    private boolean withPersistence;
 
     public Launcher(BiscuitsConfig biscuitsConfig) {
         this.biscuitsConfig = biscuitsConfig;
@@ -24,10 +26,13 @@ public class Launcher implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        this.biscuitsConfig.init(true)
-                .runWithDevelopEnvironment()
-                .setBiscuitsDatabaseSessionId("biscuits")
-                .resetPersistencePermission(serverId.toUpperCase(), this.biscuitsConfig.getPermissionMap())
-                .persistenceMapper(serverId.toUpperCase(), this.biscuitsConfig.getActionMap());
+        BiscuitsConfig biscuitsConfig = this.biscuitsConfig.init(withPersistence);
+        if (withPersistence) {
+            biscuitsConfig
+                    .runWithDevelopEnvironment()
+                    .setBiscuitsDatabaseSessionId("biscuits")
+                    .resetPersistencePermission(serverId.toUpperCase(), this.biscuitsConfig.getPermissionMap())
+                    .persistenceMapper(serverId.toUpperCase(), this.biscuitsConfig.getActionMap());
+        }
     }
 }
