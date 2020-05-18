@@ -44,12 +44,15 @@ public class AccessorLogProxy {
         if (servletRequestAttributes != null) {
             HttpServletRequest httpServletRequest = servletRequestAttributes.getRequest();
             String traceId = httpServletRequest.getHeader(BiscuitsHttpHeaders.TRACE_ID);
-            if (traceId != null) {
+            String userName = httpServletRequest.getHeader(BiscuitsHttpHeaders.USER_NAME);
+            String businessDepartmentName = httpServletRequest.getHeader(BiscuitsHttpHeaders.BUSINESS_DEPARTMENT_NAME);
+            if (traceId != null && userName != null) {
                 ObjectMapper objectMapper = new ObjectMapper();
-                String userName = httpServletRequest.getHeader(BiscuitsHttpHeaders.USER_NAME);
-                String businessDepartmentName = httpServletRequest.getHeader(BiscuitsHttpHeaders.BUSINESS_DEPARTMENT_NAME);
                 String requestId = UUID.randomUUID().toString().replace("-", "");
-                AccessorLogView accessorLogView = new AccessorLogView(requestId, requestId, URLDecoder.decode(userName, "UTF-8"), URLDecoder.decode(businessDepartmentName, "UTF-8"));
+                AccessorLogView accessorLogView = new AccessorLogView(traceId, requestId, URLDecoder.decode(userName, "UTF-8"));
+                if (businessDepartmentName != null) {
+                    accessorLogView.setBusinessDeptName(URLDecoder.decode(businessDepartmentName, "UTF-8"));
+                }
 
                 Class<?> clazz = joinPoint.getTarget().getClass();
                 accessorLogView.setAccessorName(clazz.getTypeName());

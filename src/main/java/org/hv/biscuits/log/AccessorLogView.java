@@ -24,12 +24,11 @@ public class AccessorLogView implements Serializable {
         this.startDateTime = LocalDateTime.now();
     }
 
-    public AccessorLogView(String traceId, String requestId, String userName, String businessDeptName) {
+    public AccessorLogView(String traceId, String requestId, String userName) {
         this.startDateTime = LocalDateTime.now();
         this.traceId = traceId;
         this.requestId = requestId;
         this.userName = userName;
-        this.businessDeptName = businessDeptName;
     }
 
     public String getTraceId() {
