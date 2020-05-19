@@ -9,3 +9,5 @@
 * 增加控制层切面，如果存在请求头 `Trace-Id` `User-Name` 则切面记录日志到 `LogQueue` ， 可调用 `pollAccessorLog(int size)` 消费本地日志记录。
 * 增加消费者切面，如果存在消息头同上。
         
+> 注意：为了能够正确生成日志信息，
+> 控制器务必使用注解 `org.hv.biscuits.annotation.Controller`, 消费继承 `org.hv.biscuits.message.AbstractRocketMqListener`
