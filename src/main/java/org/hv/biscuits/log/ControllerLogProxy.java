@@ -25,10 +25,10 @@ import java.util.UUID;
  */
 @Component
 @Aspect
-public class AccessorLogProxy {
+public class ControllerLogProxy {
     private final LogQueue logQueue;
 
-    public AccessorLogProxy(LogQueue logQueue) {
+    public ControllerLogProxy(LogQueue logQueue) {
         this.logQueue = logQueue;
     }
 
