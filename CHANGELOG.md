@@ -1,4 +1,4 @@
-## 0.2.0 - 2020/05/20
+## 0.2.0.PRE - 2020/05/20
 * 废弃抽象类 `AbstractController` ，所有API类无需继承此抽象类。
 * 注解 `@Controller` 添加 `name` 属性，同时废弃 `AbstractBundle` 程序无需配置创建其子类来注册Bundle。
 * 注解 `@Action` 添加 `authId` 属性指定访问该动作所需要的权限的标识，同时废弃 `@Auth` 。
