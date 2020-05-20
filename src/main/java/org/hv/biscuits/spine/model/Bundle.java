@@ -8,7 +8,7 @@ import org.hv.pocket.model.BaseEntity;
 import java.util.List;
 
 /**
- * @author wujianchuan 2019/2/25
+ * @author leyan95 2019/2/25
  */
 @Entity(table = "T_BUNDLE", tableId = 108, businessName = "菜单")
 public class Bundle extends BaseEntity {

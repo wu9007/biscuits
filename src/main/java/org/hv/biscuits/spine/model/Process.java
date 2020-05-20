@@ -6,7 +6,7 @@ import org.hv.pocket.annotation.Entity;
 import org.hv.pocket.model.BaseEntity;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 @Entity(table = "T_PROCESS", tableId = 113, businessName = "未完结的流程")
 public class Process extends BaseEntity {

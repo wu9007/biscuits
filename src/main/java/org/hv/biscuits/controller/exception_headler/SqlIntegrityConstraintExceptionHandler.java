@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.sql.SQLIntegrityConstraintViolationException;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 @ControllerAdvice
 public class SqlIntegrityConstraintExceptionHandler {

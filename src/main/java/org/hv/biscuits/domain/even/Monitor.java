@@ -1,7 +1,7 @@
 package org.hv.biscuits.domain.even;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public interface Monitor {
     /**

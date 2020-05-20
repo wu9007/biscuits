@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.SQLException;
 
 /**
- * @author wujianchuan 2019/2/26
+ * @author leyan95 2019/2/26
  * @version 1.0
  */
 @Repository

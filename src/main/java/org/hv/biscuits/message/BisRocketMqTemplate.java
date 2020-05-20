@@ -23,7 +23,7 @@ import static org.hv.biscuits.constant.BiscuitsHttpHeaders.TRACE_ID;
 import static org.hv.biscuits.constant.BiscuitsHttpHeaders.USER_NAME;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 @ExtRocketMQTemplateConfiguration
 public class BisRocketMqTemplate extends RocketMQTemplate {

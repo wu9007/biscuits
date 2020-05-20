@@ -9,7 +9,7 @@ import java.util.stream.IntStream;
 /**
  * 日志队列（包含：控制器日志，消费者日志，业务执行日志，持久化执行日志）
  *
- * @author wujianchuan
+ * @author leyan95
  */
 @Component
 public class LogQueue {

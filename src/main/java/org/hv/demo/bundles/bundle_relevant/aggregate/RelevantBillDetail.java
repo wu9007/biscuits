@@ -10,7 +10,7 @@ import org.hv.pocket.model.BaseEntity;
 import java.math.BigDecimal;
 
 /**
- * @author wujianchuan 2019/1/9
+ * @author leyan95 2019/1/9
  */
 @Entity(table = "TBL_RELEVANT_BILL_DETAIL", tableId = 2)
 public class RelevantBillDetail extends BaseEntity {

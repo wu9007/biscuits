@@ -8,7 +8,7 @@ import org.hv.pocket.model.BaseEntity;
 import java.util.List;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 @Entity(table = "TBL_RELEVANT_BILL", tableId = 3, businessName = "关联单据")
 public class RelevantBill extends BaseEntity {

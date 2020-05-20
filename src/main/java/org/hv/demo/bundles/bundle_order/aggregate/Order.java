@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * @author wujianchuan 2018/12/26
+ * @author leyan95 2018/12/26
  */
 @Entity(table = "TBL_ORDER", tableId = 0, businessName = "单据")
 public class Order extends AbstractEntity {

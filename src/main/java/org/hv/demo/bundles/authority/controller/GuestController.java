@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 @Controller(bundleId = "home", auth = false)
 public class GuestController {

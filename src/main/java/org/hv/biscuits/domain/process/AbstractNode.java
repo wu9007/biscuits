@@ -1,7 +1,7 @@
 package org.hv.biscuits.domain.process;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public abstract class AbstractNode implements Node {
     private Node preNode;

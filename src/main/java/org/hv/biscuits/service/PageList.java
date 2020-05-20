@@ -5,7 +5,7 @@ import org.hv.pocket.model.AbstractEntity;
 import java.util.List;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public class PageList<T> {
     private List<T> result;

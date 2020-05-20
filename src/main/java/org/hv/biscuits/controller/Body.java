@@ -3,7 +3,7 @@ package org.hv.biscuits.controller;
 import java.io.Serializable;
 
 /**
- * @author wujianchuan 2019/2/20
+ * @author leyan95 2019/2/20
  */
 public class Body implements Serializable {
     private static final long serialVersionUID = -7606557226712921098L;

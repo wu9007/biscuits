@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public class BundleView {
     private final String bundleId;

@@ -5,7 +5,7 @@ import org.hv.demo.bundles.bundle_order.aggregate.Order;
 import org.springframework.stereotype.Component;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 @Component
 public class OrderRepositoryImpl extends AbstractCommonRepository<Order> implements OrderRepository {

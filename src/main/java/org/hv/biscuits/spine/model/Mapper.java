@@ -9,7 +9,7 @@ import org.hv.pocket.model.BaseEntity;
 /**
  * 路径映射实体类
  *
- * @author wujianchuan 2019/2/3
+ * @author leyan95 2019/2/3
  */
 @Entity(table = "T_MAPPER", tableId = 103)
 public class Mapper extends BaseEntity {

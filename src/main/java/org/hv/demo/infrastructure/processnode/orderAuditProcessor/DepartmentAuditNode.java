@@ -4,7 +4,7 @@ import org.hv.biscuits.domain.process.State;
 import org.hv.demo.bundles.bundle_order.service.OrderService;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 @State(group = "orderAuditProcessor")
 public class DepartmentAuditNode extends AbstractOrderAuditNode {

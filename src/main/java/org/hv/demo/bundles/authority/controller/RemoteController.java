@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import java.io.IOException;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 @Controller(bundleId = "remote", auth = false)
 public class RemoteController {

@@ -1,7 +1,7 @@
 package org.hv.biscuits.constant;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public interface BiscuitsHttpHeaders {
     /**

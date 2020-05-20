@@ -11,7 +11,7 @@ import org.hv.demo.infrastructure.constant.DemoEvenConstant;
 import java.sql.SQLException;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  * 监听类同服务类组合使用是  前提：{RelevantBillService extends Service, Monitor}
  */
 @Service(session = "demo")

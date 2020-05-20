@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author wujianchuan 2019/1/30
+ * @author leyan95 2019/1/30
  */
 @Component
 public class TokenUtil {

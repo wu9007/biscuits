@@ -10,7 +10,7 @@ package org.hv.biscuits.function;
  * whose functional method is {@link #get()}.
  *
  * @param <T> the type of results supplied by this supplier
- * @author wujianchuan
+ * @author leyan95
  * @since 1.8
  */
 @FunctionalInterface

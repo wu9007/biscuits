@@ -29,7 +29,7 @@ import static org.hv.biscuits.utils.TokenUtil.CLAIM_KEY_AUTH;
 import static org.hv.biscuits.utils.TokenUtil.CLAIM_KEY_AVATAR;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 @Component
 @Order(Integer.MIN_VALUE + 1)

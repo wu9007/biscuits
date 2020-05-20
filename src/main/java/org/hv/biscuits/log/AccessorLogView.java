@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public class AccessorLogView implements Serializable {
     private static final long serialVersionUID = -7860562014778235746L;

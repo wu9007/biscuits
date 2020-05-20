@@ -4,7 +4,7 @@ import org.hv.biscuits.permission.AbstractPermission;
 import org.springframework.stereotype.Component;
 
 /**
- * @author wujianchuan 2019/2/2
+ * @author leyan95 2019/2/2
  */
 @Component
 public class DemoPermission extends AbstractPermission {

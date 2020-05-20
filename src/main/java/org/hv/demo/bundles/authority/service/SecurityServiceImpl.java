@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 @Service(session = "demo")
 public class SecurityServiceImpl extends AbstractService implements SecurityService {

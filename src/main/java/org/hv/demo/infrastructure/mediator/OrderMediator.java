@@ -10,7 +10,7 @@ import static org.hv.demo.infrastructure.constant.DemoMediatorConstant.MEDIATOR_
 import static org.hv.demo.infrastructure.constant.DemoMediatorConstant.MEDIATOR_UPDATE_RELEVANT_STATUS;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  * 负责不同模块间的交互（中介）
  * 通常将同一个流程中涉及到的模块的交互方法注入到中介中
  */

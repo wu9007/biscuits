@@ -1,7 +1,7 @@
 package org.hv.biscuits.domain.process;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public interface Node {
 

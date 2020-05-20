@@ -12,7 +12,7 @@ import java.io.IOException;
 /**
  * 反序列化空串处理为null，@JsonDeserialize(using = StringDeserializer.class)
  *
- * @author wujianchuan
+ * @author leyan95
  */
 public class StringDeserializer extends JsonDeserializer<String> {
 

@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  * 数据抓取对象
  */
 public class Grab<R> {

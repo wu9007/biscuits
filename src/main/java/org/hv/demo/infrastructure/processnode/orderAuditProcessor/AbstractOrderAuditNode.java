@@ -5,7 +5,7 @@ import org.hv.demo.bundles.bundle_order.aggregate.Order;
 import org.hv.demo.bundles.bundle_order.service.OrderService;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public abstract class AbstractOrderAuditNode extends AbstractNode {
     private OrderService orderPlusService;

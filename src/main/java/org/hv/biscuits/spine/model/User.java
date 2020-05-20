@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author wujianchuan 2019/1/30
+ * @author leyan95 2019/1/30
  */
 @Entity(table = "T_USER", tableId = 106, businessName = "人员")
 public class User extends BaseEntity {

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.SQLException;
 
 /**
- * @author wujianchuan 2019/2/21
+ * @author leyan95 2019/2/21
  */
 @Repository
 public class SpineAuthorityRepositoryImpl extends AbstractRepository implements SpineAuthorityRepository {

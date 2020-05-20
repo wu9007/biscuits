@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 /**
- * @author wujianchuan 2019/3/1
+ * @author leyan95 2019/3/1
  * @version 1.0
  */
 public class FilterView implements Serializable {

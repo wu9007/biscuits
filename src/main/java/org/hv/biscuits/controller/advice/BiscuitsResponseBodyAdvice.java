@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 /**
- * @author wujianchuan 2020/3/4
+ * @author leyan95 2020/3/4
  * @version 1.0
  * 依据注解添加加密标记
  */

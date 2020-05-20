@@ -1,7 +1,7 @@
 package org.hv.demo.infrastructure.constant;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public interface DemoEvenConstant {
     /**

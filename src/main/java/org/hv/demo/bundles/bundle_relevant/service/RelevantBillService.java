@@ -9,7 +9,7 @@ import org.hv.demo.bundles.bundle_relevant.aggregate.RelevantBill;
 import java.sql.SQLException;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public interface RelevantBillService extends Service, Monitor {
     int save(RelevantBill relevantBill) throws SQLException, IllegalAccessException;

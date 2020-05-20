@@ -10,7 +10,7 @@ import org.hv.pocket.model.BaseEntity;
 import java.util.List;
 
 /**
- * @author wujianchuan 2019/1/30
+ * @author leyan95 2019/1/30
  */
 @Entity(table = "T_ROLE", tableId = 104)
 public class Role extends BaseEntity {

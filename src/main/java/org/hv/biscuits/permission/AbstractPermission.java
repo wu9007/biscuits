@@ -4,7 +4,7 @@ package org.hv.biscuits.permission;
 import org.hv.biscuits.core.ActionFactory;
 
 /**
- * @author wujianchuan 2019/2/25
+ * @author leyan95 2019/2/25
  */
 public abstract class AbstractPermission implements Permission {
 

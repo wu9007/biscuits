@@ -7,7 +7,7 @@ import org.hv.pocket.constant.JoinMethod;
 import org.hv.pocket.model.BaseEntity;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 @Entity(table = "T_DEPARTMENT", tableId = 112, businessName = "部门")
 public class Department extends BaseEntity {

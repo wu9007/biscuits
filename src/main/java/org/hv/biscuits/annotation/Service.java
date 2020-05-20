@@ -10,7 +10,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @author wujianchuan 2019/2/12
+ * @author leyan95 2019/2/12
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

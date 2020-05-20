@@ -15,7 +15,7 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 
 /**
- * @author wujianchuan 2020/3/4
+ * @author leyan95 2020/3/4
  * @version 1.0
  * 对请求体中的数据进行解密操作
  */

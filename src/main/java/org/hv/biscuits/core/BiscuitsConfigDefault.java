@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 @Component
 public class BiscuitsConfigDefault implements BiscuitsConfig {

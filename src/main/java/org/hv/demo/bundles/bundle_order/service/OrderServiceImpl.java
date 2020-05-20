@@ -21,7 +21,7 @@ import static org.hv.demo.infrastructure.constant.DemoEvenConstant.EVEN_ORDER_UP
 import static org.hv.demo.infrastructure.constant.DemoMediatorConstant.MEDIATOR_UPDATE_RELEVANT_STATUS;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 @Service(session = "demo")
 public class OrderServiceImpl extends AbstractService implements OrderService {

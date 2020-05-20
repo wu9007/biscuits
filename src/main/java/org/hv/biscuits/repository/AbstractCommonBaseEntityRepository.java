@@ -14,7 +14,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public abstract class AbstractCommonBaseEntityRepository extends AbstractRepository implements CommonBaseEntityRepository {
 

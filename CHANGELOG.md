@@ -10,4 +10,5 @@
 * 增加消费者切面，如果存在消息头同上。
         
 > 注意：为了能够正确生成日志信息，
-> 控制器务必使用注解 `org.hv.biscuits.annotation.Controller`, 消费继承 `org.hv.biscuits.message.AbstractRocketMqListener`
+> 控制器务必使用注解 `org.hv.biscuits.annotation.Controller`, 
+> 消费继承 `org.hv.biscuits.message.BisRocketMqListener` 或 带有相应消息的抽象类`org.hv.biscuits.message.BisRocketMqReplyListener`

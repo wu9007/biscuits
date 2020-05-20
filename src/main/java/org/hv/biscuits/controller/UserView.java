@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public class UserView {
     private String uuid;

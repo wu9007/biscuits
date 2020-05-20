@@ -6,7 +6,7 @@ import org.hv.biscuits.spine.model.User;
 import java.sql.SQLException;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public interface UserRepository extends CommonRepository<User> {
 

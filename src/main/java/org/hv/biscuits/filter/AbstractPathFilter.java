@@ -8,7 +8,7 @@ import javax.servlet.ServletException;
 import java.sql.SQLException;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 abstract class AbstractPathFilter extends AbstractResponseFilter {
     private volatile Session session;

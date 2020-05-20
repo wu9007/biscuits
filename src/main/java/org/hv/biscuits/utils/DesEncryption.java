@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.security.SecureRandom;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public class DesEncryption implements EncryptionComputing {
 

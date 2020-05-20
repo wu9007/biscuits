@@ -5,7 +5,7 @@ import org.hv.biscuits.repository.CommonRepository;
 import org.hv.demo.bundles.bundle_order.aggregate.Order;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public interface OrderRepository extends CommonRepository<Order> {
 }

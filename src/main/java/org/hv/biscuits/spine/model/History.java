@@ -7,7 +7,7 @@ import org.hv.pocket.model.BaseEntity;
 import java.util.Date;
 
 /**
- * @author wujianchuan 2019/3/23
+ * @author leyan95 2019/3/23
  * @version 1.0
  */
 @Entity(table = "T_HISTORY", tableId = 111)

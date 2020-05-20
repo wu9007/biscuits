@@ -5,7 +5,7 @@ import org.hv.pocket.annotation.Entity;
 import org.hv.pocket.model.BaseEntity;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 @Entity(table = "TBL_ORDER_TYPE", tableId = 1)
 public class OrderType extends BaseEntity {

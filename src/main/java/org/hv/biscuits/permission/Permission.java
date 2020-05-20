@@ -1,7 +1,7 @@
 package org.hv.biscuits.permission;
 
 /**
- * @author wujianchuan 2019/2/3
+ * @author leyan95 2019/2/3
  */
 public interface Permission {
     /**

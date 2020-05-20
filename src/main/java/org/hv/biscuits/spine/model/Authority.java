@@ -8,7 +8,7 @@ import org.hv.pocket.model.BaseEntity;
 import java.util.List;
 
 /**
- * @author wujianchuan 2019/1/30
+ * @author leyan95 2019/1/30
  */
 @Entity(table = "T_AUTHORITY", tableId = 102)
 public class Authority extends BaseEntity {

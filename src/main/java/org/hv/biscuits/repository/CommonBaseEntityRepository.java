@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public interface CommonBaseEntityRepository {
     /**

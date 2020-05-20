@@ -6,7 +6,7 @@ import org.hv.pocket.annotation.View;
 import java.io.Serializable;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 @View
 public class Pair implements Serializable {

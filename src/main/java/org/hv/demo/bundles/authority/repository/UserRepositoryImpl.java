@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.sql.SQLException;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 @Component
 public class UserRepositoryImpl extends AbstractCommonRepository<User> implements UserRepository {

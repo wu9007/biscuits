@@ -5,7 +5,7 @@ import org.hv.pocket.annotation.ManyToOne;
 import org.hv.pocket.model.BaseEntity;
 
 /**
- * @author wujianchuan 2019/2/11
+ * @author leyan95 2019/2/11
  */
 @Entity(table = "T_ROLE_AUTH", tableId = 105)
 public class RoleAuthRelation extends BaseEntity {

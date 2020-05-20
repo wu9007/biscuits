@@ -1,7 +1,7 @@
 package org.hv.biscuits.core.views;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public class ActionView {
     private final String actionId;

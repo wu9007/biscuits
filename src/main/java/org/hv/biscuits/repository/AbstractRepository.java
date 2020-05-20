@@ -3,7 +3,7 @@ package org.hv.biscuits.repository;
 import org.hv.pocket.session.Session;
 
 /**
- * @author wujianchuan 2019/2/11
+ * @author leyan95 2019/2/11
  */
 public abstract class AbstractRepository {
 

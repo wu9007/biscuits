@@ -5,7 +5,7 @@ import org.hv.demo.bundles.bundle_order.aggregate.Order;
 import org.hv.demo.bundles.bundle_relevant.aggregate.RelevantBill;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public interface DemoMediatorConstant extends Mediator {
     /**

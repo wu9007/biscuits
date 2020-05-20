@@ -6,7 +6,7 @@ import org.hv.demo.bundles.bundle_relevant.aggregate.RelevantBill;
 import java.sql.SQLException;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public interface RelevantBillRepository extends CommonRepository<RelevantBill> {
 
