@@ -1,12 +1,11 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
-apply plugin: 'jdepend'
 apply plugin: "jacoco"
 apply plugin: 'build-dashboard'
 apply plugin: 'maven-publish'
 
 group = 'com.github.leyan95'
-version = '0.2.0.PRE'
+version = '0.2.1.PRE'
 sourceCompatibility = 1.8
 
 compileJava {
@@ -23,9 +22,6 @@ jar {
                 'Implementation-Version': version
     }
 
-    exclude "org/hv/demo"
-    exclude "org/hv/Application.class"
-    exclude "application*.yml"
     exclude "biscuits.sql"
     exclude "./docs"
 }
@@ -36,11 +32,6 @@ javadoc {
 
 test {
     exclude '*'
-}
-
-repositories {
-    mavenLocal()
-    mavenCentral()
 }
 
 compileJava.dependsOn(processResources)

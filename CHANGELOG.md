@@ -8,7 +8,10 @@
 * 可通过配置 `biscuits.withPersistence` 选择是否开启持久化（默认开启）。
 * 增加控制层切面，如果存在请求头 `Trace-Id` `User-Name` 则切面记录日志到 `LogQueue` ， 可调用 `pollAccessorLog(int size)` 消费本地日志记录。
 * 增加消费者切面，如果存在消息头同上。
+* 配置文件中需要配置 RocketMq nameServer 地址。
         
 > 注意：为了能够正确生成日志信息，
 > 控制器务必使用注解 `org.hv.biscuits.annotation.Controller`, 
 > 消费继承 `org.hv.biscuits.message.BisRocketMqListener` 或 带有响应消息的抽象类`org.hv.biscuits.message.BisRocketMqReplyListener`
+
+## 0.2.1.PRE - 2020/05/21
