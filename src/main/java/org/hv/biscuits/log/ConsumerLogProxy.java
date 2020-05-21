@@ -44,7 +44,7 @@ public class ConsumerLogProxy {
         this.logQueue = logQueue;
     }
 
-    @Pointcut("target(org.hv.biscuits.message.BisRocketMqListener)")
+    @Pointcut("target(org.hv.biscuits.message.BisRocketMqListener) || target(org.hv.biscuits.message.BisRocketMqReplyListener)")
     public void verify() {
     }
 
