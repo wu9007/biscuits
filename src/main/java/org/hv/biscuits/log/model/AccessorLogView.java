@@ -1,4 +1,4 @@
-package org.hv.biscuits.log;
+package org.hv.biscuits.log.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -8,8 +8,22 @@ import java.time.LocalDateTime;
  */
 public class AccessorLogView implements Serializable {
     private static final long serialVersionUID = -7860562014778235746L;
+    /**
+     * 在请求到达网关时，此项被放在请求头上。
+     */
     private String traceId;
+    /**
+     * 在请求到达控制器代理时，此项被放在请求属性上。
+     */
     private String requestId;
+    /**
+     * 在请求到达网关时，此项被放在请求头上。
+     */
+    private String userName;
+    /**
+     * 在请求到达网关时，此项被放在请求头上。
+     */
+    private String businessDeptName;
     private String accessorName;
     private String methodName;
     private String inParameter;
@@ -17,8 +31,6 @@ public class AccessorLogView implements Serializable {
     private String exception;
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
-    private String userName;
-    private String businessDeptName;
 
     public AccessorLogView() {
         this.startDateTime = LocalDateTime.now();

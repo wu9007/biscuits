@@ -2,6 +2,8 @@ package org.hv.biscuits.message;
 
 import org.apache.rocketmq.spring.annotation.ExtRocketMQTemplateConfiguration;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
+import org.apache.rocketmq.spring.support.RocketMQHeaders;
+import org.hv.biscuits.constant.BiscuitsHttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.Message;
@@ -38,12 +40,14 @@ public class BisRocketMqTemplate extends RocketMQTemplate {
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) requestAttributes;
         if (servletRequestAttributes != null) {
             HttpServletRequest httpServletRequest = servletRequestAttributes.getRequest();
+            String transactionId = (String) httpServletRequest.getAttribute(BiscuitsHttpHeaders.TRANSACTION_ID);
             String traceId = httpServletRequest.getHeader(TRACE_ID);
             String userName = httpServletRequest.getHeader(USER_NAME);
             String businessDepartmentName = httpServletRequest.getHeader(BUSINESS_DEPARTMENT_NAME);
             try {
                 if (traceId != null && userName != null) {
                     builder.setHeader(TRACE_ID, traceId)
+                            .setHeader(RocketMQHeaders.TRANSACTION_ID, transactionId)
                             .setHeader(USER_NAME, URLDecoder.decode(userName, "UTF-8"));
                     if (businessDepartmentName != null) {
                         builder.setHeader(BUSINESS_DEPARTMENT_NAME, URLDecoder.decode(businessDepartmentName, "UTF-8"));

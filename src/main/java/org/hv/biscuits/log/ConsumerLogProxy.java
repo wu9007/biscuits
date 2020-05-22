@@ -7,6 +7,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.hv.biscuits.log.model.AccessorLogView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static org.hv.biscuits.constant.BiscuitsHttpHeaders.BUSINESS_DEPARTMENT_NAME;
+import static org.hv.biscuits.constant.BiscuitsHttpHeaders.REQUEST_ID;
 import static org.hv.biscuits.constant.BiscuitsHttpHeaders.TRACE_ID;
 import static org.hv.biscuits.constant.BiscuitsHttpHeaders.USER_NAME;
 
@@ -55,10 +57,11 @@ public class ConsumerLogProxy {
         this.countDownLatchMap.put(requestId, new CountDownLatch(2));
         this.executorService.execute(() -> {
             MessageExt messageExt = ((MessageExt) joinPoint.getArgs()[0]);
+            messageExt.getProperties().put(REQUEST_ID, requestId);
             String traceId = messageExt.getProperty(TRACE_ID);
             String userName = messageExt.getProperty(USER_NAME);
             String businessDepartmentName = messageExt.getProperty(BUSINESS_DEPARTMENT_NAME);
-            logger.info("[{}: {}, {}: {}, {}: {}]", TRACE_ID, traceId, USER_NAME, userName, BUSINESS_DEPARTMENT_NAME, businessDepartmentName);
+            logger.info("[{}: {}, {}: {}, {}: {}, {}: {}]", TRACE_ID, traceId, REQUEST_ID, requestId, USER_NAME, userName, BUSINESS_DEPARTMENT_NAME, businessDepartmentName);
             AccessorLogView accessorLogView = new AccessorLogView(traceId, requestId, userName, businessDepartmentName)
                     .setAccessorName(joinPoint.getTarget().getClass().getTypeName())
                     .setMethodName("execute")

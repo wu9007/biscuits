@@ -20,4 +20,16 @@ public interface BiscuitsHttpHeaders {
      * 日志追链路标识
      */
     String TRACE_ID = "Trace-Id";
+    /**
+     * 请求标识
+     */
+    String REQUEST_ID = "Request-Id";
+    /**
+     * 工作单元执行标识
+     */
+    String SERVICE_ID = "Service-Id";
+    /**
+     * 消息事务标识
+     */
+    String TRANSACTION_ID = "Transaction-Id";
 }

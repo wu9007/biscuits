@@ -1,5 +1,7 @@
 package org.hv.biscuits.log;
 
+import org.hv.biscuits.log.model.AccessorLogView;
+import org.hv.biscuits.log.model.ServiceLogView;
 import org.springframework.stereotype.Component;
 
 import java.util.Queue;
@@ -17,6 +19,10 @@ public class LogQueue {
      * 控制器日志队列
      */
     private final Queue<AccessorLogView> ACCESSOR_LOG_QUEUE = new ConcurrentLinkedQueue<>();
+    /**
+     * 工作单元日志队列
+     */
+    private final Queue<ServiceLogView> SERVICE_LOG_QUEUE = new ConcurrentLinkedQueue<>();
 
     /**
      * 提供控制器日志
@@ -25,6 +31,15 @@ public class LogQueue {
      */
     public void offerAccessorLog(AccessorLogView accessorLogView) {
         ACCESSOR_LOG_QUEUE.offer(accessorLogView);
+    }
+
+    /**
+     * 提供工作单元业务执行日志
+     *
+     * @param serviceLogView {@link ServiceLogView}
+     */
+    public void offerServiceLog(ServiceLogView serviceLogView) {
+        SERVICE_LOG_QUEUE.offer(serviceLogView);
     }
 
     /**
@@ -41,7 +56,7 @@ public class LogQueue {
         if (queueSize < size) {
             size = queueSize;
         }
-        IntStream.range(0, size).forEach(accessorLogView -> queue.add(this.pollAccessorLog()));
+        IntStream.range(0, size).forEach(index -> queue.add(this.pollAccessorLog()));
         return queue;
     }
 
@@ -53,5 +68,33 @@ public class LogQueue {
      */
     public AccessorLogView pollAccessorLog() {
         return ACCESSOR_LOG_QUEUE.poll();
+    }
+
+    /**
+     * 工作单元日志批量出队，
+     * 如果批量出队的日志数量大于队列数量则全部出队，
+     * 否则出队指定数量的日志。
+     *
+     * @param size 日志数量
+     * @return 日志实例集合
+     */
+    public synchronized Queue<ServiceLogView> pollServiceLog(int size) {
+        Queue<ServiceLogView> queue = new ConcurrentLinkedQueue<>();
+        int queueSize = SERVICE_LOG_QUEUE.size();
+        if (queueSize < size) {
+            size = queueSize;
+        }
+        IntStream.range(0, size).forEach(index -> queue.add(this.pollServiceLog()));
+        return queue;
+    }
+
+    /**
+     * 工作单元日志头节点出队，
+     * 如果队列是空队列则返回 {@code null}
+     *
+     * @return 日志实例
+     */
+    public ServiceLogView pollServiceLog() {
+        return SERVICE_LOG_QUEUE.poll();
     }
 }

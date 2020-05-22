@@ -40,4 +40,17 @@ public class LogThreadPoolConfig {
         return new ThreadPoolExecutor(5, 10, 50L, TimeUnit.MILLISECONDS,
                 new ArrayBlockingQueue<>(50), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
     }
+
+    /**
+     * 工作单元日志线程池
+     *
+     * @return executor service
+     */
+    @Bean(value = "serviceLogThreadPool")
+    public ExecutorService buildServiceLogThreadPool() {
+        ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()
+                .setNameFormat("log-service-thread-%d").build();
+        return new ThreadPoolExecutor(5, 10, 50L, TimeUnit.MILLISECONDS,
+                new ArrayBlockingQueue<>(50), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
+    }
 }

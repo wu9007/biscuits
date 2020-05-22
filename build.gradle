@@ -94,6 +94,10 @@ publishing {
                 guavaDependencyNode.appendNode('groupId', 'com.google.guava')
                 guavaDependencyNode.appendNode('artifactId', 'guava')
                 guavaDependencyNode.appendNode('version', '19.0')
+                def rocketMqSpring = dependenciesNode.appendNode('dependency')
+                rocketMqSpring.appendNode('groupId', 'org.apache.rocketmq')
+                rocketMqSpring.appendNode('artifactId', 'rocketmq-spring-boot-starter')
+                rocketMqSpring.appendNode('version', '2.1.0')
             }
         }
     }
