@@ -14,4 +14,6 @@
 > 控制器务必使用注解 `org.hv.biscuits.annotation.Controller`, 
 > 消费继承 `org.hv.biscuits.message.BisRocketMqListener` 或 带有响应消息的抽象类`org.hv.biscuits.message.BisRocketMqReplyListener`
 
-## 0.2.1.PRE - 2020/05/21
+## 0.2.1.PRE - 2020/05/22
+* 增加工作单元日志切面。
+* 增加 `@GlobalTransaction` 开启持久化操作前后镜像日志记录。
