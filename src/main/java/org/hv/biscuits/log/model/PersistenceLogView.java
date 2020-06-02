@@ -8,12 +8,8 @@ import java.time.LocalDateTime;
 /**
  * @author leyan95
  */
-public class ServiceLogView implements Serializable {
+public class PersistenceLogView implements Serializable {
     private static final long serialVersionUID = -7860562014778235746L;
-    /**
-     * 在请求到达控制器切面时，此项被放在请求属性上。
-     */
-    private String requestId;
     /**
      * 在请求到达工作单元切面时，此项被放在请求属性上。
      */
@@ -23,7 +19,11 @@ public class ServiceLogView implements Serializable {
      * 当系统通过{@link BisRocketMqTemplate}发送事务消息时，取请求属性中的事务标识并放到MQ消息头中。
      */
     private String globalTransactionId;
-    private String serviceName;
+    /**
+     * 再请求到达仓储切面是，此项被放在请求属性上
+     */
+    private String persistenceId;
+    private String persistenceName;
     private String methodName;
     private String inParameter;
     private String outParameter;
@@ -31,29 +31,20 @@ public class ServiceLogView implements Serializable {
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
 
-    public ServiceLogView() {
+    public PersistenceLogView() {
         this.startDateTime = LocalDateTime.now();
     }
 
-    public ServiceLogView(String requestId) {
+    public PersistenceLogView(String serviceId) {
         this.startDateTime = LocalDateTime.now();
-        this.requestId = requestId;
-    }
-
-    public String getRequestId() {
-        return requestId;
-    }
-
-    public ServiceLogView setRequestId(String requestId) {
-        this.requestId = requestId;
-        return this;
+        this.serviceId = serviceId;
     }
 
     public String getGlobalTransactionId() {
         return globalTransactionId;
     }
 
-    public ServiceLogView setGlobalTransactionId(String globalTransactionId) {
+    public PersistenceLogView setGlobalTransactionId(String globalTransactionId) {
         this.globalTransactionId = globalTransactionId;
         return this;
     }
@@ -62,17 +53,26 @@ public class ServiceLogView implements Serializable {
         return serviceId;
     }
 
-    public ServiceLogView setServiceId(String serviceId) {
+    public PersistenceLogView setServiceId(String serviceId) {
         this.serviceId = serviceId;
         return this;
     }
 
-    public String getServiceName() {
-        return serviceName;
+    public String getPersistenceId() {
+        return persistenceId;
     }
 
-    public ServiceLogView setServiceName(String serviceName) {
-        this.serviceName = serviceName;
+    public PersistenceLogView setPersistenceId(String persistenceId) {
+        this.persistenceId = persistenceId;
+        return this;
+    }
+
+    public String getPersistenceName() {
+        return persistenceName;
+    }
+
+    public PersistenceLogView setPersistenceName(String persistenceName) {
+        this.persistenceName = persistenceName;
         return this;
     }
 
@@ -80,7 +80,7 @@ public class ServiceLogView implements Serializable {
         return methodName;
     }
 
-    public ServiceLogView setMethodName(String methodName) {
+    public PersistenceLogView setMethodName(String methodName) {
         this.methodName = methodName;
         return this;
     }
@@ -89,7 +89,7 @@ public class ServiceLogView implements Serializable {
         return inParameter;
     }
 
-    public ServiceLogView setInParameter(String inParameter) {
+    public PersistenceLogView setInParameter(String inParameter) {
         this.inParameter = inParameter;
         return this;
     }
@@ -98,7 +98,7 @@ public class ServiceLogView implements Serializable {
         return outParameter;
     }
 
-    public ServiceLogView setOutParameter(String outParameter) {
+    public PersistenceLogView setOutParameter(String outParameter) {
         this.outParameter = outParameter;
         return this;
     }
@@ -107,7 +107,7 @@ public class ServiceLogView implements Serializable {
         return exception;
     }
 
-    public ServiceLogView setException(String exception) {
+    public PersistenceLogView setException(String exception) {
         this.exception = exception;
         return this;
     }
@@ -116,7 +116,7 @@ public class ServiceLogView implements Serializable {
         return startDateTime;
     }
 
-    public ServiceLogView setStartDateTime(LocalDateTime startDateTime) {
+    public PersistenceLogView setStartDateTime(LocalDateTime startDateTime) {
         this.startDateTime = startDateTime;
         return this;
     }
@@ -125,7 +125,7 @@ public class ServiceLogView implements Serializable {
         return endDateTime;
     }
 
-    public ServiceLogView setEndDateTime(LocalDateTime endDateTime) {
+    public PersistenceLogView setEndDateTime(LocalDateTime endDateTime) {
         this.endDateTime = endDateTime;
         return this;
     }

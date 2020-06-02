@@ -32,4 +32,8 @@ public interface BiscuitsHttpHeaders {
      * 消息事务标识
      */
     String TRANSACTION_ID = "Transaction-Id";
+    /**
+     * 仓储执行标识
+     */
+    String PERSISTENCE_ID = "Persistence-Id";
 }

@@ -9,7 +9,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.hv.biscuits.constant.BiscuitsHttpHeaders;
-import org.hv.biscuits.log.model.ServiceLogView;
+import org.hv.biscuits.log.model.PersistenceLogView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.DefaultParameterNameDiscoverer;
@@ -29,6 +29,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static org.hv.biscuits.constant.BiscuitsHttpHeaders.PERSISTENCE_ID;
 import static org.hv.biscuits.constant.BiscuitsHttpHeaders.REQUEST_ID;
 import static org.hv.biscuits.constant.BiscuitsHttpHeaders.SERVICE_ID;
 import static org.hv.biscuits.constant.BiscuitsHttpHeaders.TRANSACTION_ID;
@@ -38,18 +39,21 @@ import static org.hv.biscuits.constant.BiscuitsHttpHeaders.TRANSACTION_ID;
  */
 @Component
 @Aspect
-public class ServiceLogProxy {
+public class PersistenceLogProxy {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Resource
     private LogQueue logQueue;
-    @Resource(name = "serviceLogThreadPool")
+    @Resource(name = "persistenceLogThreadPool")
     private ExecutorService executorService;
-    private final Map<String, ServiceLogView> serviceLogViewMap = new ConcurrentHashMap<>(92);
+    private final Map<String, PersistenceLogView> persistenceLogViewMap = new ConcurrentHashMap<>(92);
     private final Map<String, String> resultMap = new ConcurrentHashMap<>(92);
     private final Map<String, CountDownLatch> countDownLatchMap = new ConcurrentHashMap<>(92);
 
-    @Pointcut("@within(org.hv.biscuits.annotation.Service)")
+    @Pointcut("target(org.hv.biscuits.repository.AbstractRepository) " +
+            "&& !execution(public void pourSession()) " +
+            "&& !execution(public void injectSession(*)) " +
+            "&& !execution(public * getSession())")
     public void verify() {
     }
 
@@ -62,18 +66,19 @@ public class ServiceLogProxy {
             HttpServletRequest httpServletRequest = servletRequestAttributes.getRequest();
             String requestId = (String) httpServletRequest.getAttribute(BiscuitsHttpHeaders.REQUEST_ID);
             String transactionId = (String) httpServletRequest.getAttribute(BiscuitsHttpHeaders.TRANSACTION_ID);
-            logger.info("[{}: {}, {}: {}]", REQUEST_ID, requestId, TRANSACTION_ID, transactionId);
-            if (requestId != null) {
-                String serviceId = UUID.randomUUID().toString().replace("-", "");
-                httpServletRequest.setAttribute(SERVICE_ID, serviceId);
-                this.countDownLatchMap.put(serviceId, new CountDownLatch(1));
+            String serviceId = (String) httpServletRequest.getAttribute(SERVICE_ID);
+            logger.info("[{}: {}, {}: {}, {}: {}]", REQUEST_ID, requestId, TRANSACTION_ID, transactionId, SERVICE_ID, serviceId);
+            if (serviceId != null) {
+                String persistenceId = UUID.randomUUID().toString().replace("-", "");
+                httpServletRequest.setAttribute(PERSISTENCE_ID, persistenceId);
+                this.countDownLatchMap.put(persistenceId, new CountDownLatch(1));
                 this.executorService.execute(() -> {
-                    ServiceLogView serviceLogView = new ServiceLogView().setRequestId(requestId).setServiceId(serviceId).setGlobalTransactionId(transactionId);
+                    PersistenceLogView persistenceLogView = new PersistenceLogView(serviceId).setPersistenceId(persistenceId).setServiceId(serviceId).setGlobalTransactionId(transactionId);
                     try {
                         Class<?> clazz = joinPoint.getTarget().getClass();
-                        serviceLogView.setServiceName(clazz.getTypeName());
+                        persistenceLogView.setPersistenceName(clazz.getTypeName());
                         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
-                        serviceLogView.setMethodName(method.getName());
+                        persistenceLogView.setMethodName(method.getName());
                         DefaultParameterNameDiscoverer discoverer = new DefaultParameterNameDiscoverer();
                         String[] argsName = discoverer.getParameterNames(method);
                         if (argsName != null && argsName.length > 0) {
@@ -82,46 +87,46 @@ public class ServiceLogProxy {
                             for (int argIndex = 0; argIndex < argsName.length; argIndex++) {
                                 argsLog[argIndex] = argsName[argIndex] + ": " + objectMapper.writeValueAsString(argsValue[argIndex]);
                             }
-                            serviceLogView.setInParameter(StringUtils.join(argsLog, ", "));
+                            persistenceLogView.setInParameter(StringUtils.join(argsLog, ", "));
                         }
-                        this.serviceLogViewMap.put(serviceId, serviceLogView);
+                        this.persistenceLogViewMap.put(persistenceId, persistenceLogView);
                     } catch (JsonProcessingException e) {
                         logger.error("ObjectMapper 序列化参数失败 {}", e.getMessage());
                     } finally {
-                        this.countDownLatchMap.get(serviceId).countDown();
+                        this.countDownLatchMap.get(persistenceId).countDown();
                     }
                 });
                 try {
                     result = joinPoint.proceed();
                     if (result != null) {
-                        this.resultMap.put(serviceId, objectMapper.writeValueAsString(result));
+                        this.resultMap.put(persistenceId, objectMapper.writeValueAsString(result));
                     }
                     this.executorService.execute(() -> {
                         try {
-                            this.countDownLatchMap.get(serviceId).await(100, TimeUnit.MILLISECONDS);
-                            this.serviceLogViewMap.get(serviceId).setOutParameter(this.resultMap.get(serviceId));
+                            this.countDownLatchMap.get(persistenceId).await(100, TimeUnit.MILLISECONDS);
+                            this.persistenceLogViewMap.get(persistenceId).setOutParameter(this.resultMap.get(persistenceId));
                         } catch (InterruptedException e) {
                             logger.error("日志线程被异常中断 {} \n {}", Thread.currentThread().getName(), e.getMessage());
                         } finally {
-                            logQueue.offerServiceLog(this.serviceLogViewMap.get(serviceId).setEndDateTime(LocalDateTime.now()));
-                            this.resultMap.remove(serviceId);
-                            this.countDownLatchMap.remove(serviceId);
-                            this.serviceLogViewMap.remove(serviceId);
+                            logQueue.offerPersistenceLog(this.persistenceLogViewMap.get(persistenceId).setEndDateTime(LocalDateTime.now()));
+                            this.resultMap.remove(persistenceId);
+                            this.countDownLatchMap.remove(persistenceId);
+                            this.persistenceLogViewMap.remove(persistenceId);
                         }
                     });
                 } catch (Throwable throwable) {
-                    this.countDownLatchMap.get(serviceId).countDown();
+                    this.countDownLatchMap.get(persistenceId).countDown();
                     this.executorService.execute(() -> {
                         try {
-                            this.countDownLatchMap.get(serviceId).await(100, TimeUnit.MILLISECONDS);
-                            this.serviceLogViewMap.get(serviceId).setException(objectMapper.writeValueAsString(throwable));
+                            this.countDownLatchMap.get(persistenceId).await(100, TimeUnit.MILLISECONDS);
+                            this.persistenceLogViewMap.get(persistenceId).setException(objectMapper.writeValueAsString(throwable));
                         } catch (InterruptedException | JsonProcessingException e) {
                             logger.error("日志线程被异常中断 {} 或 \n 反序列化长信息失败 {}", Thread.currentThread().getName(), throwable.getMessage());
                         } finally {
-                            logQueue.offerServiceLog(this.serviceLogViewMap.get(serviceId).setEndDateTime(LocalDateTime.now()));
-                            this.resultMap.remove(serviceId);
-                            this.countDownLatchMap.remove(serviceId);
-                            this.serviceLogViewMap.remove(serviceId);
+                            logQueue.offerPersistenceLog(this.persistenceLogViewMap.get(persistenceId).setEndDateTime(LocalDateTime.now()));
+                            this.resultMap.remove(persistenceId);
+                            this.countDownLatchMap.remove(persistenceId);
+                            this.persistenceLogViewMap.remove(persistenceId);
                         }
                     });
                 }

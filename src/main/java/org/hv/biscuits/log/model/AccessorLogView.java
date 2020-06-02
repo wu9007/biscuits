@@ -13,7 +13,7 @@ public class AccessorLogView implements Serializable {
      */
     private String traceId;
     /**
-     * 在请求到达控制器代理时，此项被放在请求属性上。
+     * 在请求到达控制器切面时，此项被放在请求属性上。
      */
     private String requestId;
     /**

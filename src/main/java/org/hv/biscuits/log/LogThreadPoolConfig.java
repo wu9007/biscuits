@@ -53,4 +53,17 @@ public class LogThreadPoolConfig {
         return new ThreadPoolExecutor(5, 10, 50L, TimeUnit.MILLISECONDS,
                 new ArrayBlockingQueue<>(50), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
     }
+
+    /**
+     * 仓储日志线程池
+     *
+     * @return executor service
+     */
+    @Bean(value = "persistenceLogThreadPool")
+    public ExecutorService buildPersistenceLogThreadPool() {
+        ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()
+                .setNameFormat("log-persistence-thread-%d").build();
+        return new ThreadPoolExecutor(5, 10, 50L, TimeUnit.MILLISECONDS,
+                new ArrayBlockingQueue<>(50), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
+    }
 }

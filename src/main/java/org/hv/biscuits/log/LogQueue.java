@@ -1,6 +1,7 @@
 package org.hv.biscuits.log;
 
 import org.hv.biscuits.log.model.AccessorLogView;
+import org.hv.biscuits.log.model.PersistenceLogView;
 import org.hv.biscuits.log.model.ServiceLogView;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,10 @@ public class LogQueue {
      * 工作单元日志队列
      */
     private final Queue<ServiceLogView> SERVICE_LOG_QUEUE = new ConcurrentLinkedQueue<>();
+    /**
+     * 仓储日志队列
+     */
+    private final Queue<PersistenceLogView> PERSISTENCE_LOG_QUEUE = new ConcurrentLinkedQueue<>();
 
     /**
      * 提供控制器日志
@@ -40,6 +45,15 @@ public class LogQueue {
      */
     public void offerServiceLog(ServiceLogView serviceLogView) {
         SERVICE_LOG_QUEUE.offer(serviceLogView);
+    }
+
+    /**
+     * 提供仓储执行日志
+     *
+     * @param persistenceLogView {@link PersistenceLogView}
+     */
+    public void offerPersistenceLog(PersistenceLogView persistenceLogView) {
+        PERSISTENCE_LOG_QUEUE.offer(persistenceLogView);
     }
 
     /**
