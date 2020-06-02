@@ -111,4 +111,32 @@ public class LogQueue {
     public ServiceLogView pollServiceLog() {
         return SERVICE_LOG_QUEUE.poll();
     }
+
+    /**
+     * 仓储日志批量出队，
+     * 如果批量出队的日志数量大于队列数量则全部出队，
+     * 否则出队指定数量的日志。
+     *
+     * @param size 日志数量
+     * @return 日志实例集合
+     */
+    public synchronized Queue<PersistenceLogView> pollPersistenceLog(int size) {
+        Queue<PersistenceLogView> queue = new ConcurrentLinkedQueue<>();
+        int queueSize = PERSISTENCE_LOG_QUEUE.size();
+        if (queueSize < size) {
+            size = queueSize;
+        }
+        IntStream.range(0, size).forEach(index -> queue.add(this.pollPersistenceLog()));
+        return queue;
+    }
+
+    /**
+     * 仓储日志头节点出队，
+     * 如果队列是空队列则返回 {@code null}
+     *
+     * @return 日志实例
+     */
+    public PersistenceLogView pollPersistenceLog() {
+        return PERSISTENCE_LOG_QUEUE.poll();
+    }
 }
