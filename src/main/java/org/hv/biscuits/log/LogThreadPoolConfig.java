@@ -66,4 +66,17 @@ public class LogThreadPoolConfig {
         return new ThreadPoolExecutor(5, 10, 50L, TimeUnit.MILLISECONDS,
                 new ArrayBlockingQueue<>(50), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
     }
+
+    /**
+     * ORM日志线程池
+     *
+     * @return executor service
+     */
+    @Bean(value = "ormLogThreadPool")
+    public ExecutorService buildOrmLogThreadPool() {
+        ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()
+                .setNameFormat("log-orm-thread-%d").build();
+        return new ThreadPoolExecutor(5, 10, 50L, TimeUnit.MILLISECONDS,
+                new ArrayBlockingQueue<>(50), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
+    }
 }

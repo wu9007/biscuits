@@ -1,6 +1,7 @@
 package org.hv.biscuits.log;
 
 import org.hv.biscuits.log.model.AccessorLogView;
+import org.hv.biscuits.log.model.OrmLogView;
 import org.hv.biscuits.log.model.PersistenceLogView;
 import org.hv.biscuits.log.model.ServiceLogView;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,10 @@ public class LogQueue {
      * 仓储日志队列
      */
     private final Queue<PersistenceLogView> PERSISTENCE_LOG_QUEUE = new ConcurrentLinkedQueue<>();
+    /**
+     * Orm日志队列
+     */
+    private final Queue<OrmLogView> ORM_LOG_QUEUE = new ConcurrentLinkedQueue<>();
 
     /**
      * 提供控制器日志
@@ -54,6 +59,15 @@ public class LogQueue {
      */
     public void offerPersistenceLog(PersistenceLogView persistenceLogView) {
         PERSISTENCE_LOG_QUEUE.offer(persistenceLogView);
+    }
+
+    /**
+     * 提供ORM执行日志
+     *
+     * @param ormLogView {@link OrmLogView}
+     */
+    public void offerOrmLog(OrmLogView ormLogView) {
+        ORM_LOG_QUEUE.offer(ormLogView);
     }
 
     /**
@@ -138,5 +152,33 @@ public class LogQueue {
      */
     public PersistenceLogView pollPersistenceLog() {
         return PERSISTENCE_LOG_QUEUE.poll();
+    }
+
+    /**
+     * ORM日志批量出队，
+     * 如果批量出队的日志数量大于队列数量则全部出队，
+     * 否则出队指定数量的日志。
+     *
+     * @param size 日志数量
+     * @return 日志实例集合
+     */
+    public synchronized Queue<OrmLogView> pollOrmLog(int size) {
+        Queue<OrmLogView> queue = new ConcurrentLinkedQueue<>();
+        int queueSize = ORM_LOG_QUEUE.size();
+        if (queueSize < size) {
+            size = queueSize;
+        }
+        IntStream.range(0, size).forEach(index -> queue.add(this.pollOrmLog()));
+        return queue;
+    }
+
+    /**
+     * ORM日志头节点出队，
+     * 如果队列是空队列则返回 {@code null}
+     *
+     * @return 日志实例
+     */
+    public OrmLogView pollOrmLog() {
+        return ORM_LOG_QUEUE.poll();
     }
 }
