@@ -1,7 +1,5 @@
 package org.hv.biscuits.log.model;
 
-import org.hv.biscuits.message.BisRocketMqTemplate;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -20,7 +18,7 @@ public class ServiceLogView implements Serializable {
     private String serviceId;
     /**
      * 在请求到达控制器切面时，此项被放在请求属性上,
-     * 当系统通过{@link BisRocketMqTemplate}发送事务消息时，取请求属性中的事务标识并放到MQ消息头中。
+     * 当系统通过 BisRocketMqTemplate 发送事务消息时，取请求属性中的事务标识并放到MQ消息头中。
      */
     private String globalTransactionId;
     private String serviceName;
