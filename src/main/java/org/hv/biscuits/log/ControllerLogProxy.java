@@ -3,12 +3,15 @@ package org.hv.biscuits.log;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.hv.biscuits.constant.BiscuitsHttpHeaders;
+import org.hv.biscuits.log.model.AccessorLogView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.DefaultParameterNameDiscoverer;
@@ -31,7 +34,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static org.hv.biscuits.constant.BiscuitsHttpHeaders.BUSINESS_DEPARTMENT_NAME;
+import static org.hv.biscuits.constant.BiscuitsHttpHeaders.REQUEST_ID;
 import static org.hv.biscuits.constant.BiscuitsHttpHeaders.TRACE_ID;
+import static org.hv.biscuits.constant.BiscuitsHttpHeaders.TRANSACTION_ID;
 import static org.hv.biscuits.constant.BiscuitsHttpHeaders.USER_NAME;
 
 /**
@@ -54,22 +59,45 @@ public class ControllerLogProxy {
     }
 
     @Pointcut("@within(org.hv.biscuits.annotation.Controller)")
-    public void verify() {
+    public void logPointcut() {
     }
 
-    @Around("verify()")
+    @Pointcut("@annotation(org.hv.biscuits.annotation.GlobalTransaction)")
+    public void transactionPointcut() {
+    }
+
+    /**
+     * 开启全局事务向RequestAttribute中放入全局事务标识
+     *
+     * @param joinPoint join point
+     */
+    @Before("logPointcut() && transactionPointcut()")
+    public void transactionBefore(JoinPoint joinPoint) {
+        HttpServletRequest httpServletRequest = this.getHttpServletRequest();
+        if (httpServletRequest != null) {
+            httpServletRequest.setAttribute(TRANSACTION_ID, UUID.randomUUID().toString().replace("-", ""));
+        }
+    }
+
+    /**
+     * 记录日志信息
+     *
+     * @param joinPoint join point
+     * @return result
+     * @throws Throwable e
+     */
+    @Around("logPointcut()")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         Object result = null;
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) requestAttributes;
-        if (servletRequestAttributes != null) {
-            HttpServletRequest httpServletRequest = servletRequestAttributes.getRequest();
+        HttpServletRequest httpServletRequest = this.getHttpServletRequest();
+        if (httpServletRequest != null) {
             String traceId = httpServletRequest.getHeader(BiscuitsHttpHeaders.TRACE_ID);
             String userName = httpServletRequest.getHeader(BiscuitsHttpHeaders.USER_NAME);
             String businessDepartmentName = httpServletRequest.getHeader(BiscuitsHttpHeaders.BUSINESS_DEPARTMENT_NAME);
             logger.info("[{}: {}, {}: {}, {}: {}]", TRACE_ID, traceId, USER_NAME, userName, BUSINESS_DEPARTMENT_NAME, businessDepartmentName);
             if (traceId != null && userName != null) {
                 String requestId = UUID.randomUUID().toString().replace("-", "");
+                httpServletRequest.setAttribute(REQUEST_ID, requestId);
                 this.countDownLatchMap.put(requestId, new CountDownLatch(2));
                 this.executorService.execute(() -> {
                     AccessorLogView accessorLogView = new AccessorLogView().setTraceId(traceId).setRequestId(requestId);
@@ -114,10 +142,7 @@ public class ControllerLogProxy {
                         } catch (InterruptedException e) {
                             logger.error("日志线程被异常中断 {} \n {}", Thread.currentThread().getName(), e.getMessage());
                         } finally {
-                            logQueue.offerAccessorLog(this.accessorLogViewMap.get(requestId).setEndDateTime(LocalDateTime.now()));
-                            this.resultMap.remove(requestId);
-                            this.countDownLatchMap.remove(requestId);
-                            this.accessorLogViewMap.remove(requestId);
+                            this.offerLogAndCleanMap(requestId);
                         }
                     });
                 } catch (Throwable throwable) {
@@ -129,10 +154,7 @@ public class ControllerLogProxy {
                         } catch (InterruptedException | JsonProcessingException e) {
                             logger.error("日志线程被异常中断 {} 或 \n 反序列化长信息失败 {}", Thread.currentThread().getName(), throwable);
                         } finally {
-                            logQueue.offerAccessorLog(this.accessorLogViewMap.get(requestId).setEndDateTime(LocalDateTime.now()));
-                            this.resultMap.remove(requestId);
-                            this.countDownLatchMap.remove(requestId);
-                            this.accessorLogViewMap.remove(requestId);
+                            this.offerLogAndCleanMap(requestId);
                         }
                     });
                 }
@@ -143,5 +165,22 @@ public class ControllerLogProxy {
         } else {
             return joinPoint.proceed();
         }
+    }
+
+    private HttpServletRequest getHttpServletRequest() {
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) requestAttributes;
+        if (servletRequestAttributes != null) {
+            return servletRequestAttributes.getRequest();
+        } else {
+            return null;
+        }
+    }
+
+    private void offerLogAndCleanMap(String requestId) {
+        logQueue.offerAccessorLog(this.accessorLogViewMap.get(requestId).setEndDateTime(LocalDateTime.now()));
+        this.resultMap.remove(requestId);
+        this.countDownLatchMap.remove(requestId);
+        this.accessorLogViewMap.remove(requestId);
     }
 }

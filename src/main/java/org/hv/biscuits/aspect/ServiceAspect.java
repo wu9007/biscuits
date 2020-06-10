@@ -67,7 +67,7 @@ public class ServiceAspect {
         this.pushMethod(method);
         // session 嵌套时只开启最外层session
         this.sessionOpen(method, target);
-        log.info("[Before] {}({})", method.getName(), StringUtils.join(joinPoint.getArgs(), ","));
+        log.debug("[Before] {}({})", method.getName(), StringUtils.join(joinPoint.getArgs(), ","));
     }
 
     @AfterReturning("verify()")
@@ -75,7 +75,7 @@ public class ServiceAspect {
         ThreadLocal<Session> sessionLocal = this.getSessionLocal();
         Method method = this.popMethod();
         Object target = this.popTarget();
-        log.info("[After] {}.{}(-)", target.getClass().getSimpleName(), method.getName());
+        log.debug("[After] {}.{}(-)", target.getClass().getSimpleName(), method.getName());
         if (sessionLocal.get() != null && !sessionLocal.get().getClosed()) {
             //锁定开启事务的方法，提交事务
             if (this.getTransOnIndex() != null && this.getMethodLocal().size() == this.getTransOnIndex() && this.getTransOn()) {

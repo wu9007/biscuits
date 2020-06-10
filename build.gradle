@@ -1,12 +1,11 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
-apply plugin: 'jdepend'
 apply plugin: "jacoco"
 apply plugin: 'build-dashboard'
 apply plugin: 'maven-publish'
 
 group = 'com.github.leyan95'
-version = '0.2.0.PRE'
+version = '0.2.1.PRE'
 sourceCompatibility = 1.8
 
 compileJava {
@@ -23,9 +22,6 @@ jar {
                 'Implementation-Version': version
     }
 
-    exclude "org/hv/demo"
-    exclude "org/hv/Application.class"
-    exclude "application*.yml"
     exclude "biscuits.sql"
     exclude "./docs"
 }
@@ -36,11 +32,6 @@ javadoc {
 
 test {
     exclude '*'
-}
-
-repositories {
-    mavenLocal()
-    mavenCentral()
 }
 
 compileJava.dependsOn(processResources)
@@ -58,19 +49,18 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
-def pocketVersion = '0.1.8'
+def pocketVersion = '0.1.9'
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web:2.1.1.RELEASE'
-    implementation 'org.springframework.boot:spring-boot-starter-aop:2.1.1.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.0.6.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-aop:2.0.6.RELEASE'
     implementation 'org.apache.rocketmq:rocketmq-spring-boot-starter:2.1.0'
 
     implementation 'com.github.leyan95:pocket:' + pocketVersion
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
-    implementation 'com.google.guava:guava:19.0'
     implementation 'mysql:mysql-connector-java:8.0.13'
-    implementation 'org.apache.httpcomponents:httpclient:4.5.2'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.6'
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor:2.1.1.RELEASE")
     testImplementation('org.springframework.boot:spring-boot-starter-test:2.1.1.RELEASE')
 }
@@ -86,7 +76,7 @@ publishing {
                 def httpclientDependencyNode = dependenciesNode.appendNode('dependency')
                 httpclientDependencyNode.appendNode('groupId', 'org.apache.httpcomponents')
                 httpclientDependencyNode.appendNode('artifactId', 'httpclient')
-                httpclientDependencyNode.appendNode('version', '4.5.2')
+                httpclientDependencyNode.appendNode('version', '4.5.6')
                 def jwtDependencyNode = dependenciesNode.appendNode('dependency')
                 jwtDependencyNode.appendNode('groupId', 'io.jsonwebtoken')
                 jwtDependencyNode.appendNode('artifactId', 'jjwt')
@@ -99,10 +89,6 @@ publishing {
                 pocketDependencyNode.appendNode('groupId', 'com.github.leyan95')
                 pocketDependencyNode.appendNode('artifactId', 'pocket')
                 pocketDependencyNode.appendNode('version', pocketVersion)
-                def guavaDependencyNode = dependenciesNode.appendNode('dependency')
-                guavaDependencyNode.appendNode('groupId', 'com.google.guava')
-                guavaDependencyNode.appendNode('artifactId', 'guava')
-                guavaDependencyNode.appendNode('version', '19.0')
             }
         }
     }

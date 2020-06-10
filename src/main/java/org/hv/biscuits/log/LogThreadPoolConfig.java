@@ -40,4 +40,43 @@ public class LogThreadPoolConfig {
         return new ThreadPoolExecutor(5, 10, 50L, TimeUnit.MILLISECONDS,
                 new ArrayBlockingQueue<>(50), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
     }
+
+    /**
+     * 工作单元日志线程池
+     *
+     * @return executor service
+     */
+    @Bean(value = "serviceLogThreadPool")
+    public ExecutorService buildServiceLogThreadPool() {
+        ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()
+                .setNameFormat("log-service-thread-%d").build();
+        return new ThreadPoolExecutor(5, 10, 50L, TimeUnit.MILLISECONDS,
+                new ArrayBlockingQueue<>(50), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
+    }
+
+    /**
+     * 仓储日志线程池
+     *
+     * @return executor service
+     */
+    @Bean(value = "persistenceLogThreadPool")
+    public ExecutorService buildPersistenceLogThreadPool() {
+        ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()
+                .setNameFormat("log-persistence-thread-%d").build();
+        return new ThreadPoolExecutor(5, 10, 50L, TimeUnit.MILLISECONDS,
+                new ArrayBlockingQueue<>(50), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
+    }
+
+    /**
+     * ORM日志线程池
+     *
+     * @return executor service
+     */
+    @Bean(value = "ormLogThreadPool")
+    public ExecutorService buildOrmLogThreadPool() {
+        ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()
+                .setNameFormat("log-orm-thread-%d").build();
+        return new ThreadPoolExecutor(5, 10, 50L, TimeUnit.MILLISECONDS,
+                new ArrayBlockingQueue<>(50), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
+    }
 }
