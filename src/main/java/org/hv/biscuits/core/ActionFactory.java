@@ -53,12 +53,15 @@ public class ActionFactory {
                     if (authId.isEmpty()) {
                         authId = null;
                     }
-                    if (authId != null && !PERMISSION_MAP.containsKey(authId)) {
-                        throw new IllegalArgumentException(String.format("未找到权限信息 %s", authId));
-                    }
-                    PermissionView permissionView = PERMISSION_MAP.get(authId);
-                    if (permissionView.getBundleId() == null) {
-                        permissionView.setBundleId(bundleId);
+                    if (authId != null) {
+                        if (!PERMISSION_MAP.containsKey(authId)) {
+                            throw new IllegalArgumentException(String.format("未找到权限信息 %s", authId));
+                        } else {
+                            PermissionView permissionView = PERMISSION_MAP.get(authId);
+                            if (permissionView.getBundleId() == null) {
+                                permissionView.setBundleId(bundleId);
+                            }
+                        }
                     }
                     bundleView.appendActionView(ActionView.build(actionAnnotation.actionId()[0], actionAnnotation.method()[0].toString(), authId));
                 }
