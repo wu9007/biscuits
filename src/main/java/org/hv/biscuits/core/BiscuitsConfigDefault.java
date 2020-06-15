@@ -119,7 +119,7 @@ public class BiscuitsConfigDefault implements BiscuitsConfig {
     private void dynamicPersistenceMapper(String serviceId, Map<String, BundleView> bundleViewMap) throws SQLException {
         // 查询所有的bundle
         Criteria criteria = this.session.createCriteria(Bundle.class);
-        criteria.add(Restrictions.equ("serverId", serviceId));
+        criteria.add(Restrictions.equ("serviceId", serviceId));
         List<Bundle> bundles = criteria.list();
         Map<String, Bundle> bundleMap = bundles.stream().collect(Collectors.toMap(Bundle::getBundleId, item -> item));
         for (Map.Entry<String, BundleView> stringBundleViewEntry : bundleViewMap.entrySet()) {
@@ -136,7 +136,7 @@ public class BiscuitsConfigDefault implements BiscuitsConfig {
                 // 查询所有的action
                 criteria = this.session.createCriteria(Mapper.class);
                 criteria.add(Restrictions.equ("bundleId", bundleView.getBundleId()))
-                        .add(Restrictions.equ("serverId", serviceId));
+                        .add(Restrictions.equ("serviceId", serviceId));
                 List<Mapper> mappers = criteria.list();
                 Map<String, Mapper> actionMap = mappers.stream().collect(Collectors.toMap(Mapper::getActionId, item -> item));
                 for (Map.Entry<String, ActionView> stringActionViewEntry : bundleView.getActionViews().entrySet()) {
@@ -172,7 +172,7 @@ public class BiscuitsConfigDefault implements BiscuitsConfig {
 
     private void dynamicPersistencePermission(String serviceId, Map<String, PermissionView> permissionViewMap) throws SQLException {
         Criteria criteria = this.session.createCriteria(Authority.class);
-        criteria.add(Restrictions.equ("serverId", serviceId));
+        criteria.add(Restrictions.equ("serviceId", serviceId));
         List<Authority> authorities = criteria.list();
         Map<String, Authority> permissionMap = authorities.stream().collect(Collectors.toMap(Authority::getId, item -> item));
         for (Map.Entry<String, PermissionView> stringPermissionViewEntry : permissionViewMap.entrySet()) {

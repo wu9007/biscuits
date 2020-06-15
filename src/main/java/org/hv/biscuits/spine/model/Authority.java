@@ -13,8 +13,8 @@ import java.util.List;
 @Entity(table = "T_AUTHORITY", tableId = 102)
 public class Authority extends BaseEntity {
     private static final long serialVersionUID = 8811730322368476299L;
-    @Column(name = "SERVER_ID")
-    private String serverId;
+    @Column(name = "SERVICE_ID")
+    private String serviceId;
     @Column(name = "BUNDLE_ID")
     private String bundleId;
     @Column(name = "ID")
@@ -29,20 +29,20 @@ public class Authority extends BaseEntity {
     public Authority() {
     }
 
-    public Authority(String serverId, String bundleId, String id, String name, String comment) {
-        this.serverId = serverId;
+    public Authority(String serviceId, String bundleId, String id, String name, String comment) {
+        this.serviceId = serviceId;
         this.bundleId = bundleId;
         this.id = id;
         this.name = name;
         this.comment = comment;
     }
 
-    public String getServerId() {
-        return serverId;
+    public String getServiceId() {
+        return serviceId;
     }
 
-    public void setServerId(String serverId) {
-        this.serverId = serverId;
+    public void setServiceId(String serviceId) {
+        this.serviceId = serviceId;
     }
 
     public String getBundleId() {

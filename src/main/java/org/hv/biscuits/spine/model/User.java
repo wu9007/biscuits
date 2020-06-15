@@ -18,15 +18,19 @@ public class User extends BaseEntity {
     private static final long serialVersionUID = 9034066443646846844L;
     @Column(name = "CODE", businessName = "昵称")
     private String avatar;
+    @Column(name = "STAFF_ID", businessName = "工号/编号")
+    private String staffId;
     @Column(name = "NAME", businessName = "姓名")
     private String name;
+    @Column(name = "SPELL", businessName = "拼音码")
+    private String spell;
     @Column(name = "PHONE", businessName = "手机号")
     private String phone;
     @Column(name = "PASSWORD", businessName = "密码")
     private String password;
     @Column(name = "DEPT_UUID", businessName = "部门")
     private String departmentUuid;
-    @Join(columnName = "DEPT_UUID", columnSurname = "DEPT_NAME", businessName = "部门名称", joinTable = "T_DEPARTMENT", joinTableSurname = "T1",joinMethod = JoinMethod.LEFT,bridgeColumn = "UUID", destinationColumn = "NAME")
+    @Join(columnName = "DEPT_UUID", columnSurname = "DEPT_NAME", businessName = "部门名称", joinTable = "T_DEPARTMENT", joinTableSurname = "T1", joinMethod = JoinMethod.LEFT, bridgeColumn = "UUID", destinationColumn = "NAME")
     private String departmentName;
     @Column(name = "MEMO", businessName = "备注")
     private String memo;
@@ -36,9 +40,6 @@ public class User extends BaseEntity {
     private Integer sort;
     @Column(name = "LAST_PASSWORD_RESET_DATE", businessName = "密码最后更新时间")
     private Date lastPasswordResetDate;
-    /**
-     * TODO 调整角色时需要将 token 置为过期，谢谢
-     */
     @Column(name = "LAST_ROLE_MODIFY_DATE", businessName = "角色最后分配时间")
     private Date lastRoleModifyDate;
     @Column(name = "IS_MANAGER", businessName = "超级管理员")
@@ -46,6 +47,22 @@ public class User extends BaseEntity {
 
     @OneToMany(clazz = UserRoleRelation.class, bridgeField = "userUuid")
     private List<UserRoleRelation> userRoleRelations;
+
+    public String getStaffId() {
+        return staffId;
+    }
+
+    public void setStaffId(String staffId) {
+        this.staffId = staffId;
+    }
+
+    public String getSpell() {
+        return spell;
+    }
+
+    public void setSpell(String spell) {
+        this.spell = spell;
+    }
 
     public String getAvatar() {
         return avatar;
