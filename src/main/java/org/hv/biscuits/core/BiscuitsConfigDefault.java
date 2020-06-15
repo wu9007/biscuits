@@ -180,13 +180,14 @@ public class BiscuitsConfigDefault implements BiscuitsConfig {
             Authority permission;
             if (permissionMap.containsKey(permissionView.getId())) {
                 permission = permissionMap.get(permissionView.getId());
-                if (!permission.getName().equals(permissionView.getName()) || !permission.getComment().equals(permissionView.getComment())) {
+                if (!Objects.equals(permission.getName(), permissionView.getName()) || !Objects.equals(permission.getComment(), permissionView.getComment()) || !Objects.equals(permissionView.getBundleId(), permission.getBundleId())) {
+                    permission.setBundleId(permissionView.getBundleId());
                     permission.setName(permissionView.getName());
                     permission.setComment(permissionView.getComment());
                     this.session.update(permission);
                 }
             } else {
-                permission = new Authority(serviceId, permissionView.getId(), permissionView.getName(), permissionView.getComment());
+                permission = new Authority(serviceId, permissionView.getBundleId(), permissionView.getId(), permissionView.getName(), permissionView.getComment());
                 this.session.save(permission);
             }
         }

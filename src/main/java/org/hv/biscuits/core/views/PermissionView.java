@@ -5,6 +5,7 @@ package org.hv.biscuits.core.views;
  */
 public class PermissionView {
     private final String id;
+    private String bundleId;
     private final String name;
     private final String comment;
 
@@ -16,6 +17,14 @@ public class PermissionView {
 
     public static PermissionView newInstance(String id, String name, String comment) {
         return new PermissionView(id, name, comment);
+    }
+
+    public String getBundleId() {
+        return bundleId;
+    }
+
+    public void setBundleId(String bundleId) {
+        this.bundleId = bundleId;
     }
 
     public String getId() {
