@@ -61,6 +61,3 @@ public Body login(@RequestBody Map<String, String> userInfo) throws SQLException
     return Body.success().message(String.format("%s 登录成功", session.getUserView().getName())).token(session.getToken()).data(session.getUserView());
 }
 ```
-
-* 用户表添加 职工编号：`STAFF_ID` 拼音码：`SPELL` 字段。 
-* 规范属性命名 `serviceId`。
