@@ -17,3 +17,47 @@
 ## 0.2.1.PRE - 2020/05/22
 * 增加工作单元日志切面。
 * 增加 `@GlobalTransaction` 开启持久化操作前后镜像日志记录。
+* 拆分权限与MQ相关模块。
+
+## 0.2.2.PRE - 2020/06/12
+* 存储客户端发送的rsa公钥。
+```java
+//例：
+@RequestMapping(path = "/connect", method = RequestMethod.POST)
+Body connect(@RequestParam String clientName, @RequestParam String publicKey) {
+    try {
+        ClientRsaUtil.addClientPublicKey(clientName, publicKey);
+    } catch (Exception e) {
+        e.printStackTrace();
+        return Body.error().message(e.getMessage());
+    }
+    return Body.success().data(Base64.getEncoder().encodeToString(ServiceRsaUtil.getPublicKey().getEncoded()));
+}
+
+```
+* 当`@Action`的 `responseEncrypt`设置为true时对响应体进行加密（rsa+aes）。
+```java
+// 加密响应体
+@RestControllerAdvice
+public class EncryptAdvice extends AbstractEncryptAdvice {
+}
+```
+* 当请求头中的`encrypt`为true时，表示该请求携带的请求提是经过哭护短加密的。
+```java
+// 解密请求体
+@RestControllerAdvice
+public class DecryptAdvice extends AbstractDecryptAdvice {
+}
+```
+
+* 加解密接口示例：
+```java
+@Action(actionId = "login", method = RequestMethod.POST, responseEncrypt = true)
+public Body login(@RequestBody Map<String, String> userInfo) throws SQLException {
+    String avatar = userInfo.get("userName");
+    String password = userInfo.get("password");
+    String departmentUuid = userInfo.get("departmentUuid");
+    Session session = authorityCheck.login(avatar, EncodeUtil.abcEncoder(password), departmentUuid);
+    return Body.success().message(String.format("%s 登录成功", session.getUserView().getName())).token(session.getToken()).data(session.getUserView());
+}
+```

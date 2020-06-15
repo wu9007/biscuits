@@ -21,8 +21,8 @@ public class Bundle extends BaseEntity {
     /**
      * 微服务ID
      */
-    @Column(name = "SERVER_ID")
-    private String serverId;
+    @Column(name = "SERVICE_ID")
+    private String serviceId;
     @Column(name = "WITH_AUTH")
     private Boolean withAuth;
     @OneToMany(clazz = Mapper.class, bridgeField = "bundleUuid")
@@ -31,10 +31,10 @@ public class Bundle extends BaseEntity {
     public Bundle() {
     }
 
-    public Bundle(String bundleId, String bundleName, String serverId, Boolean withAuth) {
+    public Bundle(String bundleId, String bundleName, String serviceId, Boolean withAuth) {
         this.bundleId = bundleId;
         this.bundleName = bundleName;
-        this.serverId = serverId;
+        this.serviceId = serviceId;
         this.withAuth = withAuth;
     }
 
@@ -54,12 +54,12 @@ public class Bundle extends BaseEntity {
         this.bundleName = bundleName;
     }
 
-    public String getServerId() {
-        return serverId;
+    public String getServiceId() {
+        return serviceId;
     }
 
-    public void setServerId(String serverId) {
-        this.serverId = serverId;
+    public void setServiceId(String serviceId) {
+        this.serviceId = serviceId;
     }
 
     public Boolean getWithAuth() {

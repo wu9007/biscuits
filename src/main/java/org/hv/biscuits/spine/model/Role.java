@@ -18,7 +18,7 @@ public class Role extends BaseEntity {
     @Column(businessName = "标识")
     private String spell;
     @Column(businessName = "服务标识")
-    private String serverId;
+    private String serviceId;
     @Column(businessName = "名称")
     private String name;
     @Column(businessName = "排序")
@@ -44,12 +44,12 @@ public class Role extends BaseEntity {
         this.spell = spell;
     }
 
-    public String getServerId() {
-        return serverId;
+    public String getServiceId() {
+        return serviceId;
     }
 
-    public void setServerId(String serverId) {
-        this.serverId = serverId;
+    public void setServiceId(String serviceId) {
+        this.serviceId = serviceId;
     }
 
     public String getName() {

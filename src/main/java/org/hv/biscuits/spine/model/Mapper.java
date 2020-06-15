@@ -18,8 +18,8 @@ public class Mapper extends BaseEntity {
     private String requestMethod;
     @ManyToOne(columnName = "BUNDLE_UUID", clazz = Bundle.class, upBridgeField = "uuid")
     private String bundleUuid;
-    @Column(name = "SERVER_ID")
-    private String serverId;
+    @Column(name = "SERVICE_ID")
+    private String serviceId;
     @Column(name = "BUNDLE_ID")
     private String bundleId;
     @Column(name = "ACTION_ID", businessName = "映射")
@@ -30,8 +30,8 @@ public class Mapper extends BaseEntity {
     public Mapper() {
     }
 
-    public Mapper(String serverId, String requestMethod, String bundleId, String actionId, String authId) {
-        this.serverId = serverId;
+    public Mapper(String serviceId, String requestMethod, String bundleId, String actionId, String authId) {
+        this.serviceId = serviceId;
         this.requestMethod = requestMethod;
         this.bundleId = bundleId;
         this.actionId = actionId;
@@ -62,12 +62,12 @@ public class Mapper extends BaseEntity {
         this.bundleUuid = bundleUuid;
     }
 
-    public String getServerId() {
-        return serverId;
+    public String getServiceId() {
+        return serviceId;
     }
 
-    public void setServerId(String serverId) {
-        this.serverId = serverId;
+    public void setServiceId(String serviceId) {
+        this.serviceId = serviceId;
     }
 
     public String getBundleId() {
@@ -88,6 +88,6 @@ public class Mapper extends BaseEntity {
 
     @JsonIgnore
     public String getPath() {
-        return "/" + this.getServerId() + "/" + this.getBundleId() + this.getActionId();
+        return "/" + this.getServiceId() + "/" + this.getBundleId() + this.getActionId();
     }
 }
