@@ -24,7 +24,7 @@ public class PersistenceConfig {
 
     @PostConstruct
     public void run() throws Exception {
-        String serviceId = applicationName.substring(0, applicationName.indexOf("#"));
+        String serviceId = applicationName.replaceAll("\\d+","");
         if (withPersistence) {
             try {
                 BiscuitsConfig biscuitsConfig = this.biscuitsConfig.init(withPersistence);
