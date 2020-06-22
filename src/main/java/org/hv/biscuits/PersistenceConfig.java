@@ -14,7 +14,7 @@ public class PersistenceConfig {
 
     private final BiscuitsConfig biscuitsConfig;
     @Value("${spring.application.name}")
-    private String serverId;
+    private String applicationName;
     @Value("${biscuits.withPersistence:true}")
     private boolean withPersistence;
 
@@ -24,14 +24,15 @@ public class PersistenceConfig {
 
     @PostConstruct
     public void run() throws Exception {
+        String serviceId = applicationName.substring(0, applicationName.indexOf("#"));
         if (withPersistence) {
             try {
                 BiscuitsConfig biscuitsConfig = this.biscuitsConfig.init(withPersistence);
                 biscuitsConfig
                         .runWithDevelopEnvironment()
                         .setBiscuitsDatabaseSessionId("biscuits")
-                        .resetPersistencePermission(serverId.toUpperCase(), this.biscuitsConfig.getPermissionMap())
-                        .persistenceMapper(serverId.toUpperCase(), this.biscuitsConfig.getActionMap());
+                        .resetPersistencePermission(serviceId.toUpperCase(), this.biscuitsConfig.getPermissionMap())
+                        .persistenceMapper(serviceId.toUpperCase(), this.biscuitsConfig.getActionMap());
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new Exception(e);

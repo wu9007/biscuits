@@ -65,3 +65,6 @@ public Body login(@RequestBody Map<String, String> userInfo) throws SQLException
 ## 0.2.3.PRE - 2020/06/15
 * 用户表添加 职工编号：`STAFF_ID` 拼音码：`SPELL` 字段。 
 * 规范属性命名 `serviceId`。
+
+## 0.2.4.PRE - 2020/06/22
+* 修改获取`serviceId`的方式，截取`application.name`值`#`前的名称
