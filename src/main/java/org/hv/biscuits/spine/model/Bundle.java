@@ -14,17 +14,18 @@ import java.util.List;
 public class Bundle extends BaseEntity {
     private static final long serialVersionUID = -5562305365699924057L;
 
-    @Column(name = "BUNDLE_ID")
+    @Column
     private String bundleId;
-    @Column(name = "BUNDLE_NAME")
+    @Column
     private String bundleName;
-    /**
-     * 微服务ID
-     */
-    @Column(name = "SERVICE_ID")
+    @Column
     private String serviceId;
-    @Column(name = "WITH_AUTH")
+    @Column
     private Boolean withAuth;
+    @Column
+    private Double sort;
+    @Column
+    private String groupId;
     @OneToMany(clazz = Mapper.class, bridgeField = "bundleUuid")
     private List<Mapper> mappers;
 
@@ -76,5 +77,21 @@ public class Bundle extends BaseEntity {
 
     public void setMappers(List<Mapper> mappers) {
         this.mappers = mappers;
+    }
+
+    public Double getSort() {
+        return sort;
+    }
+
+    public void setSort(Double sort) {
+        this.sort = sort;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 }
