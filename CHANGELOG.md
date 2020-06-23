@@ -68,3 +68,6 @@ public Body login(@RequestBody Map<String, String> userInfo) throws SQLException
 
 ## 0.2.4.PRE - 2020/06/22
 * 修改获取`serviceId`的方式，去除`application.name`尾部的数字。
+
+## 0.2.5.PRE - 2020/06/22
+* `bundle`可设置分组。
