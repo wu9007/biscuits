@@ -12,10 +12,12 @@ import org.hv.pocket.model.BaseEntity;
 @Entity(table = "T_DEPARTMENT", tableId = 112, businessName = "部门")
 public class Department extends BaseEntity {
     private static final long serialVersionUID = -893404050854935292L;
-    @Column(name = "PARENT_UUID", businessName = "父节点标识")
+    @Column(name = "PARENT_UUID", businessName = "父节点/站标识")
     private String parentUuid;
     @Join(columnName = "PARENT_UUID", columnSurname = "PARENT_NAME", businessName = "父节点名称", joinTable = "T_DEPARTMENT", joinTableSurname = "T1", joinMethod = JoinMethod.LEFT, bridgeColumn = "UUID", destinationColumn = "NAME")
     private String parentName;
+    @Join(columnName = "PARENT_UUID", columnSurname = "STATION_NAME", businessName = "站名称", joinTable = "T_STATION", joinTableSurname = "T2", joinMethod = JoinMethod.LEFT, bridgeColumn = "UUID", destinationColumn = "NAME")
+    private String stationName;
     @Column(name = "NAME", businessName = "名称")
     private String name;
     @Column(name = "SPELL", businessName = "拼音码")
@@ -121,5 +123,13 @@ public class Department extends BaseEntity {
 
     public void setLeader(String leader) {
         this.leader = leader;
+    }
+
+    public String getStationName() {
+        return stationName;
+    }
+
+    public void setStationName(String stationName) {
+        this.stationName = stationName;
     }
 }
