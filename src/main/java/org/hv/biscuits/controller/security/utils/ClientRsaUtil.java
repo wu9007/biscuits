@@ -17,16 +17,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author leyan95
  * @version 1.0
  */
-public class ClientRsaUtil
-{
+public class ClientRsaUtil {
 
     private static final Map<String, Key> KEY_MAP = new ConcurrentHashMap<>();
 
     /**
      * 添加客户端公钥
      */
-    public static void addClientPublicKey(String clientKey, String publicKeyStr) throws Exception
-    {
+    public static void addClientPublicKey(String clientKey, String publicKeyStr) throws Exception {
         Key publicKey = buildPublicKey(publicKeyStr.replace("-----BEGIN PUBLIC KEY-----", "").replace("-----END PUBLIC KEY-----", ""));
         KEY_MAP.putIfAbsent(clientKey, publicKey);
     }
@@ -34,11 +32,9 @@ public class ClientRsaUtil
     /**
      * 使用客户端公钥加密
      */
-    public static String encrypt(String source, String clientName) throws Exception
-    {
+    public static String encrypt(String source, String clientName) throws Exception {
         Key key = KEY_MAP.get(clientName);
-        if (key == null)
-        {
+        if (key == null) {
             return null;
         }
         Cipher cipher = Cipher.getInstance("RSA");
@@ -47,8 +43,7 @@ public class ClientRsaUtil
         return Base64.getEncoder().encodeToString(bytes);
     }
 
-    public static PublicKey buildPublicKey(String key) throws Exception
-    {
+    public static PublicKey buildPublicKey(String key) throws Exception {
         byte[] keyBytes;
         keyBytes = (new BASE64Decoder()).decodeBuffer(key);
 //        keyBytes = java.util.Base64.getDecoder().decode(key);
@@ -57,8 +52,7 @@ public class ClientRsaUtil
         return keyFactory.generatePublic(keySpec);
     }
 
-    public static PrivateKey buildPrivateKey(String key) throws Exception
-    {
+    public static PrivateKey buildPrivateKey(String key) throws Exception {
         byte[] keyBytes;
         keyBytes = (new BASE64Decoder()).decodeBuffer(key);
 //        keyBytes = java.util.Base64.getDecoder().decode(key);

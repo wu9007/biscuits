@@ -94,8 +94,8 @@ public class ControllerLogProxy {
             String traceId = httpServletRequest.getHeader(BiscuitsHttpHeaders.TRACE_ID);
             String userName = httpServletRequest.getHeader(BiscuitsHttpHeaders.USER_NAME);
             String businessDepartmentName = httpServletRequest.getHeader(BiscuitsHttpHeaders.BUSINESS_DEPARTMENT_NAME);
-            logger.info("[{}: {}, {}: {}, {}: {}]", TRACE_ID, traceId, USER_NAME, userName, BUSINESS_DEPARTMENT_NAME, businessDepartmentName);
             if (traceId != null && userName != null) {
+                logger.info("[{}: {}, {}: {}, {}: {}]", TRACE_ID, traceId, USER_NAME, userName, BUSINESS_DEPARTMENT_NAME, businessDepartmentName);
                 String requestId = UUID.randomUUID().toString().replace("-", "");
                 httpServletRequest.setAttribute(REQUEST_ID, requestId);
                 this.countDownLatchMap.put(requestId, new CountDownLatch(2));

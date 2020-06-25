@@ -71,3 +71,6 @@ public Body login(@RequestBody Map<String, String> userInfo) throws SQLException
 
 ## 0.2.5.PRE - 2020/06/22
 * `bundle`可设置分组。
+
+## 0.2.6.PRE - 2020/06/25
+* 添加站和站级别实体类。
