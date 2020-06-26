@@ -16,7 +16,7 @@ import java.util.List;
 @Entity(table = "T_USER", tableId = 106, businessName = "人员")
 public class User extends BaseEntity {
     private static final long serialVersionUID = 9034066443646846844L;
-    @Column(name = "CODE", businessName = "昵称")
+    @Column(name = "AVATAR", businessName = "昵称")
     private String avatar;
     @Column(name = "STAFF_ID", businessName = "工号/编号")
     private String staffId;
