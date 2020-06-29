@@ -81,3 +81,7 @@ public Body login(@RequestBody Map<String, String> userInfo) throws SQLException
 ## 0.2.8.PRE - 2020/06/26
 * 添加岗位实体类。
 * 添加岗位人员关联实体类。
+
+## 0.2.9.PRE - 2020/06/29
+* 添加分工实体类。
+* 添加岗位分工关联实体类。
