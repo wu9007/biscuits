@@ -90,4 +90,15 @@ public abstract class AbstractCommonRepository<T extends AbstractEntity> extends
         List<T> list = criteria.listNotCleanRestrictions();
         return PageList.newInstance(list, criteria.count());
     }
+
+    @Override
+    public List<T> loadListByFilter(FilterView filterView) {
+        Criteria criteria;
+        if (filterView == null) {
+            criteria = this.getSession().createCriteria(this.genericClazz);
+        } else {
+            criteria = filterView.createCriteria(this.getSession(), this.genericClazz);
+        }
+        return criteria.list();
+    }
 }

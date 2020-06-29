@@ -15,6 +15,14 @@ public class UserRoleRelation extends BaseEntity {
     @ManyToOne(columnName = "ROLE_UUID", clazz = Role.class, upBridgeField = "uuid")
     private String roleUuid;
 
+    public UserRoleRelation() {
+    }
+
+    public UserRoleRelation(String userUuid, String roleUuid) {
+        this.userUuid = userUuid;
+        this.roleUuid = roleUuid;
+    }
+
     public String getUserUuid() {
         return userUuid;
     }

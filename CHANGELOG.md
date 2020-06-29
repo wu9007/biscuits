@@ -77,3 +77,7 @@ public Body login(@RequestBody Map<String, String> userInfo) throws SQLException
 
 ## 0.2.7.PRE - 2020/06/26
 * 修改用户实体类CODE->AVATAR。
+
+## 0.2.8.PRE - 2020/06/26
+* 添加岗位实体类。
+* 添加岗位人员关联实体类。
