@@ -16,8 +16,6 @@ public class Department extends BaseEntity {
     private String parentUuid;
     @Join(columnName = "PARENT_UUID", columnSurname = "PARENT_NAME", businessName = "父节点名称", joinTable = "T_DEPARTMENT", joinTableSurname = "T1", joinMethod = JoinMethod.LEFT, bridgeColumn = "UUID", destinationColumn = "NAME")
     private String parentName;
-    @Join(columnName = "PARENT_UUID", columnSurname = "STATION_NAME", businessName = "站名称", joinTable = "T_STATION", joinTableSurname = "T2", joinMethod = JoinMethod.LEFT, bridgeColumn = "UUID", destinationColumn = "NAME")
-    private String stationName;
     @Column(name = "NAME", businessName = "名称")
     private String name;
     @Column(name = "SPELL", businessName = "拼音码")
@@ -36,6 +34,12 @@ public class Department extends BaseEntity {
     private String systemCode;
     @Column(name = "LEADER", businessName = "部门领导")
     private String leader;
+    @Column(name = "STATION_UUID", businessName = "血站标识")
+    private String stationUuid;
+    @Join(columnName = "STATION_UUID", columnSurname = "STATION_CODE", businessName = "站编码",
+            joinTable = "T_STATION", joinTableSurname = "T2", joinMethod = JoinMethod.LEFT,
+            bridgeColumn = "UUID", destinationColumn = "CODE")
+    private String stationCode;
 
     public String getParentUuid() {
         return parentUuid;
@@ -125,11 +129,19 @@ public class Department extends BaseEntity {
         this.leader = leader;
     }
 
-    public String getStationName() {
-        return stationName;
+    public String getStationUuid() {
+        return stationUuid;
     }
 
-    public void setStationName(String stationName) {
-        this.stationName = stationName;
+    public void setStationUuid(String stationUuid) {
+        this.stationUuid = stationUuid;
+    }
+
+    public String getStationCode() {
+        return stationCode;
+    }
+
+    public void setStationCode(String stationCode) {
+        this.stationCode = stationCode;
     }
 }
