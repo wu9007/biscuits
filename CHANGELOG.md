@@ -88,3 +88,6 @@ public Body login(@RequestBody Map<String, String> userInfo) throws SQLException
 
 ## 0.2.10.PRE - 2020/06/30
 * 部门实体类添加所属站标识和编码。
+
+## 0.2.11.PRE - 2020/06/30
+* 添加首选项实体类。
