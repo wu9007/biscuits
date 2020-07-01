@@ -1,17 +1,17 @@
 package org.hv.biscuits.spine.model;
 
+import org.hv.biscuits.spine.AbstractBisEntity;
 import org.hv.pocket.annotation.Column;
 import org.hv.pocket.annotation.Entity;
 import org.hv.pocket.annotation.OneToMany;
-import org.hv.pocket.model.BaseEntity;
 
 import java.util.List;
 
 /**
  * @author leyan95 2019/1/30
  */
-@Entity(table = "T_AUTHORITY", tableId = 102)
-public class Authority extends BaseEntity {
+@Entity(table = "T_AUTHORITY")
+public class Authority extends AbstractBisEntity {
     private static final long serialVersionUID = 8811730322368476299L;
     @Column(name = "SERVICE_ID")
     private String serviceId;

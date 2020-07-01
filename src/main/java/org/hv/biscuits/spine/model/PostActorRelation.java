@@ -1,14 +1,14 @@
 package org.hv.biscuits.spine.model;
 
+import org.hv.biscuits.spine.AbstractBisEntity;
 import org.hv.pocket.annotation.Column;
 import org.hv.pocket.annotation.Entity;
-import org.hv.pocket.model.BaseEntity;
 
 /**
  * @author leyan95 2020/6/26
  */
-@Entity(table = "T_POST_ACTOR", tableId = 119)
-public class PostActorRelation extends BaseEntity {
+@Entity(table = "T_POST_ACTOR")
+public class PostActorRelation extends AbstractBisEntity {
     private static final long serialVersionUID = -1878385856874316067L;
     @Column
     private String postUuid;

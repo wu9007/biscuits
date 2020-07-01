@@ -1,17 +1,17 @@
 package org.hv.biscuits.spine.model;
 
+import org.hv.biscuits.spine.AbstractBisEntity;
 import org.hv.pocket.annotation.Column;
 import org.hv.pocket.annotation.Entity;
 import org.hv.pocket.annotation.OneToMany;
-import org.hv.pocket.model.BaseEntity;
 
 import java.util.List;
 
 /**
  * @author leyan95 2019/2/25
  */
-@Entity(table = "T_BUNDLE", tableId = 108, businessName = "菜单")
-public class Bundle extends BaseEntity {
+@Entity(table = "T_BUNDLE", businessName = "菜单")
+public class Bundle extends AbstractBisEntity {
     private static final long serialVersionUID = -5562305365699924057L;
 
     @Column

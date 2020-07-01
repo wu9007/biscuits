@@ -1,16 +1,16 @@
 package org.hv.biscuits.spine.model;
 
+import org.hv.biscuits.spine.AbstractBisEntity;
 import org.hv.pocket.annotation.Column;
 import org.hv.pocket.annotation.Entity;
 import org.hv.pocket.annotation.Join;
 import org.hv.pocket.constant.JoinMethod;
-import org.hv.pocket.model.BaseEntity;
 
 /**
  * @author leyan95
  */
-@Entity(table = "T_DEPARTMENT", tableId = 112, businessName = "部门")
-public class Department extends BaseEntity {
+@Entity(table = "T_DEPARTMENT", businessName = "部门")
+public class Department extends AbstractBisEntity {
     private static final long serialVersionUID = -893404050854935292L;
     @Column(name = "PARENT_UUID", businessName = "父节点/站标识")
     private String parentUuid;
