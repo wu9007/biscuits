@@ -1,18 +1,18 @@
 package org.hv.biscuits.spine.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hv.biscuits.spine.AbstractBisEntity;
 import org.hv.pocket.annotation.Column;
 import org.hv.pocket.annotation.Entity;
 import org.hv.pocket.annotation.ManyToOne;
-import org.hv.pocket.model.BaseEntity;
 
 /**
  * 路径映射实体类
  *
  * @author leyan95 2019/2/3
  */
-@Entity(table = "T_MAPPER", tableId = 103)
-public class Mapper extends BaseEntity {
+@Entity(table = "T_MAPPER")
+public class Mapper extends AbstractBisEntity {
     private static final long serialVersionUID = -2091601211891427181L;
     @Column(name = "REQUEST_METHOD", businessName = "请求方式")
     private String requestMethod;

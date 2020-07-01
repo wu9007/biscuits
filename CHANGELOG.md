@@ -91,3 +91,8 @@ public Body login(@RequestBody Map<String, String> userInfo) throws SQLException
 
 ## 0.2.11.PRE - 2020/06/30
 * 添加首选项实体类。
+
+## 0.2.12.PRE - 2020/07/01
+* 添加注解生成策略 (服务标识+表标识+站标识+年月日+序列号)。
+* 添加抽象映射基础类（包含公用字段 deleted lastOperator lastOperationDateTime）。
+* 去掉 @Entity 的 tableId 属性，统一从表中获取。

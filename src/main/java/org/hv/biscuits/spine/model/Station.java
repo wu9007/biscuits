@@ -1,16 +1,16 @@
 package org.hv.biscuits.spine.model;
 
+import org.hv.biscuits.spine.AbstractBisEntity;
 import org.hv.pocket.annotation.Column;
 import org.hv.pocket.annotation.Entity;
 import org.hv.pocket.annotation.Join;
 import org.hv.pocket.constant.JoinMethod;
-import org.hv.pocket.model.BaseEntity;
 
 /**
  * @author wujianchuan
  */
-@Entity(table = "T_STATION", tableId = 114, businessName = "站")
-public class Station extends BaseEntity {
+@Entity(table = "T_STATION", businessName = "站")
+public class Station extends AbstractBisEntity {
     private static final long serialVersionUID = -5525761142462824878L;
     @Column
     private String name;
@@ -28,6 +28,7 @@ public class Station extends BaseEntity {
     private String classUuid;
     @Join(columnName = "CLASS_UUID", columnSurname = "CLASS_NAME", businessName = "血站级别名称", joinTable = "T_STATION_CLASS", joinTableSurname = "T1", joinMethod = JoinMethod.LEFT, bridgeColumn = "UUID", destinationColumn = "NAME")
     private String className;
+
     public String getName() {
         return name;
     }

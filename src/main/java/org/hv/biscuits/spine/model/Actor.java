@@ -1,11 +1,14 @@
 package org.hv.biscuits.spine.model;
 
+import org.hv.biscuits.spine.AbstractBisEntity;
 import org.hv.pocket.annotation.Column;
 import org.hv.pocket.annotation.Entity;
-import org.hv.pocket.model.BaseEntity;
 
-@Entity(table = "T_ACTOR", tableId = 118)
-public class Actor extends BaseEntity {
+/**
+ * @author wujianchuan
+ */
+@Entity(table = "T_ACTOR")
+public class Actor extends AbstractBisEntity {
 
     private static final long serialVersionUID = -8229871104842779922L;
     @Column

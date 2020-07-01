@@ -1,14 +1,14 @@
 package org.hv.biscuits.spine.model;
 
+import org.hv.biscuits.spine.AbstractBisEntity;
 import org.hv.pocket.annotation.Column;
 import org.hv.pocket.annotation.Entity;
-import org.hv.pocket.model.BaseEntity;
 
 /**
  * @author wujianchuan
  */
-@Entity(table = "T_PREFERENCES", tableId = 120, businessName = "首选项")
-public class Preferences extends BaseEntity {
+@Entity(table = "T_PREFERENCES", businessName = "首选项")
+public class Preferences extends AbstractBisEntity {
     private static final long serialVersionUID = -1944222721422088148L;
 
     @Column

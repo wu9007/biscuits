@@ -1,14 +1,14 @@
 package org.hv.biscuits.spine.model;
 
+import org.hv.biscuits.spine.AbstractBisEntity;
 import org.hv.pocket.annotation.Column;
 import org.hv.pocket.annotation.Entity;
-import org.hv.pocket.model.BaseEntity;
 
 /**
  * @author leyan95 2020/6/26
  */
-@Entity(table = "T_POST", tableId = 116)
-public class Post extends BaseEntity {
+@Entity(table = "T_POST")
+public class Post extends AbstractBisEntity {
     private static final long serialVersionUID = -1762486150168555776L;
     @Column(businessName = "服务标识")
     private String serviceId;

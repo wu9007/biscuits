@@ -1,19 +1,19 @@
 package org.hv.biscuits.spine.model;
 
+import org.hv.biscuits.spine.AbstractBisEntity;
 import org.hv.pocket.annotation.Column;
 import org.hv.pocket.annotation.Entity;
 import org.hv.pocket.annotation.Join;
 import org.hv.pocket.annotation.OneToMany;
 import org.hv.pocket.constant.JoinMethod;
-import org.hv.pocket.model.BaseEntity;
 
 import java.util.List;
 
 /**
  * @author leyan95 2019/1/30
  */
-@Entity(table = "T_ROLE", tableId = 104)
-public class Role extends BaseEntity {
+@Entity(table = "T_ROLE")
+public class Role extends AbstractBisEntity {
     private static final long serialVersionUID = -1762486150168555776L;
     @Column(businessName = "标识")
     private String spell;
