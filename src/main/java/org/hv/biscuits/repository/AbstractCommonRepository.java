@@ -81,24 +81,42 @@ public abstract class AbstractCommonRepository<T extends AbstractEntity> extends
 
     @Override
     public PageList<T> loadPage(FilterView filterView) throws SQLException {
-        Criteria criteria;
-        if (filterView == null) {
-            criteria = this.getSession().createCriteria(this.genericClazz);
-        } else {
-            criteria = filterView.createCriteria(this.getSession(), this.genericClazz);
-        }
-        List<T> list = criteria.listNotCleanRestrictions();
-        return PageList.newInstance(list, criteria.count());
+        return this.loadPage(filterView, false);
     }
 
     @Override
     public List<T> loadListByFilter(FilterView filterView) {
+        return this.loadListByFilter(filterView, false);
+    }
+
+    @Override
+    public PageList<T> loadPageCascade(FilterView filterView) throws SQLException {
+        return this.loadPage(filterView, true);
+    }
+
+    @Override
+    public List<T> loadListCascadeByFilter(FilterView filterView) throws SQLException {
+        return this.loadListByFilter(filterView, true);
+    }
+
+    private PageList<T> loadPage(FilterView filterView, boolean cascade) throws SQLException {
         Criteria criteria;
         if (filterView == null) {
             criteria = this.getSession().createCriteria(this.genericClazz);
         } else {
             criteria = filterView.createCriteria(this.getSession(), this.genericClazz);
         }
-        return criteria.list();
+        List<T> list = criteria.listNotCleanRestrictions(cascade);
+        return PageList.newInstance(list, criteria.count());
+    }
+
+    private List<T> loadListByFilter(FilterView filterView, boolean cascade) {
+        Criteria criteria;
+        if (filterView == null) {
+            criteria = this.getSession().createCriteria(this.genericClazz);
+        } else {
+            criteria = filterView.createCriteria(this.getSession(), this.genericClazz);
+        }
+        return criteria.list(cascade);
     }
 }

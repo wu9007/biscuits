@@ -125,5 +125,9 @@ public interface CommonRepository<T extends AbstractEntity> {
 
     PageList<T> loadPage(FilterView filterView) throws SQLException;
 
+    PageList<T> loadPageCascade(FilterView filterView) throws SQLException;
+
     List<T> loadListByFilter(FilterView filterView) throws SQLException;
+
+    List<T> loadListCascadeByFilter(FilterView filterView) throws SQLException;
 }
