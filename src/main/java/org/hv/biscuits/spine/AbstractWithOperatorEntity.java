@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 /**
  * @author wujianchuan 2018/12/26
+ * 臣虽至愚至陋，何能有知，徒以忠愤所激，不能自已。
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class AbstractWithOperatorEntity extends AbstractBisEntity {
@@ -22,15 +23,17 @@ public abstract class AbstractWithOperatorEntity extends AbstractBisEntity {
         return lastOperator;
     }
 
-    public void setLastOperator(String lastOperator) {
+    public AbstractWithOperatorEntity setLastOperator(String lastOperator) {
         this.lastOperator = lastOperator;
+        return this;
     }
 
     public LocalDateTime getLastOperationTime() {
         return lastOperationTime;
     }
 
-    public void setLastOperationTime(LocalDateTime lastOperationTime) {
+    public AbstractWithOperatorEntity setLastOperationTime(LocalDateTime lastOperationTime) {
         this.lastOperationTime = lastOperationTime;
+        return this;
     }
 }

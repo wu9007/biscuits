@@ -97,6 +97,11 @@ public Body login(@RequestBody Map<String, String> userInfo) throws SQLException
 * 添加抽象映射基础类（包含公用字段 deleted lastOperator lastOperationDateTime）。
 * 去掉 @Entity 的 tableId 属性，统一从表中获取。
 
-## 0.2.12.PRE - 2020/07/02
+## 0.2.13.PRE - 2020/07/02
 * 添加级联列表查询。
 * 修复查询tableId异常。
+
+## 0.2.14.PRE - 2020/07/02
+* 修改FilterView可人工添加过滤条件。
+* 如果持久化类是AbstractWithOperatorEntity的子类在保存（saveWithTrack）和 更新（updateWithTrack）的时候自动为末次操作人和操作事件赋值。
+* 删除无用的抽象类。
