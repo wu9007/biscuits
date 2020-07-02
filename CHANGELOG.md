@@ -105,3 +105,6 @@ public Body login(@RequestBody Map<String, String> userInfo) throws SQLException
 * 修改FilterView可人工添加过滤条件。
 * 如果持久化类是AbstractWithOperatorEntity的子类在保存（saveWithTrack）和 更新（updateWithTrack）的时候自动为末次操作人和操作事件赋值。
 * 删除无用的抽象类。
+
+## 0.2.15.PRE - 2020/07/02
+* 修复主键生成策略

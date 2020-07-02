@@ -44,7 +44,7 @@ public class ServerTableStationDateGenerator extends AbstractIdentifyGenerator {
             synchronized (this) {
                 serialNumber = POOL.getOrDefault(tableName, new AtomicLong(0L));
                 if (serialNumber.get() == 0) {
-                    String maxIdentify = String.valueOf(this.getMaxIdentify(session, clazz));
+                    String maxIdentify = (String) this.getMaxIdentify(session, clazz);
                     if (maxIdentify != null) {
                         long maxSerialNumber = Long.parseLong(maxIdentify.replace(preStr, ""));
                         serialNumber.addAndGet(Math.max(maxSerialNumber, baseIdentify));
