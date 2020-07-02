@@ -108,3 +108,6 @@ public Body login(@RequestBody Map<String, String> userInfo) throws SQLException
 
 ## 0.2.15.PRE - 2020/07/02
 * 修复主键生成策略
+
+## 0.2.16.PRE - 2020/07/02
+FIX BUG
