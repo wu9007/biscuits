@@ -89,7 +89,7 @@ public class FilterView implements Serializable {
     }
 
     public Filter createFilter(String key, Object value, String operate) {
-        return new Filter(key, value, operate);
+        return new Filter(key, value, operate, null);
     }
 
     public List<Filter> getFilters() {

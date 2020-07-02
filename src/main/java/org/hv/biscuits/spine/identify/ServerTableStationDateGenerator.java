@@ -2,6 +2,7 @@ package org.hv.biscuits.spine.identify;
 
 import org.hv.biscuits.spine.model.TableIdView;
 import org.hv.pocket.criteria.Criteria;
+import org.hv.pocket.criteria.Restrictions;
 import org.hv.pocket.identify.AbstractIdentifyGenerator;
 import org.hv.pocket.model.AbstractEntity;
 import org.hv.pocket.model.MapperFactory;
@@ -15,6 +16,8 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -37,14 +40,13 @@ public class ServerTableStationDateGenerator extends AbstractIdentifyGenerator {
     public Serializable getIdentify(Class<? extends AbstractEntity> clazz, Session session) throws SQLException {
         String tableName = MapperFactory.getTableName(clazz.getName());
         AtomicLong serialNumber = POOL.getOrDefault(tableName, new AtomicLong(0L));
-        String localDateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        String preStr = String.format("%03d", serverId) + this.getTableId(clazz) + String.format("%05d", stationId);
-        long baseIdentify = Long.parseLong(localDateStr) * 1000000;
+        String preStr = String.format("%03d", serverId) + this.getTableId(clazz) + String.format("%05d", stationId) + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        long baseIdentify = Long.parseLong("0");
         if (serialNumber.get() == 0) {
             synchronized (this) {
                 serialNumber = POOL.getOrDefault(tableName, new AtomicLong(0L));
                 if (serialNumber.get() == 0) {
-                    Serializable maxIdentify = this.getMaxIdentify(session, clazz);
+                    Serializable maxIdentify = this.getTodayMaxIdentify(session, clazz, preStr);
                     if (maxIdentify != null) {
                         long maxSerialNumber = Long.parseLong(String.valueOf(maxIdentify).replace(preStr, ""));
                         serialNumber.addAndGet(Math.max(maxSerialNumber, baseIdentify));
@@ -54,20 +56,19 @@ public class ServerTableStationDateGenerator extends AbstractIdentifyGenerator {
                 }
                 serialNumber.incrementAndGet();
                 POOL.put(tableName, serialNumber);
-                return preStr + serialNumber.get();
+                return preStr + String.format("%06d", serialNumber.get());
             }
         } else {
-            if (serialNumber.get() < baseIdentify) {
-                serialNumber = new AtomicLong(baseIdentify);
-            }
-            return preStr + serialNumber.incrementAndGet();
+            return preStr + String.format("%06d", serialNumber.incrementAndGet());
         }
     }
 
-    private Serializable getMaxIdentify(Session session, Class<? extends AbstractEntity> clazz) {
+    private Serializable getTodayMaxIdentify(Session session, Class<? extends AbstractEntity> clazz, String preStr) throws SQLException {
         String identifyFieldName = MapperFactory.getIdentifyFieldName(clazz.getName());
-        Criteria criteria = session.createCriteria(clazz);
-        return (Serializable) criteria.max(identifyFieldName);
+        Criteria criteria = session.createCriteria(clazz)
+                .add(Restrictions.like(identifyFieldName, preStr + "%"));
+        List<AbstractEntity> list = criteria.list();
+        return list.stream().map(item -> Integer.parseInt(((String) item.loadIdentify()).replace(preStr, ""))).max(Comparator.naturalOrder()).orElse(0);
     }
 
     private String getTableId(Class<? extends AbstractEntity> clazz) throws SQLException {
