@@ -81,7 +81,7 @@ public abstract class AbstractCommonBaseEntityRepository extends AbstractReposit
         if (filterView == null) {
             criteria = this.getSession().createCriteria((Class<T>)Class.forName(className));
         } else {
-            criteria = filterView.createCriteria(this.getSession(), Class.forName(className));
+            criteria = filterView.createCriteria(this.getSession(), (Class<T>)Class.forName(className));
         }
         List<T> list = criteria.listNotCleanRestrictions();
         return PageList.newInstance(list, criteria.count());

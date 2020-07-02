@@ -49,7 +49,7 @@ public class FilterView implements Serializable {
     private List<Filter> filters;
     private List<FilterSort> sorts;
 
-    public Criteria createCriteria(Session session, Class<? extends AbstractEntity> clazz) {
+    public <T extends AbstractEntity> Criteria createCriteria(Session session, Class<T> clazz) {
         Criteria criteria = session.createCriteria(clazz);
         if (filters != null && filters.size() > 0) {
             for (Filter item : filters) {
