@@ -111,3 +111,6 @@ public Body login(@RequestBody Map<String, String> userInfo) throws SQLException
 
 ## 0.2.16.PRE - 2020/07/02
 FIX BUG
+
+## 0.2.17.PRE - 2020/07/02
+* upgrade filter view.
