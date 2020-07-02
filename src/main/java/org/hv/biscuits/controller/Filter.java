@@ -20,6 +20,10 @@ public class Filter implements Serializable {
         this.operate = operate;
     }
 
+    public static Filter newEquInstance(String key, Object value) {
+        return new Filter(key, value, FilterView.Operate.EQU);
+    }
+
     public String getKey() {
         return key;
     }

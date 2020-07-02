@@ -2,6 +2,7 @@ package org.hv.biscuits.repository;
 
 import org.hv.biscuits.constant.OperateEnum;
 import org.hv.biscuits.service.PageList;
+import org.hv.biscuits.spine.AbstractWithOperatorEntity;
 import org.hv.pocket.criteria.Criteria;
 import org.hv.pocket.model.AbstractEntity;
 import org.hv.biscuits.annotation.Track;
@@ -11,6 +12,7 @@ import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -27,7 +29,7 @@ public abstract class AbstractCommonRepository<T extends AbstractEntity> extends
 
     @Override
     public T findOne(Serializable uuid) throws SQLException {
-        return (T) super.getSession().findOne(this.genericClazz, uuid);
+        return super.getSession().findOne(this.genericClazz, uuid);
     }
 
     @Override
@@ -58,18 +60,27 @@ public abstract class AbstractCommonRepository<T extends AbstractEntity> extends
     @Override
     @Track(data = "#obj", operateName = "#trackDescription", operator = "#trackOperator", operate = OperateEnum.ADD)
     public int saveWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException {
+        if (obj instanceof AbstractWithOperatorEntity) {
+            ((AbstractWithOperatorEntity) obj).setLastOperator(trackOperator).setLastOperationTime(LocalDateTime.now());
+        }
         return this.save(obj, cascade);
     }
 
     @Override
     @Track(data = "#obj", operateName = "#trackDescription", operator = "#trackOperator", operate = OperateEnum.ADD)
     public int forcibleSaveWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException {
+        if (obj instanceof AbstractWithOperatorEntity) {
+            ((AbstractWithOperatorEntity) obj).setLastOperator(trackOperator).setLastOperationTime(LocalDateTime.now());
+        }
         return this.forcibleSave(obj, cascade);
     }
 
     @Override
     @Track(data = "#obj", operateName = "#trackDescription", operator = "#trackOperator", operate = OperateEnum.EDIT)
     public int updateWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException {
+        if (obj instanceof AbstractWithOperatorEntity) {
+            ((AbstractWithOperatorEntity) obj).setLastOperator(trackOperator).setLastOperationTime(LocalDateTime.now());
+        }
         return this.update(obj, cascade);
     }
 

@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 /**
  * @author wujianchuan 2018/12/26
- * 臣虽至愚至陋，何能有知，徒以忠愤所激，不能自已。
+ * 恭惟皇帝陛下，聪明神武，灼见事几，虽光武明谟，宪宗果断，所难比拟。
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class AbstractBisEntity extends AbstractEntity {

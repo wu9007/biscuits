@@ -3,6 +3,7 @@ package org.hv.biscuits.controller;
 import org.hv.pocket.criteria.Criteria;
 import org.hv.pocket.criteria.Restrictions;
 import org.hv.pocket.criteria.Sort;
+import org.hv.pocket.model.AbstractEntity;
 import org.hv.pocket.session.Session;
 
 import java.io.Serializable;
@@ -34,8 +35,8 @@ public class FilterView implements Serializable {
         RESTRICTIONS_FACTORY.put(Operate.GTE, (item) -> Restrictions.gte(item.getKey(), item.getValue()));
         RESTRICTIONS_FACTORY.put(Operate.LT, (item) -> Restrictions.lt(item.getKey(), item.getValue()));
         RESTRICTIONS_FACTORY.put(Operate.LTE, (item) -> Restrictions.lte(item.getKey(), item.getValue()));
-        RESTRICTIONS_FACTORY.put(Operate.IN, (item) -> Restrictions.in(item.getKey(), (List) item.getValue()));
-        RESTRICTIONS_FACTORY.put(Operate.NOT_IN, (item) -> Restrictions.notIn(item.getKey(), (List) item.getValue()));
+        RESTRICTIONS_FACTORY.put(Operate.IN, (item) -> Restrictions.in(item.getKey(), (List<?>) item.getValue()));
+        RESTRICTIONS_FACTORY.put(Operate.NOT_IN, (item) -> Restrictions.notIn(item.getKey(), (List<?>) item.getValue()));
         RESTRICTIONS_FACTORY.put(Operate.LIKE, (item) -> Restrictions.like(item.getKey(), "%" + item.getValue() + "%"));
         RESTRICTIONS_FACTORY.put(Operate.IS_NULL, (item) -> Restrictions.isNull(item.getKey()));
         RESTRICTIONS_FACTORY.put(Operate.IS_NOT_NULL, (item) -> Restrictions.isNotNull(item.getKey()));
@@ -48,17 +49,11 @@ public class FilterView implements Serializable {
     private List<Filter> filters;
     private List<FilterSort> sorts;
 
-    public Criteria createCriteria(Session session, Class clazz) {
+    public Criteria createCriteria(Session session, Class<? extends AbstractEntity> clazz) {
         Criteria criteria = session.createCriteria(clazz);
         if (filters != null && filters.size() > 0) {
             for (Filter item : filters) {
                 String operate = item.getOperate();
-//                Object value = item.getValue();
-                // 过滤空字符串 bad request!!!
-//                if (value instanceof String && ((String) value).length() == 0) {
-//                    continue;
-//                }
-
                 // 默认操作为 `Operate.EQU`
                 if (operate != null && operate.trim().length() > 0) {
                     criteria.add(RESTRICTIONS_FACTORY.get(item.getOperate()).apply(item));
@@ -82,6 +77,11 @@ public class FilterView implements Serializable {
             criteria.limit(this.getStart(), this.getLimit());
         }
         return criteria;
+    }
+
+    public FilterView addFilter(Filter filter) {
+        this.filters.add(filter);
+        return this;
     }
 
     public Filter createEmptyFilter() {
