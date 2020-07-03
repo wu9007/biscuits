@@ -7,7 +7,7 @@ import org.hv.pocket.annotation.Entity;
 /**
  * @author leyan95 2020/6/26
  */
-@Entity(table = "T_POST_ACTOR")
+@Entity(table = "T_POST_ACTOR", businessName = "岗位分工关联")
 public class PostActorRelation extends AbstractBisEntity {
     private static final long serialVersionUID = -1878385856874316067L;
     @Column
