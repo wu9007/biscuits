@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * @author leyan95 2019/1/30
  */
-@Entity(table = "T_AUTHORITY")
+@Entity(table = "T_AUTHORITY", businessName = "权限")
 public class Authority extends AbstractBisEntity {
     private static final long serialVersionUID = 8811730322368476299L;
     @Column(name = "SERVICE_ID")

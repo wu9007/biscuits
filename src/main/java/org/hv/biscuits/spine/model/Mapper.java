@@ -11,7 +11,7 @@ import org.hv.pocket.annotation.ManyToOne;
  *
  * @author leyan95 2019/2/3
  */
-@Entity(table = "T_MAPPER")
+@Entity(table = "T_MAPPER", businessName = "接口")
 public class Mapper extends AbstractBisEntity {
     private static final long serialVersionUID = -2091601211891427181L;
     @Column(name = "REQUEST_METHOD", businessName = "请求方式")

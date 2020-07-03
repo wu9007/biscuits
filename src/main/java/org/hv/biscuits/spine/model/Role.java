@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author leyan95 2019/1/30
  */
-@Entity(table = "T_ROLE")
+@Entity(table = "T_ROLE", businessName = "角色")
 public class Role extends AbstractBisEntity {
     private static final long serialVersionUID = -1762486150168555776L;
     @Column(businessName = "标识")

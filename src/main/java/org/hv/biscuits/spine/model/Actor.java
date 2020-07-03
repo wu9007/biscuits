@@ -7,7 +7,7 @@ import org.hv.pocket.annotation.Entity;
 /**
  * @author wujianchuan
  */
-@Entity(table = "T_ACTOR")
+@Entity(table = "T_ACTOR", businessName = "分工")
 public class Actor extends AbstractBisEntity {
 
     private static final long serialVersionUID = -8229871104842779922L;

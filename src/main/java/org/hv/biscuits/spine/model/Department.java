@@ -4,7 +4,10 @@ import org.hv.biscuits.spine.AbstractBisEntity;
 import org.hv.pocket.annotation.Column;
 import org.hv.pocket.annotation.Entity;
 import org.hv.pocket.annotation.Join;
+import org.hv.pocket.annotation.OneToMany;
 import org.hv.pocket.constant.JoinMethod;
+
+import java.util.List;
 
 /**
  * @author leyan95
@@ -24,10 +27,6 @@ public class Department extends AbstractBisEntity {
     private Integer sort;
     @Column(name = "ENABLE", businessName = "启用")
     private Boolean enable;
-    @Column(name = "IS_QC", businessName = "是否质控科室")
-    private Boolean controlQuality;
-    @Column(name = "IS_PURCHASE", businessName = "是否采购科室")
-    private Boolean controlPurchase;
     @Column(name = "IS_CHILD", businessName = "是否含子节点")
     private Boolean hasChild;
     @Column(name = "SYSTEM_CODE", businessName = "业务系统对照")
@@ -40,6 +39,8 @@ public class Department extends AbstractBisEntity {
             joinTable = "T_STATION", joinTableSurname = "T2", joinMethod = JoinMethod.LEFT,
             bridgeColumn = "UUID", destinationColumn = "CODE")
     private String stationCode;
+    @OneToMany(clazz = DepartmentClassRelation.class, bridgeField = "departmentUuid")
+    private List<DepartmentClassRelation> departmentClassRelations;
 
     public String getParentUuid() {
         return parentUuid;
@@ -79,22 +80,6 @@ public class Department extends AbstractBisEntity {
 
     public void setEnable(Boolean enable) {
         this.enable = enable;
-    }
-
-    public Boolean getControlQuality() {
-        return controlQuality;
-    }
-
-    public void setControlQuality(Boolean controlQuality) {
-        this.controlQuality = controlQuality;
-    }
-
-    public Boolean getControlPurchase() {
-        return controlPurchase;
-    }
-
-    public void setControlPurchase(Boolean controlPurchase) {
-        this.controlPurchase = controlPurchase;
     }
 
     public Boolean getHasChild() {
@@ -143,5 +128,13 @@ public class Department extends AbstractBisEntity {
 
     public void setStationCode(String stationCode) {
         this.stationCode = stationCode;
+    }
+
+    public List<DepartmentClassRelation> getDepartmentClassRelations() {
+        return departmentClassRelations;
+    }
+
+    public void setDepartmentClassRelations(List<DepartmentClassRelation> departmentClassRelations) {
+        this.departmentClassRelations = departmentClassRelations;
     }
 }

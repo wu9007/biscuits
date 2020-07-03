@@ -10,7 +10,7 @@ import java.util.Date;
  * @author leyan95 2019/3/23
  * @version 1.0
  */
-@Entity(table = "T_HISTORY")
+@Entity(table = "T_HISTORY", businessName = "历史")
 public class History extends AbstractBisEntity {
     private static final long serialVersionUID = 1783568186627352468L;
 
