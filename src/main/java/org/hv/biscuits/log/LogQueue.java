@@ -89,6 +89,17 @@ public class LogQueue {
     }
 
     /**
+     * 拉取队列中的所有日志
+     *
+     * @return 日志集合
+     */
+    public synchronized Queue<AccessorLogView> pollAllAccessorLog() {
+        Queue<AccessorLogView> queue = new ConcurrentLinkedQueue<>();
+        IntStream.range(0, ACCESSOR_LOG_QUEUE.size()).forEach(index -> queue.add(this.pollAccessorLog()));
+        return queue;
+    }
+
+    /**
      * 控制器日志头节点出队，
      * 如果队列是空队列则返回 {@code null}
      *
@@ -113,6 +124,17 @@ public class LogQueue {
             size = queueSize;
         }
         IntStream.range(0, size).forEach(index -> queue.add(this.pollServiceLog()));
+        return queue;
+    }
+
+    /**
+     * 拉取队列中的所有日志
+     *
+     * @return 日志集合
+     */
+    public synchronized Queue<ServiceLogView> pollAllServiceLog() {
+        Queue<ServiceLogView> queue = new ConcurrentLinkedQueue<>();
+        IntStream.range(0, SERVICE_LOG_QUEUE.size()).forEach(index -> queue.add(this.pollServiceLog()));
         return queue;
     }
 
@@ -145,6 +167,17 @@ public class LogQueue {
     }
 
     /**
+     * 拉取队列中的所有日志
+     *
+     * @return 日志集合
+     */
+    public synchronized Queue<PersistenceLogView> pollAllPersistenceLog() {
+        Queue<PersistenceLogView> queue = new ConcurrentLinkedQueue<>();
+        IntStream.range(0, PERSISTENCE_LOG_QUEUE.size()).forEach(index -> queue.add(this.pollPersistenceLog()));
+        return queue;
+    }
+
+    /**
      * 仓储日志头节点出队，
      * 如果队列是空队列则返回 {@code null}
      *
@@ -169,6 +202,17 @@ public class LogQueue {
             size = queueSize;
         }
         IntStream.range(0, size).forEach(index -> queue.add(this.pollOrmLog()));
+        return queue;
+    }
+
+    /**
+     * 拉取队列中的所有日志
+     *
+     * @return 日志集合
+     */
+    public synchronized Queue<OrmLogView> pollAllOrmLog() {
+        Queue<OrmLogView> queue = new ConcurrentLinkedQueue<>();
+        IntStream.range(0, ORM_LOG_QUEUE.size()).forEach(index -> queue.add(this.pollOrmLog()));
         return queue;
     }
 
