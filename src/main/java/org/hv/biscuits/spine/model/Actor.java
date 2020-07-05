@@ -3,6 +3,9 @@ package org.hv.biscuits.spine.model;
 import org.hv.biscuits.spine.AbstractBisEntity;
 import org.hv.pocket.annotation.Column;
 import org.hv.pocket.annotation.Entity;
+import org.hv.pocket.annotation.OneToMany;
+
+import java.util.List;
 
 /**
  * @author wujianchuan
@@ -23,6 +26,8 @@ public class Actor extends AbstractBisEntity {
     private String description;
     @Column
     private Double sort;
+    @OneToMany(clazz = PostActorRelation.class, bridgeField = "actorUuid")
+    private List<PostActorRelation> postActorRelations;
 
     public String getServiceId() {
         return serviceId;
@@ -70,5 +75,13 @@ public class Actor extends AbstractBisEntity {
 
     public void setSort(Double sort) {
         this.sort = sort;
+    }
+
+    public List<PostActorRelation> getPostActorRelations() {
+        return postActorRelations;
+    }
+
+    public void setPostActorRelations(List<PostActorRelation> postActorRelations) {
+        this.postActorRelations = postActorRelations;
     }
 }

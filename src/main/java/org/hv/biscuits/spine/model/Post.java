@@ -3,6 +3,9 @@ package org.hv.biscuits.spine.model;
 import org.hv.biscuits.spine.AbstractBisEntity;
 import org.hv.pocket.annotation.Column;
 import org.hv.pocket.annotation.Entity;
+import org.hv.pocket.annotation.OneToMany;
+
+import java.util.List;
 
 /**
  * @author leyan95 2020/6/26
@@ -22,6 +25,8 @@ public class Post extends AbstractBisEntity {
     private Boolean enable;
     @Column(businessName = "备注")
     private String memo;
+    @OneToMany(clazz = PostActorRelation.class, bridgeField = "postUuid")
+    private List<PostActorRelation> postActorRelations;
 
     public String getSpell() {
         return spell;
