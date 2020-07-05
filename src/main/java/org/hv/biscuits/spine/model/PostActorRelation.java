@@ -1,8 +1,8 @@
 package org.hv.biscuits.spine.model;
 
 import org.hv.biscuits.spine.AbstractBisEntity;
-import org.hv.pocket.annotation.Column;
 import org.hv.pocket.annotation.Entity;
+import org.hv.pocket.annotation.ManyToOne;
 
 /**
  * @author leyan95 2020/6/26
@@ -10,9 +10,9 @@ import org.hv.pocket.annotation.Entity;
 @Entity(table = "T_POST_ACTOR", businessName = "岗位分工关联")
 public class PostActorRelation extends AbstractBisEntity {
     private static final long serialVersionUID = -1878385856874316067L;
-    @Column
+    @ManyToOne(columnName = "POST_UUID", clazz = Post.class, upBridgeField = "uuid")
     private String postUuid;
-    @Column
+    @ManyToOne(columnName = "ACTOR_UUID", clazz = Actor.class, upBridgeField = "uuid")
     private String actorUuid;
 
     public PostActorRelation() {
