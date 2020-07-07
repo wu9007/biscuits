@@ -28,6 +28,7 @@ public class Station extends AbstractBisEntity {
     private String classUuid;
     @Join(columnName = "CLASS_UUID", columnSurname = "CLASS_NAME", businessName = "血站级别名称", joinTable = "T_STATION_CLASS", joinTableSurname = "T1", joinMethod = JoinMethod.LEFT, bridgeColumn = "UUID", destinationColumn = "NAME")
     private String className;
+    private Boolean leafNode;
 
     public String getName() {
         return name;
@@ -83,5 +84,21 @@ public class Station extends AbstractBisEntity {
 
     public void setClassUuid(String classUuid) {
         this.classUuid = classUuid;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    public Boolean getLeafNode() {
+        return leafNode;
+    }
+
+    public void setLeafNode(Boolean leafNode) {
+        this.leafNode = leafNode;
     }
 }
