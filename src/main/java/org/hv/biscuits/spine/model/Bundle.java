@@ -24,8 +24,6 @@ public class Bundle extends AbstractBisEntity {
     private Boolean withAuth;
     @Column
     private Double sort;
-    @Column
-    private String groupId;
     @OneToMany(clazz = Mapper.class, bridgeField = "bundleUuid")
     private List<Mapper> mappers;
 
@@ -85,13 +83,5 @@ public class Bundle extends AbstractBisEntity {
 
     public void setSort(Double sort) {
         this.sort = sort;
-    }
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
     }
 }
