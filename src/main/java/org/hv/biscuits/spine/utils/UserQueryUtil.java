@@ -2,10 +2,11 @@ package org.hv.biscuits.spine.utils;
 
 import org.hv.biscuits.annotation.Service;
 import org.hv.biscuits.service.AbstractService;
-import org.hv.biscuits.spine.model.Actor;
 import org.hv.biscuits.spine.model.User;
 import org.hv.pocket.query.SQLQuery;
+import org.springframework.beans.factory.annotation.Value;
 
+import javax.annotation.PostConstruct;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -14,15 +15,24 @@ import java.util.List;
  */
 @Service(session = "biscuits")
 public class UserQueryUtil extends AbstractService {
+    @Value("${spring.application.name}")
+    private String applicationName;
+    private String serviceId;
+
+    @PostConstruct
+    public void init() {
+        serviceId = applicationName.replaceAll("\\d+", "");
+    }
 
     /**
      * 获取指定分工下的人员
      *
-     * @param actor 分工实例
+     * @param bundleId 功能点
+     * @param actorId  分工
      * @return 人员集合
      * @throws SQLException e
      */
-    public List<User> getUserByActor(Actor actor) throws SQLException {
+    public List<User> getUserByActor(String bundleId, String actorId) throws SQLException {
         String sql = "SELECT DISTINCT " +
                 "    T5.AVATAR AS avatar, " +
                 "    T5.STAFF_ID AS staffId, " +
@@ -44,9 +54,9 @@ public class UserQueryUtil extends AbstractService {
                 "    LEFT JOIN T_USER T5 ON T4.USER_UUID = T5.UUID " +
                 "    WHERE T1.SERVICE_ID = :SERVICE_ID AND T1.BUNDLE_ID = :BUNDLE_ID AND T1.ACTOR_ID = :ACTOR_ID ";
         SQLQuery sqlQuery = this.getSession().createSQLQuery(sql, User.class)
-                .setParameter("SERVICE_ID", actor.getServiceId())
-                .setParameter("BUNDLE_ID", actor.getBundleId())
-                .setParameter("ACTOR_ID", actor.getActorId());
+                .setParameter("SERVICE_ID", serviceId)
+                .setParameter("BUNDLE_ID", bundleId)
+                .setParameter("ACTOR_ID", actorId);
         return sqlQuery.list();
     }
 }
