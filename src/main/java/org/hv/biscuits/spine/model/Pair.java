@@ -15,6 +15,8 @@ public class Pair implements Serializable {
     private String label;
     @Column
     private String value;
+    @Column
+    private Boolean deleted;
 
     public Pair() {
     }
@@ -22,6 +24,12 @@ public class Pair implements Serializable {
     public Pair(String label, String value) {
         this.label = label;
         this.value = value;
+    }
+
+    public Pair(String label, String value, Boolean deleted) {
+        this.label = label;
+        this.value = value;
+        this.deleted = deleted;
     }
 
     public String getLabel() {
@@ -38,5 +46,13 @@ public class Pair implements Serializable {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 }
