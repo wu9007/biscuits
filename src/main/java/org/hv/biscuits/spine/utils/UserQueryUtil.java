@@ -36,7 +36,7 @@ public class UserQueryUtil extends AbstractService {
         String sql = "SELECT DISTINCT " +
                 "    T5.AVATAR AS avatar, " +
                 "    T5.STAFF_ID AS staffId, " +
-                "    T5.NAME AS NAME, " +
+                "    T5.NAME AS name, " +
                 "    T5.SPELL AS spell, " +
                 "    T5.PHONE AS phone, " +
                 "    T5.DEPT_UUID AS departmentUuid, " +
