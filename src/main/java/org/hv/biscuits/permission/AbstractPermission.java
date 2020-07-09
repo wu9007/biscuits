@@ -1,7 +1,7 @@
 package org.hv.biscuits.permission;
 
 
-import org.hv.biscuits.core.ActionFactory;
+import org.hv.biscuits.core.ActionHolder;
 
 /**
  * @author leyan95 2019/2/25
@@ -9,6 +9,6 @@ import org.hv.biscuits.core.ActionFactory;
 public abstract class AbstractPermission implements Permission {
 
     protected void register(String authId, String name, String common) {
-        ActionFactory.register(authId, name, common);
+        ActionHolder.register(authId, name, common);
     }
 }
