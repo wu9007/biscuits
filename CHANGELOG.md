@@ -144,3 +144,61 @@ FIX BUG
 
 ## 0.2.30.PRE - 2020/07/08
 * 修改Pair类
+
+## 0.2.31.PRE - 2020/07/09
+#### 支持两种持久化路由和权限基础数据的方式
+* 本系统直接链接数据库进行保存
+```java
+@EnableDiscoveryClient
+@SpringBootApplication
+@ComponentScan(basePackages = {"org.hv.*"})
+public class SettingApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(SettingApplication.class, args);
+    }
+
+    @Bean
+    public ActionHolder getActionFactory() throws SQLException {
+        ActionHolder actionFactory = ActionHolder.getInstance();
+        actionFactory.setBiscuitsDatabaseSessionId("biscuits")
+                .runWithDevelopEnvironment()
+                .persistenceMapper(actionFactory.getOwnServiceId(), actionFactory.getActionMap())
+                .persistencePermission(actionFactory.getOwnServiceId(), actionFactory.getPermissionMap());
+        return actionFactory;
+    }
+}
+```
+* 从内存中取出后使用MQ发送给其他系统，委托给其他系统进行存储
+
+```java
+// 本系统生产消息
+@Component
+public class DxpActionHolderSender implements CommandLineRunner {
+
+    @Resource
+    private BisRocketMqTemplate bisRocketMqTemplate;
+
+    @Override
+    public void run(String... args) throws Exception {
+        bisRocketMqTemplate.convertAndSend("Topic-Action-Holder-Persistence", ActionHolderView.newInstance(ActionHolder.getInstance()));
+    }
+}
+
+// 其他系统消费消息
+@Component
+@RocketMQMessageListener(topic = "Topic-Action-Holder-Persistence", consumerGroup = "Topic-Action-Holder-Persistence-Group")
+public class ActionHolderConsumer extends BisRocketMqListener<ActionHolderView> {
+    private final Logger logger = LoggerFactory.getLogger(ActionHolderConsumer.class);
+
+    @Override
+    public void execute(ActionHolderView actionHolderView) throws Exception {
+        logger.info("========================== 持久化服务 {} 的功能点（{}条） 、权限数据 （{}条） ==========================",
+                actionHolderView.getServiceId(),
+                actionHolderView.getBundleViewMap().size(),
+                actionHolderView.getPermissionViewMap().size());
+        ActionHolder.getInstance()
+                .persistenceMapper(actionHolderView.getServiceId(), actionHolderView.getBundleViewMap())
+                .persistencePermission(actionHolderView.getServiceId(), actionHolderView.getPermissionViewMap());
+    }
+}
+```

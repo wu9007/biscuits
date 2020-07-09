@@ -12,11 +12,10 @@ import javax.annotation.PostConstruct;
 @Component
 public class PersistenceConfig {
 
-    private final BiscuitsConfig biscuitsConfig;
-    @Value("${spring.application.name}")
-    private String applicationName;
     @Value("${biscuits.withPersistence:true}")
     private boolean withPersistence;
+
+    private final BiscuitsConfig biscuitsConfig;
 
     public PersistenceConfig(BiscuitsConfig biscuitsConfig) {
         this.biscuitsConfig = biscuitsConfig;
@@ -24,15 +23,9 @@ public class PersistenceConfig {
 
     @PostConstruct
     public void run() throws Exception {
-        String serviceId = applicationName.replaceAll("\\d+","");
         if (withPersistence) {
             try {
-                BiscuitsConfig biscuitsConfig = this.biscuitsConfig.init(withPersistence);
-                biscuitsConfig
-                        .runWithDevelopEnvironment()
-                        .setBiscuitsDatabaseSessionId("biscuits")
-                        .resetPersistencePermission(serviceId.toUpperCase(), this.biscuitsConfig.getPermissionMap())
-                        .persistenceMapper(serviceId.toUpperCase(), this.biscuitsConfig.getActionMap());
+                this.biscuitsConfig.init();
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new Exception(e);

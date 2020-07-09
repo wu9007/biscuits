@@ -1,16 +1,21 @@
 package org.hv.biscuits.core.views;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author leyan95
  */
-public class BundleView {
-    private final String bundleId;
-    private final String bundleName;
-    private final boolean withAuth;
-    private final Map<String, ActionView> actionViews;
+public class BundleView implements Serializable {
+    private static final long serialVersionUID = 8327647556636949498L;
+    private String bundleId;
+    private String bundleName;
+    private boolean withAuth;
+    private Map<String, ActionView> actionViews;
+
+    public BundleView() {
+    }
 
     private BundleView(String bundleId, String bundleName, boolean withAuth) {
         this.bundleId = bundleId;
@@ -33,15 +38,31 @@ public class BundleView {
         return bundleId;
     }
 
+    public void setBundleId(String bundleId) {
+        this.bundleId = bundleId;
+    }
+
     public String getBundleName() {
         return bundleName;
+    }
+
+    public void setBundleName(String bundleName) {
+        this.bundleName = bundleName;
     }
 
     public boolean isWithAuth() {
         return withAuth;
     }
 
+    public void setWithAuth(boolean withAuth) {
+        this.withAuth = withAuth;
+    }
+
     public Map<String, ActionView> getActionViews() {
         return actionViews;
+    }
+
+    public void setActionViews(Map<String, ActionView> actionViews) {
+        this.actionViews = actionViews;
     }
 }
