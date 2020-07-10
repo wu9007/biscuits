@@ -202,3 +202,5 @@ public class ActionHolderConsumer extends BisRocketMqListener<ActionHolderView> 
     }
 }
 ```
+## 0.2.32.PRE - 2020/07/10
+* 获取人员拥有的岗位
