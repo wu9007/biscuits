@@ -1,7 +1,6 @@
 package org.hv.biscuits.spine.model;
 
 import org.hv.biscuits.spine.AbstractBisEntity;
-import org.hv.pocket.annotation.Column;
 import org.hv.pocket.annotation.Entity;
 import org.hv.pocket.annotation.ManyToOne;
 
