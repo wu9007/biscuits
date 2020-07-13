@@ -56,7 +56,7 @@ public class UserQueryUtil extends AbstractService {
                 "WHERE T1.SERVICE_ID = :SERVICE_ID " +
                 "    AND T1.BUNDLE_ID = :BUNDLE_ID " +
                 "    AND T1.ACTOR_ID = :ACTOR_ID " +
-                "ORDER BY T1.SORT ";
+                "ORDER BY T5.SORT ";
         SQLQuery sqlQuery = this.getSession().createSQLQuery(sql, User.class)
                 .setParameter("SERVICE_ID", serviceId)
                 .setParameter("BUNDLE_ID", bundleId)
