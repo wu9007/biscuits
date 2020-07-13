@@ -206,3 +206,5 @@ public class ActionHolderConsumer extends BisRocketMqListener<ActionHolderView> 
 * 获取人员拥有的岗位
 ## 0.2.33.PRE - 2020/07/10
 * 未知属性仍可反序列化
+## 0.2.34.PRE - 2020/07/10
+* FIX BUG
