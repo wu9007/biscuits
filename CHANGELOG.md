@@ -208,3 +208,5 @@ public class ActionHolderConsumer extends BisRocketMqListener<ActionHolderView> 
 * 未知属性仍可反序列化
 ## 0.2.34.PRE - 2020/07/10
 * FIX BUG
+## 0.2.35.PRE - 2020/07/10
+* UPGRADE POCKET VERSION.
