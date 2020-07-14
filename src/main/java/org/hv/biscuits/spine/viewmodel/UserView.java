@@ -21,11 +21,12 @@ public class UserView implements Serializable {
     private String name;
     private String departmentUuid;
     private String departmentName;
+    private Map<String, Map<String, List<UserAuthorityView>>> departmentServiceUserAuthorityViewMap;
     private String businessDepartmentUuid;
     private String businessDepartmentName;
     private String stationUuid;
     private String stationCode;
-    private Map<String, Map<String, List<UserAuthorityView>>> departmentServiceUserAuthorityViewMap;
+    private List<String> authIds;
 
     public UserView() {
     }
@@ -81,14 +82,23 @@ public class UserView implements Serializable {
     /**
      * @return 当前工作科室下拥有的权限集合
      */
-    @JsonIgnore
     public List<String> getAuthIds() {
-        return this.departmentServiceUserAuthorityViewMap.getOrDefault(this.businessDepartmentUuid, new HashMap<>(0)).values().stream()
-                .flatMap(Collection::stream).map(UserAuthorityView::getAuthorityId).collect(Collectors.toList());
+        return this.authIds;
     }
 
+    public void setDepartmentServiceUserAuthorityViewMap(Map<String, Map<String, List<UserAuthorityView>>> departmentServiceUserAuthorityViewMap) {
+        this.departmentServiceUserAuthorityViewMap = departmentServiceUserAuthorityViewMap;
+    }
+
+    /**
+     * NOTE: Jackson 反序列化是按照属性定义顺序调用的setter方法；
+     * 因为此方法依赖于 {@code departmentServiceUserAuthorityViewMap}，
+     * 故 {@code businessDepartmentUuid} 应定义在相对靠后的位置。
+     */
     public UserView setBusinessDepartmentUuid(String businessDepartmentUuid) {
         this.businessDepartmentUuid = businessDepartmentUuid;
+        this.authIds = this.departmentServiceUserAuthorityViewMap.getOrDefault(this.businessDepartmentUuid, new HashMap<>(0)).values().stream()
+                .flatMap(Collection::stream).map(UserAuthorityView::getAuthorityId).collect(Collectors.toList());
         return this;
     }
 
@@ -132,6 +142,10 @@ public class UserView implements Serializable {
         return this;
     }
 
+    public void setAuthIds(List<String> authIds) {
+        this.authIds = authIds;
+    }
+
     public String getUuid() {
         return uuid;
     }
@@ -166,5 +180,9 @@ public class UserView implements Serializable {
 
     public String getStationCode() {
         return stationCode;
+    }
+
+    public Map<String, Map<String, List<UserAuthorityView>>> getDepartmentServiceUserAuthorityViewMap() {
+        return departmentServiceUserAuthorityViewMap;
     }
 }

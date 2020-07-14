@@ -210,3 +210,5 @@ public class ActionHolderConsumer extends BisRocketMqListener<ActionHolderView> 
 * FIX BUG
 ## 0.2.35.PRE - 2020/07/10
 * UPGRADE POCKET VERSION.
+## 0.2.36.PRE - 2020/07/14
+* UserView序列化调整。
