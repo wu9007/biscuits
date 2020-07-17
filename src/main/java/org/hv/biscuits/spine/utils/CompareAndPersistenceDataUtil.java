@@ -45,7 +45,7 @@ public class CompareAndPersistenceDataUtil {
         }
         if (saveData.size() > 0) {
             for (T data : saveData) {
-                session.save(data);
+                session.save(data, false);
             }
             logger.info("========================== 同步数据过程中新增 {} 条{}数据  ==========================", saveData.size(), businessName);
         }
