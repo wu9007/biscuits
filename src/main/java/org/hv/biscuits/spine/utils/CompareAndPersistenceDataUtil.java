@@ -39,7 +39,7 @@ public class CompareAndPersistenceDataUtil {
         });
         if (deleteData.size() > 0) {
             for (T data : deleteData) {
-                session.delete(data);
+                session.delete(data, false);
             }
             logger.info("========================== 同步数据过程中删除 {} 条{}数据 ==========================", deleteData.size(), businessName);
         }
