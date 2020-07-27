@@ -1,7 +1,7 @@
 package org.hv.biscuits.remote;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public interface EncryptionComputing {
 

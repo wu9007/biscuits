@@ -1,7 +1,7 @@
 package org.hv.biscuits.domain.mediator;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public class NoSuchMediatorFunctionException extends Exception {
 

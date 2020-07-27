@@ -1,18 +1,14 @@
 package org.hv.biscuits.permission;
 
 
+import org.hv.biscuits.core.ActionHolder;
+
 /**
- * @author wujianchuan 2019/2/25
+ * @author leyan95 2019/2/25
  */
 public abstract class AbstractPermission implements Permission {
-    private String serverId;
 
-    public Permission setServerId(String serverId) {
-        this.serverId = serverId;
-        return this;
-    }
-
-    protected void register(String bundleId, String authId, String name, String common) {
-        PermissionFactory.register(serverId, bundleId, authId, name, common);
+    protected void register(String authId, String name, String common) {
+        ActionHolder.register(authId, name, common);
     }
 }

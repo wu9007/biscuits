@@ -2,6 +2,7 @@ package org.hv.biscuits.repository;
 
 import org.hv.biscuits.constant.OperateEnum;
 import org.hv.biscuits.service.PageList;
+import org.hv.biscuits.spine.AbstractWithOperatorEntity;
 import org.hv.pocket.criteria.Criteria;
 import org.hv.pocket.model.AbstractEntity;
 import org.hv.biscuits.annotation.Track;
@@ -11,10 +12,11 @@ import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public abstract class AbstractCommonRepository<T extends AbstractEntity> extends AbstractRepository implements CommonRepository<T> {
     protected Class<T> genericClazz;
@@ -27,7 +29,7 @@ public abstract class AbstractCommonRepository<T extends AbstractEntity> extends
 
     @Override
     public T findOne(Serializable uuid) throws SQLException {
-        return (T) super.getSession().findOne(this.genericClazz, uuid);
+        return super.getSession().findOne(this.genericClazz, uuid);
     }
 
     @Override
@@ -58,18 +60,27 @@ public abstract class AbstractCommonRepository<T extends AbstractEntity> extends
     @Override
     @Track(data = "#obj", operateName = "#trackDescription", operator = "#trackOperator", operate = OperateEnum.ADD)
     public int saveWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException {
+        if (obj instanceof AbstractWithOperatorEntity) {
+            ((AbstractWithOperatorEntity) obj).setLastOperator(trackOperator).setLastOperationTime(LocalDateTime.now());
+        }
         return this.save(obj, cascade);
     }
 
     @Override
     @Track(data = "#obj", operateName = "#trackDescription", operator = "#trackOperator", operate = OperateEnum.ADD)
     public int forcibleSaveWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException {
+        if (obj instanceof AbstractWithOperatorEntity) {
+            ((AbstractWithOperatorEntity) obj).setLastOperator(trackOperator).setLastOperationTime(LocalDateTime.now());
+        }
         return this.forcibleSave(obj, cascade);
     }
 
     @Override
     @Track(data = "#obj", operateName = "#trackDescription", operator = "#trackOperator", operate = OperateEnum.EDIT)
     public int updateWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException {
+        if (obj instanceof AbstractWithOperatorEntity) {
+            ((AbstractWithOperatorEntity) obj).setLastOperator(trackOperator).setLastOperationTime(LocalDateTime.now());
+        }
         return this.update(obj, cascade);
     }
 
@@ -81,13 +92,42 @@ public abstract class AbstractCommonRepository<T extends AbstractEntity> extends
 
     @Override
     public PageList<T> loadPage(FilterView filterView) throws SQLException {
+        return this.loadPage(filterView, false);
+    }
+
+    @Override
+    public List<T> loadListByFilter(FilterView filterView) {
+        return this.loadListByFilter(filterView, false);
+    }
+
+    @Override
+    public PageList<T> loadPageCascade(FilterView filterView) throws SQLException {
+        return this.loadPage(filterView, true);
+    }
+
+    @Override
+    public List<T> loadListCascadeByFilter(FilterView filterView) throws SQLException {
+        return this.loadListByFilter(filterView, true);
+    }
+
+    private PageList<T> loadPage(FilterView filterView, boolean cascade) throws SQLException {
         Criteria criteria;
         if (filterView == null) {
             criteria = this.getSession().createCriteria(this.genericClazz);
         } else {
             criteria = filterView.createCriteria(this.getSession(), this.genericClazz);
         }
-        List<T> list = criteria.listNotCleanRestrictions();
+        List<T> list = criteria.listNotCleanRestrictions(cascade);
         return PageList.newInstance(list, criteria.count());
+    }
+
+    private List<T> loadListByFilter(FilterView filterView, boolean cascade) {
+        Criteria criteria;
+        if (filterView == null) {
+            criteria = this.getSession().createCriteria(this.genericClazz);
+        } else {
+            criteria = filterView.createCriteria(this.getSession(), this.genericClazz);
+        }
+        return criteria.list(cascade);
     }
 }

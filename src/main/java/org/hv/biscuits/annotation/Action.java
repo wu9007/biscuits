@@ -11,7 +11,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @author wujianchuan 2019/2/20
+ * @author leyan95 2019/2/20
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -24,6 +24,8 @@ public @interface Action {
 
     @AliasFor(annotation = RequestMapping.class)
     RequestMethod[] method() default {RequestMethod.GET};
+
+    String authId() default "";
 
     @AliasFor(annotation = RequestMapping.class)
     String[] produces() default {"application/json; charset=UTF-8"};

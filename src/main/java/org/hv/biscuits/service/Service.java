@@ -3,7 +3,7 @@ package org.hv.biscuits.service;
 import org.hv.pocket.session.Session;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public interface Service {
     /**

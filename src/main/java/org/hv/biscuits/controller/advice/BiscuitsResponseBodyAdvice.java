@@ -1,6 +1,5 @@
 package org.hv.biscuits.controller.advice;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hv.biscuits.annotation.Action;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -10,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 /**
- * @author wujianchuan 2020/3/4
+ * @author leyan95 2020/3/4
  * @version 1.0
  * 依据注解添加加密标记
  */

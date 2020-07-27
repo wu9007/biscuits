@@ -15,7 +15,7 @@ If you have any improvement, I will be happy to get a pull request from you.
 
 ## 功能点设计思路
 ### 分层结构
-![](https://github.com/HunterVillage/biscuits-demo/blob/master/hierarchy.png?raw=true)
+![](https://github.com/wechat-program/album/blob/master/pic/cons/D2.png?raw=true)
 
 #### 展现层
 负责向用户展现信息以及解释用户命令。更细的方面来讲就是：
@@ -33,7 +33,7 @@ If you have any improvement, I will be happy to get a pull request from you.
 本层为其他层提供通用的技术能力；提供了层间的通信；为领域层实现持久化机制；总之，基础设施层可以通过架构和框架来支持其他层的技术需求；
 
 ### 功能点分块结构
-![](https://github.com/HunterVillage/biscuits-demo/blob/master/DDD.png?raw=true)
+![](https://github.com/wechat-program/album/blob/master/pic/cons/D3.png?raw=true)
 
 #### 聚合
 通过定义对象之间清晰的所属关系和边界来实现领域模型的内聚，并避免了错综复杂的难以维护的对象关系网的形成。聚合定义了一组具有内聚关系的相关对象的集合，我们把聚合看作是一个修改数据的单元。

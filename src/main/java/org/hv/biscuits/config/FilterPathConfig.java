@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 @Component(value = "BiscuitJwtAccountConfig")
 @ConfigurationProperties(prefix = "biscuits.filter")

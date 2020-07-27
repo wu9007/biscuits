@@ -3,7 +3,7 @@ package org.hv.biscuits.controller;
 import java.io.Serializable;
 
 /**
- * @author wujianchuan 2019/2/20
+ * @author leyan95 2019/2/20
  */
 public class Body implements Serializable {
     private static final long serialVersionUID = -7606557226712921098L;
@@ -12,8 +12,6 @@ public class Body implements Serializable {
     private Object data;
     private String title;
     private String message;
-    private boolean resend;
-    private String token;
     private boolean reLogin;
 
     public Body() {
@@ -50,16 +48,6 @@ public class Body implements Serializable {
         return this;
     }
 
-    public Body resend() {
-        this.resend = true;
-        return this;
-    }
-
-    public Body token(String token) {
-        this.token = token;
-        return this;
-    }
-
     public Body reLogin() {
         this.reLogin = true;
         return this;
@@ -88,14 +76,6 @@ public class Body implements Serializable {
 
     public String getMessage() {
         return message;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public boolean isResend() {
-        return resend;
     }
 
     public boolean getReLogin() {

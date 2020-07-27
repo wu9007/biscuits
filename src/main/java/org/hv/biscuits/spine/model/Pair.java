@@ -1,20 +1,22 @@
 package org.hv.biscuits.spine.model;
 
 import org.hv.pocket.annotation.Column;
-import org.hv.pocket.annotation.Entity;
+import org.hv.pocket.annotation.View;
 
 import java.io.Serializable;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
-@Entity(table = "", tableId = -1)
+@View
 public class Pair implements Serializable {
     private static final long serialVersionUID = 5656710925928861884L;
-    @Column(name = "label")
+    @Column
     private String label;
-    @Column(name = "value")
+    @Column
     private String value;
+    @Column
+    private Boolean deleted;
 
     public Pair() {
     }
@@ -22,6 +24,12 @@ public class Pair implements Serializable {
     public Pair(String label, String value) {
         this.label = label;
         this.value = value;
+    }
+
+    public Pair(String label, String value, Boolean deleted) {
+        this.label = label;
+        this.value = value;
+        this.deleted = deleted;
     }
 
     public String getLabel() {
@@ -38,5 +46,13 @@ public class Pair implements Serializable {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 }

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 @ControllerAdvice
 public class SystemExceptionHandler {

@@ -11,7 +11,7 @@ import java.security.SecureRandom;
 import java.util.Base64;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public class DesEncryption implements EncryptionComputing {
 

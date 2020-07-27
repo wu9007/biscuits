@@ -1,17 +1,17 @@
 package org.hv.biscuits.spine.model;
 
+import org.hv.biscuits.spine.AbstractBisEntity;
 import org.hv.pocket.annotation.Column;
 import org.hv.pocket.annotation.Entity;
-import org.hv.pocket.model.BaseEntity;
 
 import java.util.Date;
 
 /**
- * @author wujianchuan 2019/3/23
+ * @author leyan95 2019/3/23
  * @version 1.0
  */
-@Entity(table = "T_HISTORY", tableId = 111)
-public class History extends BaseEntity {
+@Entity(table = "T_HISTORY", businessName = "历史")
+public class History extends AbstractBisEntity {
     private static final long serialVersionUID = 1783568186627352468L;
 
     @Column(name = "OPERATE")

@@ -27,7 +27,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @author wujianchuan 2019/1/31
+ * @author leyan95 2019/1/31
  */
 @SuppressWarnings("unchecked")
 @Aspect
@@ -48,7 +48,7 @@ public class ServiceAspect {
     public ServiceAspect(ApplicationContext context) {
         this.context = context;
     }
-    @Pointcut("execution(public * *(..)) && @within(org.hv.biscuits.annotation.Service)")
+    @Pointcut("execution(public * *(..)) && @within(org.hv.biscuits.annotation.Service) && !execution(public String[] evenSourceIds())")
     public void verify() {}
 
     @Before("verify()")
@@ -67,7 +67,7 @@ public class ServiceAspect {
         this.pushMethod(method);
         // session 嵌套时只开启最外层session
         this.sessionOpen(method, target);
-        log.info("[Before] {}({})", method.getName(), StringUtils.join(joinPoint.getArgs(), ","));
+        log.debug("[Before] {}({})", method.getName(), StringUtils.join(joinPoint.getArgs(), ","));
     }
 
     @AfterReturning("verify()")
@@ -75,7 +75,7 @@ public class ServiceAspect {
         ThreadLocal<Session> sessionLocal = this.getSessionLocal();
         Method method = this.popMethod();
         Object target = this.popTarget();
-        log.info("[After] {}.{}(-)", target.getClass().getSimpleName(), method.getName());
+        log.debug("[After] {}.{}(-)", target.getClass().getSimpleName(), method.getName());
         if (sessionLocal.get() != null && !sessionLocal.get().getClosed()) {
             //锁定开启事务的方法，提交事务
             if (this.getTransOnIndex() != null && this.getMethodLocal().size() == this.getTransOnIndex() && this.getTransOn()) {

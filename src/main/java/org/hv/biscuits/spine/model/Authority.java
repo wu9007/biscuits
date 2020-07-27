@@ -1,20 +1,20 @@
 package org.hv.biscuits.spine.model;
 
+import org.hv.biscuits.spine.AbstractBisEntity;
 import org.hv.pocket.annotation.Column;
 import org.hv.pocket.annotation.Entity;
 import org.hv.pocket.annotation.OneToMany;
-import org.hv.pocket.model.BaseEntity;
 
 import java.util.List;
 
 /**
- * @author wujianchuan 2019/1/30
+ * @author leyan95 2019/1/30
  */
-@Entity(table = "T_AUTHORITY", tableId = 102)
-public class Authority extends BaseEntity {
+@Entity(table = "T_AUTHORITY", businessName = "权限")
+public class Authority extends AbstractBisEntity {
     private static final long serialVersionUID = 8811730322368476299L;
-    @Column(name = "SERVER_ID")
-    private String serverId;
+    @Column(name = "SERVICE_ID")
+    private String serviceId;
     @Column(name = "BUNDLE_ID")
     private String bundleId;
     @Column(name = "ID")
@@ -23,28 +23,26 @@ public class Authority extends BaseEntity {
     private String name;
     @Column(name = "COMMENT")
     private String comment;
-    @OneToMany(clazz = AuthMapperRelation.class, bridgeField = "authUuid")
-    private List<AuthMapperRelation> authMapperRelationList;
     @OneToMany(clazz = RoleAuthRelation.class, bridgeField = "authUuid")
     private List<RoleAuthRelation> roleAuthRelationList;
 
     public Authority() {
     }
 
-    public Authority(String serverId, String bundleId, String id, String name, String comment) {
-        this.serverId = serverId;
+    public Authority(String serviceId, String bundleId, String id, String name, String comment) {
+        this.serviceId = serviceId;
         this.bundleId = bundleId;
         this.id = id;
         this.name = name;
         this.comment = comment;
     }
 
-    public String getServerId() {
-        return serverId;
+    public String getServiceId() {
+        return serviceId;
     }
 
-    public void setServerId(String serverId) {
-        this.serverId = serverId;
+    public void setServiceId(String serviceId) {
+        this.serviceId = serviceId;
     }
 
     public String getBundleId() {
@@ -77,14 +75,6 @@ public class Authority extends BaseEntity {
 
     public void setComment(String comment) {
         this.comment = comment;
-    }
-
-    public List<AuthMapperRelation> getAuthMapperRelationList() {
-        return authMapperRelationList;
-    }
-
-    public void setAuthMapperRelationList(List<AuthMapperRelation> authMapperRelationList) {
-        this.authMapperRelationList = authMapperRelationList;
     }
 
     public List<RoleAuthRelation> getRoleAuthRelationList() {

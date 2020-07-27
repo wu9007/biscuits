@@ -1,15 +1,15 @@
 package org.hv.biscuits.spine.model;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hv.biscuits.spine.AbstractBisEntity;
 import org.hv.pocket.annotation.Column;
 import org.hv.pocket.annotation.Entity;
-import org.hv.pocket.model.BaseEntity;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
-@Entity(table = "T_PROCESS", tableId = 113, businessName = "未完结的流程")
-public class Process extends BaseEntity {
+@Entity(table = "T_PROCESS", businessName = "未完结的流程")
+public class Process extends AbstractBisEntity {
     private static final long serialVersionUID = -3161539503737404152L;
     @Column(name = "PROCESS_ID")
     private String processId;

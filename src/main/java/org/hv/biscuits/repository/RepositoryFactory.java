@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public class RepositoryFactory {
     private final static Map<String, List<AbstractRepository>> FACTORY = new ConcurrentHashMap<>();

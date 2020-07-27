@@ -1,37 +1,39 @@
 package org.hv.biscuits.spine.model;
 
+import org.hv.biscuits.spine.AbstractBisEntity;
 import org.hv.pocket.annotation.Column;
 import org.hv.pocket.annotation.Entity;
 import org.hv.pocket.annotation.OneToMany;
-import org.hv.pocket.model.BaseEntity;
 
 import java.util.List;
 
 /**
- * @author wujianchuan 2019/2/25
+ * @author leyan95 2019/2/25
  */
-@Entity(table = "T_BUNDLE", tableId = 108, businessName = "菜单")
-public class Bundle extends BaseEntity {
+@Entity(table = "T_BUNDLE", businessName = "功能点")
+public class Bundle extends AbstractBisEntity {
     private static final long serialVersionUID = -5562305365699924057L;
 
-    @Column(name = "BUNDLE_ID")
+    @Column
     private String bundleId;
-    @Column(name = "BUNDLE_NAME")
+    @Column
     private String bundleName;
-    @Column(name = "SERVER_ID")
-    private String serverId;
-    @Column(name = "WITH_AUTH")
+    @Column
+    private String serviceId;
+    @Column
     private Boolean withAuth;
+    @Column
+    private Double sort;
     @OneToMany(clazz = Mapper.class, bridgeField = "bundleUuid")
     private List<Mapper> mappers;
 
     public Bundle() {
     }
 
-    public Bundle(String bundleId, String bundleName, String serverId, Boolean withAuth) {
+    public Bundle(String bundleId, String bundleName, String serviceId, Boolean withAuth) {
         this.bundleId = bundleId;
         this.bundleName = bundleName;
-        this.serverId = serverId;
+        this.serviceId = serviceId;
         this.withAuth = withAuth;
     }
 
@@ -51,12 +53,12 @@ public class Bundle extends BaseEntity {
         this.bundleName = bundleName;
     }
 
-    public String getServerId() {
-        return serverId;
+    public String getServiceId() {
+        return serviceId;
     }
 
-    public void setServerId(String serverId) {
-        this.serverId = serverId;
+    public void setServiceId(String serviceId) {
+        this.serviceId = serviceId;
     }
 
     public Boolean getWithAuth() {
@@ -73,5 +75,13 @@ public class Bundle extends BaseEntity {
 
     public void setMappers(List<Mapper> mappers) {
         this.mappers = mappers;
+    }
+
+    public Double getSort() {
+        return sort;
+    }
+
+    public void setSort(Double sort) {
+        this.sort = sort;
     }
 }

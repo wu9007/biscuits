@@ -3,7 +3,7 @@ package org.hv.biscuits.domain.mediator;
 import org.hv.biscuits.service.Service;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 @FunctionalInterface
 public interface MediatorFunction<T extends Service, R> {

@@ -5,7 +5,7 @@ import org.hv.biscuits.service.Service;
 import java.util.List;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public interface Mediator {
     /**

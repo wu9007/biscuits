@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public interface CommonRepository<T extends AbstractEntity> {
     /**
@@ -123,5 +123,39 @@ public interface CommonRepository<T extends AbstractEntity> {
      */
     int deleteWithTrack(T obj, String operator, String trackDescription) throws SQLException, IllegalAccessException;
 
+    /**
+     * 加载分页数据 非级联
+     *
+     * @param filterView 过滤条件
+     * @return 分页数据
+     * @throws SQLException e
+     */
     PageList<T> loadPage(FilterView filterView) throws SQLException;
+
+    /**
+     * 加载分页数据 级联
+     *
+     * @param filterView 过滤条件
+     * @return 分页数据
+     * @throws SQLException e
+     */
+    PageList<T> loadPageCascade(FilterView filterView) throws SQLException;
+
+    /**
+     * 根据过滤条件查询集合 非级联
+     *
+     * @param filterView 过滤条件
+     * @return 分页数据
+     * @throws SQLException e
+     */
+    List<T> loadListByFilter(FilterView filterView) throws SQLException;
+
+    /**
+     * 根据过滤条件查询集合 级联
+     *
+     * @param filterView 过滤条件
+     * @return 分页数据
+     * @throws SQLException e
+     */
+    List<T> loadListCascadeByFilter(FilterView filterView) throws SQLException;
 }

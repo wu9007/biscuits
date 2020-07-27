@@ -9,7 +9,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * @author wujianchuan 2019/2/15
+ * @author leyan95 2019/2/15
  */
 @Component
 public class EncodeUtil {

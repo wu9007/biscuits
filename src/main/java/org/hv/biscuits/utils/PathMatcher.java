@@ -1,7 +1,7 @@
 package org.hv.biscuits.utils;
 
 /**
- * @author wujianchuan
+ * @author leyan95
  */
 public class PathMatcher {
     private static final String ALL = "/*";
