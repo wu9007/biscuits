@@ -98,6 +98,8 @@ public class FilterView implements Serializable {
                         String upBridgeFieldName = MapperFactory.getManyToOneUpField(detailClazz.getName(), clazz.getName());
                         criteria.add(Restrictions.in(upBridgeFieldName, bridgeValues));
                     }
+                } else {
+                    logger.error("非法的过滤参数 {}", item.getKey());
                 }
             }
         }
