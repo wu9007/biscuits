@@ -67,8 +67,8 @@ public class PersistenceLogProxy {
             String requestId = (String) httpServletRequest.getAttribute(BiscuitsHttpHeaders.REQUEST_ID);
             String transactionId = (String) httpServletRequest.getAttribute(BiscuitsHttpHeaders.TRANSACTION_ID);
             String serviceId = (String) httpServletRequest.getAttribute(SERVICE_ID);
-            logger.info("[{}: {}, {}: {}, {}: {}]", REQUEST_ID, requestId, TRANSACTION_ID, transactionId, SERVICE_ID, serviceId);
             if (serviceId != null) {
+                logger.info("[{}: {}, {}: {}, {}: {}]", REQUEST_ID, requestId, TRANSACTION_ID, transactionId, SERVICE_ID, serviceId);
                 String persistenceId = UUID.randomUUID().toString().replace("-", "");
                 httpServletRequest.setAttribute(PERSISTENCE_ID, persistenceId);
                 this.countDownLatchMap.put(persistenceId, new CountDownLatch(1));

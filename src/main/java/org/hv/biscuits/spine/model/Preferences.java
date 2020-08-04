@@ -30,6 +30,20 @@ public class Preferences extends AbstractBisEntity {
     @Column
     private String alert;
 
+    public Preferences() {
+    }
+
+    private Preferences(String id, String stationCode, String serviceId, String bundleId) {
+        this.id = id;
+        this.stationCode = stationCode;
+        this.serviceId = serviceId;
+        this.bundleId = bundleId;
+    }
+
+    public static Preferences newConditionInstance(String id, String stationCode, String serviceId, String bundleId) {
+        return new Preferences(id, stationCode, serviceId, bundleId);
+    }
+
     public String getId() {
         return id;
     }

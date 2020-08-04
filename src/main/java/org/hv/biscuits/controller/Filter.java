@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 /**
  * @author leyan95
@@ -16,6 +17,7 @@ public class Filter implements Serializable {
     private Object value;
     private String operate;
     private String valueType;
+    private List<Filter> orFilters;
 
     Filter() {
     }
@@ -77,6 +79,14 @@ public class Filter implements Serializable {
 
     public void setValueType(String valueType) {
         this.valueType = valueType;
+    }
+
+    public List<Filter> getOrFilters() {
+        return orFilters;
+    }
+
+    public void setOrFilters(List<Filter> orFilters) {
+        this.orFilters = orFilters;
     }
 
     public interface ValueType {

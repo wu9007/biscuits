@@ -62,8 +62,8 @@ public class ServiceLogProxy {
             HttpServletRequest httpServletRequest = servletRequestAttributes.getRequest();
             String requestId = (String) httpServletRequest.getAttribute(BiscuitsHttpHeaders.REQUEST_ID);
             String transactionId = (String) httpServletRequest.getAttribute(BiscuitsHttpHeaders.TRANSACTION_ID);
-            logger.info("[{}: {}, {}: {}]", REQUEST_ID, requestId, TRANSACTION_ID, transactionId);
             if (requestId != null) {
+                logger.info("[{}: {}, {}: {}]", REQUEST_ID, requestId, TRANSACTION_ID, transactionId);
                 String serviceId = UUID.randomUUID().toString().replace("-", "");
                 httpServletRequest.setAttribute(SERVICE_ID, serviceId);
                 this.countDownLatchMap.put(serviceId, new CountDownLatch(1));

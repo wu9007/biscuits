@@ -51,7 +51,7 @@ public class UserView implements Serializable {
     }
 
     /**
-     * 添加权限信息
+     * 添加权限信息（角色所属部门暂时不可为空）
      *
      * @param userAuthorityViews 用户权限映射视图列表 {@link UserAuthorityView}
      */

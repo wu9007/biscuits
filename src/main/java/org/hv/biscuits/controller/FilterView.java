@@ -55,52 +55,69 @@ public class FilterView implements Serializable {
     private List<Filter> filters;
     private List<FilterSort> sorts;
 
+    private <T extends AbstractEntity> Restrictions buildRestrictions(Filter filter, Session session, Class<T> clazz) {
+        if (Operate.OR.equals(filter.getOperate())) {
+            List<Filter> filters = filter.getOrFilters();
+            Restrictions[] restrictionsArray = new Restrictions[filters.size()];
+            for (int index = 0; index < filters.size(); index++) {
+                restrictionsArray[index] = this.buildRestrictions(filters.get(index), session, clazz);
+            }
+            return Restrictions.or(restrictionsArray);
+        } else {
+            String[] fileNames = filter.getKey().split("\\.");
+            // 默认操作为 `Operate.EQU`
+            String operate = filter.getOperate();
+            if (fileNames.length == 1) {
+                if (operate != null && operate.trim().length() > 0) {
+                    return RESTRICTIONS_FACTORY.get(filter.getOperate()).apply(filter.getKey(), filter.getValue());
+                } else {
+                    return RESTRICTIONS_FACTORY.get(Operate.EQU).apply(filter.getKey(), filter.getValue());
+                }
+            } else if (fileNames.length == 2) {
+                List<String> bridgeValues = new ArrayList<>();
+                // 从明细中进行过滤
+                String detailFieldName = fileNames[0];
+                String detailFilterFieldName = fileNames[1];
+                Class<? extends AbstractEntity> detailClazz = MapperFactory.getDetailClass(clazz.getName(), detailFieldName);
+                Criteria detailCriteria = session.createCriteria(detailClazz);
+                if (operate != null && operate.trim().length() > 0) {
+                    detailCriteria.add(RESTRICTIONS_FACTORY.get(filter.getOperate()).apply(detailFilterFieldName, filter.getValue()));
+                } else {
+                    detailCriteria.add(RESTRICTIONS_FACTORY.get(Operate.EQU).apply(detailFilterFieldName, filter.getValue()));
+                }
+                String bridgeField = MapperFactory.getOneToMayDownFieldName(clazz.getName(), detailFieldName);
+                Field mainField = MapperFactory.getField(detailClazz.getName(), bridgeField);
+                mainField.setAccessible(true);
+                for (AbstractEntity entity : detailCriteria.list()) {
+                    String value = null;
+                    try {
+                        value = (String) mainField.get(entity);
+                    } catch (IllegalAccessException e) {
+                        logger.error(e.getMessage());
+                    }
+                    if (!bridgeValues.contains(value)) {
+                        bridgeValues.add(value);
+                    }
+                }
+                if (bridgeValues.size() > 0) {
+                    String upBridgeFieldName = MapperFactory.getManyToOneUpField(detailClazz.getName(), clazz.getName());
+                    return Restrictions.in(upBridgeFieldName, bridgeValues);
+                } else {
+                    return null;
+                }
+            } else {
+                logger.error("非法的过滤参数 {}", filter.getKey());
+                return null;
+            }
+        }
+    }
+
     public <T extends AbstractEntity> Criteria createCriteria(Session session, Class<T> clazz) {
         Criteria criteria = session.createCriteria(clazz);
         if (filters != null && filters.size() > 0) {
-            for (Filter item : filters) {
-                String[] fileNames = item.getKey().split("\\.");
-                // 默认操作为 `Operate.EQU`
-                String operate = item.getOperate();
-                if (fileNames.length == 1) {
-                    if (operate != null && operate.trim().length() > 0) {
-                        criteria.add(RESTRICTIONS_FACTORY.get(item.getOperate()).apply(item.getKey(), item.getValue()));
-                    } else {
-                        criteria.add(RESTRICTIONS_FACTORY.get(Operate.EQU).apply(item.getKey(), item.getValue()));
-                    }
-                } else if (fileNames.length == 2) {
-                    List<String> bridgeValues = new ArrayList<>();
-                    // 从明细中进行过滤
-                    String detailFieldName = fileNames[0];
-                    String detailFilterFieldName = fileNames[1];
-                    Class<? extends AbstractEntity> detailClazz = MapperFactory.getDetailClass(clazz.getName(), detailFieldName);
-                    Criteria detailCriteria = session.createCriteria(detailClazz);
-                    if (operate != null && operate.trim().length() > 0) {
-                        detailCriteria.add(RESTRICTIONS_FACTORY.get(item.getOperate()).apply(detailFilterFieldName, item.getValue()));
-                    } else {
-                        detailCriteria.add(RESTRICTIONS_FACTORY.get(Operate.EQU).apply(detailFilterFieldName, item.getValue()));
-                    }
-                    String bridgeField = MapperFactory.getOneToMayDownFieldName(clazz.getName(), detailFieldName);
-                    Field mainField = MapperFactory.getField(detailClazz.getName(), bridgeField);
-                    mainField.setAccessible(true);
-                    for (AbstractEntity entity : detailCriteria.list()) {
-                        String value = null;
-                        try {
-                            value = (String) mainField.get(entity);
-                        } catch (IllegalAccessException e) {
-                            logger.error(e.getMessage());
-                        }
-                        if (!bridgeValues.contains(value)) {
-                            bridgeValues.add(value);
-                        }
-                    }
-                    if (bridgeValues.size() > 0) {
-                        String upBridgeFieldName = MapperFactory.getManyToOneUpField(detailClazz.getName(), clazz.getName());
-                        criteria.add(Restrictions.in(upBridgeFieldName, bridgeValues));
-                    }
-                } else {
-                    logger.error("非法的过滤参数 {}", item.getKey());
-                }
+            for (Filter filter : filters) {
+                Restrictions restrictions = this.buildRestrictions(filter, session, clazz);
+                criteria.add(restrictions);
             }
         }
         if (this.sorts != null && this.sorts.size() > 0) {
@@ -193,5 +210,6 @@ public class FilterView implements Serializable {
         String LIKE = "like";
         String IS_NULL = "isNull";
         String IS_NOT_NULL = "isNotNull";
+        String OR = "or";
     }
 }

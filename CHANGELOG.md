@@ -218,3 +218,11 @@ public class ActionHolderConsumer extends BisRocketMqListener<ActionHolderView> 
 * 升级Pocket依赖。
 ## 0.2.40.PRE - 2020/07/17
 * 可根据明细数据进行过滤。
+## 0.2.41.PRE - 2020/07/28
+* 升级Pocket依赖，支持批量SQL语句执行，可查询当前时间。
+## 0.2.43.PRE - 2020/07/30
+* 列表查询条件支持‘或’操作。
+## 0.2.44.PRE - 2020/08/01
+* 升级Pocket依赖，将执行异常的SQL写入error日志文件中，将执行效率低下的SQL写入warn日志文件中。
+## 0.2.45.PRE - 2020/08/03
+* 首选项添加静态构造方法。
