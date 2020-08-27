@@ -7,16 +7,15 @@ import java.time.LocalDateTime;
 
 /**
  * @author wujianchuan 2018/12/26
- * 臣虽至愚至陋，何能有知，徒以忠愤所激，不能自已。
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class AbstractWithOperatorEntity extends AbstractBisEntity {
 
     private static final long serialVersionUID = 1300050418377082968L;
 
-    @Column
+    @Column(ignoreCompare = true)
     private String lastOperator;
-    @Column
+    @Column(ignoreCompare = true)
     private LocalDateTime lastOperationTime;
 
     public String getLastOperator() {

@@ -28,7 +28,7 @@ Body connect(@RequestParam String clientName, @RequestParam String publicKey) {
     try {
         ClientRsaUtil.addClientPublicKey(clientName, publicKey);
     } catch (Exception e) {
-        e.printStackTrace();
+        LOGGER.error(e.getMessage());
         return Body.error().message(e.getMessage());
     }
     return Body.success().data(Base64.getEncoder().encodeToString(ServiceRsaUtil.getPublicKey().getEncoded()));
@@ -226,3 +226,79 @@ public class ActionHolderConsumer extends BisRocketMqListener<ActionHolderView> 
 * 升级Pocket依赖，将执行异常的SQL写入error日志文件中，将执行效率低下的SQL写入warn日志文件中。
 ## 0.2.45.PRE - 2020/08/03
 * 首选项添加静态构造方法。
+## 0.2.48.PRE - 2020/08/05
+* 添加存储公用数据的工具类。
+## 0.2.49.PRE - 2020/08/06
+* 添加获取所有人员的方法。
+## 0.2.50.PRE - 2020/08/06
+* 修复重启数据库后语句执行异常。
+## 0.2.52.PRE - 2020/08/07
+* Fix bug.
+* 保存更新时从表信息对末次操作人和末次操作时间属性进行赋值。
+## 0.2.53.PRE - 2020/08/07
+* @Column @ManyToOne 添加属性 ignoreCompare 标识在更新数据比较实体获取脏数据时是否忽略该属性（默认不忽略）
+* 在调用 saveWithTrack、forcibleSaveWithTrack、updateWithTrack 时继承自 AbstractWithOperatorEntity 的明细实体类会同步更新其末次操作人和末次操作时间
+## 0.2.53.PRE - 2020/08/11
+* 修改Group添加属性parentUuid
+## 0.2.55.PRE -2020/08/12
+* 支持多级菜单分组
+## 0.2.59.PRE -2020/08/18
+* @Column添加encryptModel参数标注持久化时选择的加密方式以及查询时选择的解密方式。
+* 加密字段禁止使用PoEl表达式进行更新。
+* 使用SQLQuery更新加密字段时需要使用`EncryptUtil`手动进行加密。
+```java
+@Column(businessName = "身份证号码", encryptMode = EncryptType.DES)
+private String idCode;
+```
+
+## 0.2.61.PRE -2020/08/19
+- fix(util)获取分工下的人员。
+
+## 0.2.63.PRE -2020/08/20
+- @Join 以相同方式关联同一张表的不同字段则在生成的sql中以and链接（解决重复链接同一张表的问题）。
+
+## 0.2.64.PRE -2020/08/20
+- Criteria 添加方法 specifyField 指定部分查询列。
+```java
+Criteria criteria = this.session.createCriteria(Order.class);
+criteria.add(Restrictions.equ("code", "C-006"))
+        .add(Sort.asc("code"))
+        .specifyField("code", "price");
+List<Order> orderList = criteria.list();
+```
+
+## 0.2.65.PRE -2020/08/21
+- @Join 以相同方式关联同一张表的相同字段不在生成的sql中以and链接（解决0.2.63.PRE的遗留BUG）。
+
+## 0.2.67.PRE -2020/08/24
+- Fix：级联保存给明细设置末次操作人和末次操作时间时抛出空指针异常。
+
+## 0.2.68.PRE -2020/08/25
+- Pair 重写hasCode和equals方法。
+
+## 0.2.69.PRE -2020/08/26
+- PERF：添加`@OneToOne` 注解。
+```java
+public class Order {
+
+    @Column
+    private String typeUuid;
+    @OneToOne(ownField = "typeUuid", relatedField = "uuid")
+    private OrderType orderType;
+}
+
+public class OrderType {
+
+    @Identify
+    @Column
+    private String uuid;
+    @Column
+    private String name;
+} 
+```
+
+## 0.2.71.PRE -2020/08/26
+- PREF loadPage 可查询指定列。
+```java
+loadPage(FilterView filterView, String... fieldNames)
+```

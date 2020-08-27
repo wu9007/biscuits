@@ -127,35 +127,39 @@ public interface CommonRepository<T extends AbstractEntity> {
      * 加载分页数据 非级联
      *
      * @param filterView 过滤条件
+     * @param fieldNames 指定查询多个属性名
      * @return 分页数据
      * @throws SQLException e
      */
-    PageList<T> loadPage(FilterView filterView) throws SQLException;
+    PageList<T> loadPage(FilterView filterView, String... fieldNames) throws SQLException;
 
     /**
      * 加载分页数据 级联
      *
      * @param filterView 过滤条件
+     * @param fieldNames 指定查询多个属性名
      * @return 分页数据
      * @throws SQLException e
      */
-    PageList<T> loadPageCascade(FilterView filterView) throws SQLException;
+    PageList<T> loadPageCascade(FilterView filterView, String... fieldNames) throws SQLException;
 
     /**
      * 根据过滤条件查询集合 非级联
      *
      * @param filterView 过滤条件
+     * @param fieldNames 指定查询多个属性名
      * @return 分页数据
      * @throws SQLException e
      */
-    List<T> loadListByFilter(FilterView filterView) throws SQLException;
+    List<T> loadListByFilter(FilterView filterView, String... fieldNames) throws SQLException;
 
     /**
      * 根据过滤条件查询集合 级联
      *
      * @param filterView 过滤条件
+     * @param fieldNames 指定查询多个属性名
      * @return 分页数据
      * @throws SQLException e
      */
-    List<T> loadListCascadeByFilter(FilterView filterView) throws SQLException;
+    List<T> loadListCascadeByFilter(FilterView filterView, String... fieldNames) throws SQLException;
 }

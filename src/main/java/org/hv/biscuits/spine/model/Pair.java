@@ -55,4 +55,67 @@ public class Pair implements Serializable {
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
     }
+
+    @Override
+    public int hashCode() {
+        int hashCode = 0;
+        if (label != null) {
+            hashCode = 31 * hashCode + label.hashCode();
+        }
+        if (value != null) {
+            hashCode = 31 * hashCode + value.hashCode();
+        }
+        if (deleted != null) {
+            hashCode = 31 * hashCode + deleted.hashCode();
+        }
+        return hashCode;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj == null) {
+            return false;
+        } else if (this.getClass() != obj.getClass()) {
+            return false;
+        } else {
+            Pair pair = (Pair) obj;
+            if (label == null) {
+                if (pair.label != null) {
+                    return false;
+                }
+            } else {
+                if (pair.label == null) {
+                    return false;
+                }
+                if (!label.equals(pair.label)) {
+                    return false;
+                }
+            }
+            if (value == null) {
+                if (pair.value != null) {
+                    return false;
+                }
+            } else {
+                if (pair.value == null) {
+                    return false;
+                }
+                if (!value.equals(pair.value)) {
+                    return false;
+                }
+            }
+            if (deleted == null) {
+                return pair.deleted == null;
+            } else {
+                if (pair.deleted == null) {
+                    return false;
+                }
+                if (!deleted.equals(pair.deleted)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
 }

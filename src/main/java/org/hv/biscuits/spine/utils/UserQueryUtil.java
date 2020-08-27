@@ -49,10 +49,10 @@ public class UserQueryUtil extends AbstractService {
                 "    T5.IS_MANAGER AS superAdmin  " +
                 "FROM " +
                 "    T_ACTOR T1 " +
-                "    LEFT JOIN T_POST_ACTOR T2 ON T1.UUID = T2.ACTOR_UUID " +
-                "    LEFT JOIN T_POST T3 ON T2.POST_UUID = T3.UUID " +
-                "    LEFT JOIN T_POST_USER T4 ON T3.UUID = T4.POST_UUID " +
-                "    LEFT JOIN T_USER T5 ON T4.USER_UUID = T5.UUID " +
+                "    INNER JOIN T_POST_ACTOR T2 ON T1.UUID = T2.ACTOR_UUID " +
+                "    INNER JOIN T_POST T3 ON T2.POST_UUID = T3.UUID " +
+                "    INNER JOIN T_POST_USER T4 ON T3.UUID = T4.POST_UUID " +
+                "    INNER JOIN T_USER T5 ON T4.USER_UUID = T5.UUID " +
                 "WHERE T1.SERVICE_ID = :SERVICE_ID " +
                 "    AND T1.BUNDLE_ID = :BUNDLE_ID " +
                 "    AND T1.ACTOR_ID = :ACTOR_ID " +
@@ -82,8 +82,8 @@ public class UserQueryUtil extends AbstractService {
                 "    T3.MEMO AS memo " +
                 "FROM " +
                 "    T_USER T1 " +
-                "    LEFT JOIN T_POST_USER T2 ON T1.UUID = T2.USER_UUID " +
-                "    LEFT JOIN T_POST T3 ON T2.POST_UUID = T3.UUID  " +
+                "    INNER JOIN T_POST_USER T2 ON T1.UUID = T2.USER_UUID " +
+                "    INNER JOIN T_POST T3 ON T2.POST_UUID = T3.UUID  " +
                 "WHERE " +
                 "    T3.UUID IS NOT NULL  " +
                 "    AND T1.AVATAR = :AVATAR " +
@@ -91,5 +91,14 @@ public class UserQueryUtil extends AbstractService {
         SQLQuery query = this.getSession().createSQLQuery(sql, Post.class)
                 .setParameter("AVATAR", avatar);
         return query.list();
+    }
+
+    /**
+     * 获取所有人员
+     *
+     * @return 人员集合
+     */
+    public List<User> getAllUser() {
+        return this.getSession().list(User.class, false);
     }
 }

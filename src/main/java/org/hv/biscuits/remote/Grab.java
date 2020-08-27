@@ -12,6 +12,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContextBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import javax.net.ssl.SSLContext;
@@ -30,10 +32,11 @@ import java.util.function.Function;
  * 数据抓取对象
  */
 public class Grab<R> {
-    private StringBuilder url;
-    private RequestBody<String, Object> requestBody = new RequestBody<>();
-    private StringBuilder pathParams = new StringBuilder();
-    private Map<String, String> headers = new HashMap<>(2);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Grab.class);
+    private final StringBuilder url;
+    private final RequestBody<String, Object> requestBody = new RequestBody<>();
+    private final StringBuilder pathParams = new StringBuilder();
+    private final Map<String, String> headers = new HashMap<>(2);
 
     private int connectionRequestTimeout = 5000;
     private int connectTimeout = 5000;
@@ -47,7 +50,7 @@ public class Grab<R> {
             SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, (chain, authType) -> true).build();
             sslFactory = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
         CLIENT = HttpClients.custom().setSSLSocketFactory(sslFactory).build();
     }

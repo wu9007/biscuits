@@ -27,7 +27,6 @@ public class PersistenceConfig {
             try {
                 this.biscuitsConfig.init();
             } catch (Exception e) {
-                e.printStackTrace();
                 throw new Exception(e);
             }
         }

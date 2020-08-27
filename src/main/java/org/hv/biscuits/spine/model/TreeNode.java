@@ -15,6 +15,7 @@ public class TreeNode extends Pair {
 
     private static final long serialVersionUID = 4169755587846928569L;
     private List<TreeNode> children;
+    private boolean leaf;
 
     public List<TreeNode> getChildren() {
         return children;
@@ -22,5 +23,13 @@ public class TreeNode extends Pair {
 
     public void setChildren(List<TreeNode> children) {
         this.children = children;
+    }
+
+    public boolean isLeaf() {
+        return leaf;
+    }
+
+    public void setLeaf(boolean leaf) {
+        this.leaf = leaf;
     }
 }

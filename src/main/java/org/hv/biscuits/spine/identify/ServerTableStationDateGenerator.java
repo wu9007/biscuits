@@ -39,7 +39,7 @@ public class ServerTableStationDateGenerator extends AbstractIdentifyGenerator {
     public Serializable getIdentify(Class<? extends AbstractEntity> clazz, Session session) throws SQLException {
         String tableName = MapperFactory.getTableName(clazz.getName());
         AtomicLong serialNumber = POOL.getOrDefault(tableName, new AtomicLong(0L));
-        String preStr = String.format("%03d", serverId) + this.getTableId(clazz) + String.format("%05d", stationId) + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String preStr = String.format("%04d", serverId) + this.getTableId(clazz) + String.format("%05d", stationId) + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         long baseIdentify = Long.parseLong("0");
         if (serialNumber.get() == 0) {
             synchronized (this) {

@@ -257,8 +257,14 @@ public class ActionHolder {
             Authority permission;
             if (permissionMap.containsKey(permissionView.getId())) {
                 permission = permissionMap.get(permissionView.getId());
-                if (!Objects.equals(permission.getName(), permissionView.getName()) || !Objects.equals(permission.getComment(), permissionView.getComment()) || !Objects.equals(permissionView.getBundleId(), permission.getBundleId())) {
-                    permission.setBundleId(permissionView.getBundleId());
+                String newBundleId = permissionView.getBundleId();
+                String oldBundleId = permission.getBundleId();
+                if (!Objects.equals(permission.getName(), permissionView.getName())
+                        || !Objects.equals(permission.getComment(), permissionView.getComment())
+                        || !Objects.equals(newBundleId, oldBundleId)) {
+                    if (newBundleId != null) {
+                        permission.setBundleId(newBundleId);
+                    }
                     permission.setName(permissionView.getName());
                     permission.setComment(permissionView.getComment());
                     this.session.update(permission);

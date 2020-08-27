@@ -33,7 +33,7 @@ import java.util.List;
 @Aspect
 @Component
 public class ServiceAspect {
-    private static final Logger log = LoggerFactory.getLogger(ServiceAspect.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceAspect.class);
 
     private final ThreadLocal<Long> startTimeLocal = new ThreadLocal<>();
     private final ThreadLocal<ThreadLocal<Session>> sessionThreadLocal = new ThreadLocal<>();
@@ -48,8 +48,10 @@ public class ServiceAspect {
     public ServiceAspect(ApplicationContext context) {
         this.context = context;
     }
+
     @Pointcut("execution(public * *(..)) && @within(org.hv.biscuits.annotation.Service) && !execution(public String[] evenSourceIds())")
-    public void verify() {}
+    public void verify() {
+    }
 
     @Before("verify()")
     public void before(JoinPoint joinPoint) {
@@ -67,7 +69,7 @@ public class ServiceAspect {
         this.pushMethod(method);
         // session 嵌套时只开启最外层session
         this.sessionOpen(method, target);
-        log.debug("[Before] {}({})", method.getName(), StringUtils.join(joinPoint.getArgs(), ","));
+        LOGGER.debug("[Before] {}({})", method.getName(), StringUtils.join(joinPoint.getArgs(), ","));
     }
 
     @AfterReturning("verify()")
@@ -75,24 +77,25 @@ public class ServiceAspect {
         ThreadLocal<Session> sessionLocal = this.getSessionLocal();
         Method method = this.popMethod();
         Object target = this.popTarget();
-        log.debug("[After] {}.{}(-)", target.getClass().getSimpleName(), method.getName());
-        if (sessionLocal.get() != null && !sessionLocal.get().getClosed()) {
+        LOGGER.debug("[After] {}.{}(-)", target.getClass().getSimpleName(), method.getName());
+        if (sessionLocal.get() != null) {
             //锁定开启事务的方法，提交事务
             if (this.getTransOnIndex() != null && this.getMethodLocal().size() == this.getTransOnIndex() && this.getTransOn()) {
                 sessionLocal.get().getTransaction().commit();
                 this.setTransOn(false);
             }
+
+            //清空service下repository们的thread local.
+            List<AbstractRepository> repositories = RepositoryFactory.getRepositories(target.getClass().getName());
+            if (repositories != null && repositories.size() > 0) {
+                repositories.forEach(AbstractRepository::pourSession);
+            }
+
             //关闭最外层session
             if (this.getMethodLocal().size() == 0) {
                 sessionLocal.get().close();
                 //清空切面中的thread local.
                 this.remove();
-            } else {
-                //清空service下repository们的thread local.
-                List<AbstractRepository> repositories = RepositoryFactory.getRepositories(target.getClass().getName());
-                if (repositories != null && repositories.size() > 0) {
-                    repositories.forEach(AbstractRepository::pourSession);
-                }
             }
         }
     }
@@ -100,7 +103,7 @@ public class ServiceAspect {
     @AfterThrowing(pointcut = "verify()", throwing = "exception")
     public void afterThrowing(Exception exception) throws Exception {
         ThreadLocal<Session> sessionLocal = this.getSessionLocal();
-        if (sessionLocal != null && sessionLocal.get() != null && !sessionLocal.get().getClosed()) {
+        if (sessionLocal != null && sessionLocal.get() != null) {
             if (this.getTransOn()) {
                 sessionLocal.get().getTransaction().rollBack();
                 this.setTransOn(false);
@@ -170,7 +173,7 @@ public class ServiceAspect {
                 repositories.forEach(repository -> repository.injectSession(sessionLocal.get()));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
     }
 

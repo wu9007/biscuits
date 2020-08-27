@@ -7,17 +7,17 @@ import java.util.List;
  */
 public class PageList<T> {
     private List<T> result;
-    private Long count;
+    private Number count;
 
     public PageList() {
     }
 
-    private PageList(List<T> result, Long count) {
+    private PageList(List<T> result, Number count) {
         this.result = result;
         this.count = count;
     }
 
-    public static <T> PageList<T> newInstance(List<T> result, long count) {
+    public static <T> PageList<T> newInstance(List<T> result, Number count) {
         return new PageList<T>(result, count);
     }
 
@@ -29,11 +29,11 @@ public class PageList<T> {
         this.result = result;
     }
 
-    public Long getCount() {
+    public Number getCount() {
         return count;
     }
 
-    public void setCount(Long count) {
+    public void setCount(Number count) {
         this.count = count;
     }
 }

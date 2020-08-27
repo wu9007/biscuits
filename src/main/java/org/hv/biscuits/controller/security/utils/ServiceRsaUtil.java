@@ -1,5 +1,8 @@
 package org.hv.biscuits.controller.security.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.crypto.Cipher;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -13,6 +16,7 @@ import java.util.Map;
  * @author leyan95
  */
 public class ServiceRsaUtil {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceRsaUtil.class);
 
     public static final String PUBLIC_KEY = "RSAPublicKey";
     public static final String PRIVATE_KEY = "RSAPrivateKey";
@@ -31,7 +35,7 @@ public class ServiceRsaUtil {
             KEY_MAP.put(PUBLIC_KEY, publicKey);
             KEY_MAP.put(PRIVATE_KEY, privateKey);
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
     }
 

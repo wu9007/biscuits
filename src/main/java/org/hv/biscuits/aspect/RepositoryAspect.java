@@ -18,6 +18,8 @@ import org.hv.pocket.model.DetailInductiveBox;
 import org.hv.pocket.model.MapperFactory;
 import org.hv.pocket.session.Session;
 import org.hv.pocket.utils.ReflectUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
@@ -48,6 +50,7 @@ import java.util.stream.Collectors;
 @Component
 public class RepositoryAspect {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(RepositoryAspect.class);
     private final Collector<HistoryData, ?, Map<String, Object>> flagBusinessCollector = Collectors.toMap(entityData ->
                     MapperFactory.getBusinessName(entityData.getNewEntity().getClass().getName(), entityData.field.getName()),
             entityData -> {
@@ -57,7 +60,7 @@ public class RepositoryAspect {
                     Object value = field.get(entityData.getNewEntity());
                     return value != null ? value : "---";
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    LOGGER.warn(e.getMessage());
                     return "---";
                 }
             });
@@ -88,14 +91,14 @@ public class RepositoryAspect {
                             List<AbstractEntity> newDetails = (List<AbstractEntity>) newValue;
                             List<AbstractEntity> oldDetails = (List<AbstractEntity>) oldValue;
                             DetailInductiveBox detailInductiveBox = DetailInductiveBox.newInstance(newDetails, oldDetails);
-                            List<Map> moribundDetailListContent = detailInductiveBox.getMoribund().stream()
+                            List<Map<String, Object>> moribundDetailListContent = detailInductiveBox.getMoribund().stream()
                                     .map(moribund -> this.getBusinessContent(null, moribund))
                                     .collect(Collectors.toList());
-                            List<Map> newbornDetailListContent = detailInductiveBox.getNewborn().stream()
+                            List<Map<String, Object>> newbornDetailListContent = detailInductiveBox.getNewborn().stream()
                                     .map(newborn -> this.getBusinessContent(newborn, null))
                                     .collect(Collectors.toList());
                             Map<String, AbstractEntity> olderMapper = oldDetails.stream().collect(Collectors.toMap(detail -> (String) detail.loadIdentify(), detail -> detail));
-                            List<Map> updateDetailListContent = detailInductiveBox.getUpdate().stream()
+                            List<Map<String, Object>> updateDetailListContent = detailInductiveBox.getUpdate().stream()
                                     .map(newDetail -> {
                                         AbstractEntity olderDetail = olderMapper.get(newDetail.loadIdentify());
                                         return this.getBusinessContent(newDetail, olderDetail);
@@ -122,7 +125,7 @@ public class RepositoryAspect {
                         throw new IllegalArgumentException("非法参数");
                     }
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    LOGGER.warn(e.getMessage());
                     return "警告⚠该条数据不合法";
                 }
             }, (u, v) -> {
@@ -190,7 +193,7 @@ public class RepositoryAspect {
         }
         Object result = joinPoint.proceed();
         if (entity.loadIdentify() != null) {
-            newEntity = (AbstractEntity) session.findDirect(entity.getClass(), entity.loadIdentify());
+            newEntity = session.findDirect(entity.getClass(), entity.loadIdentify());
         } else {
             newEntity = entity;
         }
@@ -200,8 +203,8 @@ public class RepositoryAspect {
 
     private void saveHistory(AbstractEntity olderEntity, AbstractEntity newEntity, Session session, String operateName, String operate, String operator) throws SQLException {
 
-        Class clazz = newEntity != null ? newEntity.getClass() : olderEntity.getClass();
-        Entity entityAnnotation = (Entity) clazz.getAnnotation(Entity.class);
+        Class<?> clazz = newEntity != null ? newEntity.getClass() : olderEntity.getClass();
+        Entity entityAnnotation = clazz.getAnnotation(Entity.class);
 
         if (entityAnnotation != null) {
             String tableBusinessName = entityAnnotation.businessName();
@@ -230,12 +233,15 @@ public class RepositoryAspect {
                     throw new IllegalArgumentException(String.format("%s - 该操作不产生历史数据。", operate));
             }
 
+            ObjectMapper objectMapper = new ObjectMapper();
+            String businessUuid = newEntity != null ? (String) newEntity.loadIdentify() : (String) olderEntity.loadIdentify();
+            History history = null;
             try {
-                ObjectMapper objectMapper = new ObjectMapper();
-                Objects.requireNonNull(session).save(new History(operate, new Date(), operator, newEntity != null ? (String) newEntity.loadIdentify() : (String) olderEntity.loadIdentify(), objectMapper.writeValueAsString(operateContent)));
+                history = new History(operate, new Date(), operator, businessUuid, objectMapper.writeValueAsString(operateContent));
             } catch (JsonProcessingException e) {
-                e.printStackTrace();
+                LOGGER.warn(e.getMessage());
             }
+            Objects.requireNonNull(session).save(history);
         }
     }
 
