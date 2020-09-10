@@ -10,19 +10,19 @@ public class PermissionView implements Serializable {
     private String id;
     private String bundleId;
     private String name;
-    private String comment;
+    private String description;
 
     public PermissionView() {
     }
 
-    private PermissionView(String id, String name, String comment) {
+    private PermissionView(String id, String name, String description) {
         this.id = id;
         this.name = name;
-        this.comment = comment;
+        this.description = description;
     }
 
-    public static PermissionView newInstance(String id, String name, String comment) {
-        return new PermissionView(id, name, comment);
+    public static PermissionView newInstance(String id, String name, String description) {
+        return new PermissionView(id, name, description);
     }
 
     public String getId() {
@@ -49,11 +49,11 @@ public class PermissionView implements Serializable {
         this.name = name;
     }
 
-    public String getComment() {
-        return comment;
+    public String getDescription() {
+        return description;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

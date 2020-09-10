@@ -136,12 +136,12 @@ public class ActionHolder {
     /**
      * 注册的权限
      *
-     * @param id     权限编号
-     * @param name   权限名称
-     * @param common 描述
+     * @param id          权限编号
+     * @param name        权限名称
+     * @param description 描述
      */
-    public static void register(String id, String name, String common) {
-        PermissionView permissionView = PERMISSION_MAP.putIfAbsent(id, PermissionView.newInstance(id, name, common));
+    public static void register(String id, String name, String description) {
+        PermissionView permissionView = PERMISSION_MAP.putIfAbsent(id, PermissionView.newInstance(id, name, description));
         if (permissionView != null) {
             throw new IllegalArgumentException(String.format("权限重复 %s", permissionView.getId()));
         }
@@ -205,7 +205,7 @@ public class ActionHolder {
             // 数据库中已存在该bundle（更新）
             if (bundleMap.containsKey(bundleView.getBundleId())) {
                 bundle = bundleMap.get(bundleView.getBundleId());
-                if (!bundle.getBundleName().equals(bundleView.getBundleName()) || !bundle.getWithAuth().equals(bundleView.isWithAuth())) {
+                if (!Objects.equals(bundleView.getBundleName(), bundle.getBundleName()) || !Objects.equals(bundle.getWithAuth(), bundleView.isWithAuth())) {
                     bundle.setBundleName(bundleView.getBundleName());
                     bundle.setWithAuth(bundleView.isWithAuth());
                     this.session.update(bundle);
@@ -222,7 +222,7 @@ public class ActionHolder {
                     // 数据库中已存在该action（更新）
                     if (actionMap.containsKey(actionView.getActionId())) {
                         action = actionMap.get(actionView.getActionId());
-                        if (!action.getRequestMethod().equals(actionView.getRequestMethod()) || !Objects.equals(actionView.getAuthId(), action.getAuthId())) {
+                        if (!Objects.equals(action.getRequestMethod(), actionView.getRequestMethod()) || !Objects.equals(actionView.getAuthId(), action.getAuthId())) {
                             action.setAuthId(actionView.getAuthId());
                             action.setRequestMethod(actionView.getRequestMethod());
                             this.session.update(action);
@@ -260,17 +260,17 @@ public class ActionHolder {
                 String newBundleId = permissionView.getBundleId();
                 String oldBundleId = permission.getBundleId();
                 if (!Objects.equals(permission.getName(), permissionView.getName())
-                        || !Objects.equals(permission.getComment(), permissionView.getComment())
+                        || !Objects.equals(permission.getDescription(), permissionView.getDescription())
                         || !Objects.equals(newBundleId, oldBundleId)) {
                     if (newBundleId != null) {
                         permission.setBundleId(newBundleId);
                     }
                     permission.setName(permissionView.getName());
-                    permission.setComment(permissionView.getComment());
+                    permission.setDescription(permissionView.getDescription());
                     this.session.update(permission);
                 }
             } else {
-                permission = new Authority(serviceId, permissionView.getBundleId(), permissionView.getId(), permissionView.getName(), permissionView.getComment());
+                permission = new Authority(serviceId, permissionView.getBundleId(), permissionView.getId(), permissionView.getName(), permissionView.getDescription());
                 this.session.save(permission);
             }
         }

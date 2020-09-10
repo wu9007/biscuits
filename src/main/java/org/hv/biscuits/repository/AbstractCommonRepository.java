@@ -7,8 +7,11 @@ import org.hv.pocket.criteria.Criteria;
 import org.hv.pocket.model.AbstractEntity;
 import org.hv.biscuits.annotation.Track;
 import org.hv.biscuits.controller.FilterView;
+import org.hv.pocket.model.DetailInductiveBox;
+import org.hv.pocket.model.MapperFactory;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.sql.SQLException;
@@ -60,19 +63,13 @@ public abstract class AbstractCommonRepository<T extends AbstractEntity> extends
     @Override
     @Track(data = "#obj", operateName = "#trackDescription", operator = "#trackOperator", operate = OperateEnum.ADD)
     public int saveWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException {
-        if (obj instanceof AbstractWithOperatorEntity) {
-            ((AbstractWithOperatorEntity) obj).setLastOperator(trackOperator).setLastOperationTime(LocalDateTime.now());
-        }
-        return this.save(obj, cascade);
+        return this.saveWithTrack(obj, false, cascade, trackOperator);
     }
 
     @Override
     @Track(data = "#obj", operateName = "#trackDescription", operator = "#trackOperator", operate = OperateEnum.ADD)
     public int forcibleSaveWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException {
-        if (obj instanceof AbstractWithOperatorEntity) {
-            ((AbstractWithOperatorEntity) obj).setLastOperator(trackOperator).setLastOperationTime(LocalDateTime.now());
-        }
-        return this.forcibleSave(obj, cascade);
+        return this.saveWithTrack(obj, true, cascade, trackOperator);
     }
 
     @Override
@@ -80,6 +77,25 @@ public abstract class AbstractCommonRepository<T extends AbstractEntity> extends
     public int updateWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException {
         if (obj instanceof AbstractWithOperatorEntity) {
             ((AbstractWithOperatorEntity) obj).setLastOperator(trackOperator).setLastOperationTime(LocalDateTime.now());
+            Field[] detailField = MapperFactory.getOneToMayFields(obj.getClass().getName());
+            if (cascade && detailField.length > 0) {
+                T older = this.findOne(((AbstractWithOperatorEntity) obj).getUuid());
+                for (Field field : detailField) {
+                    Class<?> detailClazz = MapperFactory.getDetailClass(field.getDeclaringClass().getName(), field.getName());
+                    if (AbstractWithOperatorEntity.class.isAssignableFrom(detailClazz)) {
+                        field.setAccessible(true);
+                        DetailInductiveBox detailBox = DetailInductiveBox.newInstance((List) field.get(obj), (List) field.get(older));
+                        List<? extends AbstractWithOperatorEntity> newbornDetails = (List) detailBox.getNewborn();
+                        for (AbstractWithOperatorEntity detail : newbornDetails) {
+                            detail.setLastOperator(trackOperator).setLastOperationTime(((AbstractWithOperatorEntity) obj).getLastOperationTime());
+                        }
+                        List<? extends AbstractWithOperatorEntity> updateDetails = (List) detailBox.getUpdate();
+                        for (AbstractWithOperatorEntity detail : updateDetails) {
+                            detail.setLastOperator(trackOperator).setLastOperationTime(((AbstractWithOperatorEntity) obj).getLastOperationTime());
+                        }
+                    }
+                }
+            }
         }
         return this.update(obj, cascade);
     }
@@ -91,43 +107,69 @@ public abstract class AbstractCommonRepository<T extends AbstractEntity> extends
     }
 
     @Override
-    public PageList<T> loadPage(FilterView filterView) throws SQLException {
-        return this.loadPage(filterView, false);
+    public PageList<T> loadPage(FilterView filterView, String... fieldNames) throws SQLException {
+        return this.loadPage(filterView, false, fieldNames);
     }
 
     @Override
-    public List<T> loadListByFilter(FilterView filterView) {
-        return this.loadListByFilter(filterView, false);
+    public List<T> loadListByFilter(FilterView filterView, String... fieldNames) {
+        return this.loadListByFilter(filterView, false, fieldNames);
     }
 
     @Override
-    public PageList<T> loadPageCascade(FilterView filterView) throws SQLException {
-        return this.loadPage(filterView, true);
+    public PageList<T> loadPageCascade(FilterView filterView, String... fieldNames) throws SQLException {
+        return this.loadPage(filterView, true, fieldNames);
     }
 
     @Override
-    public List<T> loadListCascadeByFilter(FilterView filterView) throws SQLException {
-        return this.loadListByFilter(filterView, true);
+    public List<T> loadListCascadeByFilter(FilterView filterView, String... fieldNames) throws SQLException {
+        return this.loadListByFilter(filterView, true, fieldNames);
     }
 
-    private PageList<T> loadPage(FilterView filterView, boolean cascade) throws SQLException {
+    private PageList<T> loadPage(FilterView filterView, boolean cascade, String... fieldNames) throws SQLException {
         Criteria criteria;
         if (filterView == null) {
             criteria = this.getSession().createCriteria(this.genericClazz);
         } else {
             criteria = filterView.createCriteria(this.getSession(), this.genericClazz);
         }
-        List<T> list = criteria.listNotCleanRestrictions(cascade);
+        List<T> list = criteria.specifyField(fieldNames).listNotCleanRestrictions(cascade);
         return PageList.newInstance(list, criteria.count());
     }
 
-    private List<T> loadListByFilter(FilterView filterView, boolean cascade) {
+    private List<T> loadListByFilter(FilterView filterView, boolean cascade, String... fieldNames) {
         Criteria criteria;
         if (filterView == null) {
             criteria = this.getSession().createCriteria(this.genericClazz);
         } else {
             criteria = filterView.createCriteria(this.getSession(), this.genericClazz);
         }
-        return criteria.list(cascade);
+        return criteria.specifyField(fieldNames).list(cascade);
+    }
+
+    private int saveWithTrack(T obj, boolean forcible, boolean cascade, String trackOperator) throws SQLException, IllegalAccessException {
+        if (obj instanceof AbstractWithOperatorEntity) {
+            ((AbstractWithOperatorEntity) obj).setLastOperator(trackOperator).setLastOperationTime(LocalDateTime.now());
+            Field[] detailField = MapperFactory.getOneToMayFields(obj.getClass().getName());
+            if (cascade && detailField.length > 0) {
+                for (Field field : detailField) {
+                    Class<?> detailClazz = MapperFactory.getDetailClass(field.getDeclaringClass().getName(), field.getName());
+                    if (AbstractWithOperatorEntity.class.isAssignableFrom(detailClazz)) {
+                        field.setAccessible(true);
+                        Iterable<? extends AbstractWithOperatorEntity> detailIterable = (Iterable) field.get(obj);
+                        if (detailIterable != null) {
+                            for (AbstractWithOperatorEntity detail : detailIterable) {
+                                detail.setLastOperator(trackOperator).setLastOperationTime(((AbstractWithOperatorEntity) obj).getLastOperationTime());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (forcible) {
+            return this.forcibleSave(obj, cascade);
+        } else {
+            return this.save(obj, cascade);
+        }
     }
 }

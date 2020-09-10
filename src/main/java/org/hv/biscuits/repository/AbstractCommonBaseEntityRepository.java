@@ -8,8 +8,6 @@ import org.hv.pocket.criteria.Criteria;
 import org.hv.pocket.model.AbstractEntity;
 
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.sql.SQLException;
 import java.util.List;
 

@@ -1,5 +1,6 @@
 package org.hv.biscuits.spine.utils;
 
+import org.hv.biscuits.annotation.Affairs;
 import org.hv.biscuits.annotation.Service;
 import org.hv.biscuits.service.AbstractService;
 import org.hv.biscuits.spine.model.Post;
@@ -33,8 +34,10 @@ public class UserQueryUtil extends AbstractService {
      * @return 人员集合
      * @throws SQLException e
      */
+    @Affairs(on = false)
     public List<User> getUserByActor(String bundleId, String actorId) throws SQLException {
         String sql = "SELECT DISTINCT " +
+                "    T5.UUID AS uuid, " +
                 "    T5.AVATAR AS avatar, " +
                 "    T5.STAFF_ID AS staffId, " +
                 "    T5.NAME AS name, " +
@@ -71,6 +74,7 @@ public class UserQueryUtil extends AbstractService {
      * @return 岗位集合
      * @throws SQLException e
      */
+    @Affairs(on = false)
     public List<Post> getPostByUserAvatar(String avatar) throws SQLException {
         String sql = "SELECT " +
                 "    T3.UUID AS uuid, " +
@@ -98,6 +102,7 @@ public class UserQueryUtil extends AbstractService {
      *
      * @return 人员集合
      */
+    @Affairs(on = false)
     public List<User> getAllUser() {
         return this.getSession().list(User.class, false);
     }

@@ -21,20 +21,20 @@ public class Authority extends AbstractBisEntity {
     private String id;
     @Column(name = "NAME")
     private String name;
-    @Column(name = "COMMENT")
-    private String comment;
+    @Column(name = "DESCRIPTION")
+    private String description;
     @OneToMany(clazz = RoleAuthRelation.class, bridgeField = "authUuid")
     private List<RoleAuthRelation> roleAuthRelationList;
 
     public Authority() {
     }
 
-    public Authority(String serviceId, String bundleId, String id, String name, String comment) {
+    public Authority(String serviceId, String bundleId, String id, String name, String description) {
         this.serviceId = serviceId;
         this.bundleId = bundleId;
         this.id = id;
         this.name = name;
-        this.comment = comment;
+        this.description = description;
     }
 
     public String getServiceId() {
@@ -69,12 +69,12 @@ public class Authority extends AbstractBisEntity {
         this.name = name;
     }
 
-    public String getComment() {
-        return comment;
+    public String getDescription() {
+        return description;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public List<RoleAuthRelation> getRoleAuthRelationList() {

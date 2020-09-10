@@ -7,17 +7,21 @@ import org.hv.pocket.identify.AbstractIdentifyGenerator;
 import org.hv.pocket.model.AbstractEntity;
 import org.hv.pocket.model.MapperFactory;
 import org.hv.pocket.session.Session;
-import org.hv.pocket.session.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-import java.sql.SQLException;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.UnaryOperator;
 
 /**
  * @author wujianchuan 2019/1/2
@@ -25,10 +29,16 @@ import java.util.concurrent.atomic.AtomicLong;
 @Component
 public class ServerTableStationDateGenerator extends AbstractIdentifyGenerator {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServerTableStationDateGenerator.class);
     @Value("${biscuits.serverId}")
     private int serverId;
     @Value("${biscuits.stationId}")
     private int stationId;
+    private static final UnaryOperator<BigInteger> INTEGER_UNARY_OPERATOR = (item) -> item.add(BigInteger.ONE);
+    /**
+     * 类名与类对应的数据库表编号
+     */
+    private static final Map<String, String> CLASS_ID_MAPPER = new HashMap<>(200);
 
     @Override
     public void setGeneratorId() {
@@ -36,51 +46,57 @@ public class ServerTableStationDateGenerator extends AbstractIdentifyGenerator {
     }
 
     @Override
-    public Serializable getIdentify(Class<? extends AbstractEntity> clazz, Session session) throws SQLException {
+    public Serializable getIdentify(Class<? extends AbstractEntity> clazz, Session session) {
         String tableName = MapperFactory.getTableName(clazz.getName());
-        AtomicLong serialNumber = POOL.getOrDefault(tableName, new AtomicLong(0L));
-        String preStr = String.format("%04d", serverId) + this.getTableId(clazz) + String.format("%05d", stationId) + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        AtomicReference<BigInteger> serialNumber = POOL.getOrDefault(tableName, new AtomicReference<>(BigInteger.ZERO));
+        String preStr = String.format("%04d", serverId) + this.getTableId(clazz, session) + String.format("%05d", stationId) + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         long baseIdentify = Long.parseLong("0");
-        if (serialNumber.get() == 0) {
+        if (serialNumber.get().compareTo(BigInteger.ZERO) == 0) {
             synchronized (this) {
-                serialNumber = POOL.getOrDefault(tableName, new AtomicLong(0L));
-                if (serialNumber.get() == 0) {
+                serialNumber = POOL.getOrDefault(tableName, new AtomicReference<>(BigInteger.ZERO));
+                if (serialNumber.get().compareTo(BigInteger.ZERO) == 0) {
                     Serializable maxIdentify = this.getTodayMaxIdentify(session, clazz, preStr);
                     if (maxIdentify != null) {
                         long maxSerialNumber = Long.parseLong(String.valueOf(maxIdentify).replace(preStr, ""));
-                        serialNumber.addAndGet(Math.max(maxSerialNumber, baseIdentify));
+                        serialNumber.set(new BigInteger(String.valueOf(Math.max(maxSerialNumber, baseIdentify))));
                     } else {
-                        serialNumber = new AtomicLong(baseIdentify);
+                        serialNumber = new AtomicReference<>(new BigInteger(String.valueOf(baseIdentify)));
                     }
+                    serialNumber.updateAndGet(INTEGER_UNARY_OPERATOR);
+                    POOL.put(tableName, serialNumber);
+                    return serialNumber;
+                } else {
+                    return serialNumber.updateAndGet(INTEGER_UNARY_OPERATOR);
                 }
-                serialNumber.incrementAndGet();
-                POOL.put(tableName, serialNumber);
-                return preStr + String.format("%06d", serialNumber.get());
             }
         } else {
-            return preStr + String.format("%06d", serialNumber.incrementAndGet());
+            return preStr + String.format("%06d", serialNumber.updateAndGet(INTEGER_UNARY_OPERATOR));
         }
     }
 
-    private Serializable getTodayMaxIdentify(Session session, Class<? extends AbstractEntity> clazz, String preStr) throws SQLException {
+    private Serializable getTodayMaxIdentify(Session session, Class<? extends AbstractEntity> clazz, String preStr) {
         String identifyFieldName = MapperFactory.getIdentifyFieldName(clazz.getName());
-        Criteria criteria = session.createCriteria(clazz)
+        Criteria criteria = session.createCriteria(clazz).specifyField("uuid")
                 .add(Restrictions.like(identifyFieldName, preStr + "%"));
         List<AbstractEntity> list = criteria.list();
-        return list.stream().map(item -> Integer.parseInt(((String) item.loadIdentify()).replace(preStr, ""))).max(Comparator.naturalOrder()).orElse(0);
+        int maxNumber = list.stream().map(item -> Integer.parseInt(((String) item.loadIdentify()).replace(preStr, ""))).max(Comparator.naturalOrder()).orElse(0);
+        LOGGER.debug("获取的 {} 中最大序号为 >>> {}", clazz.getSimpleName(), maxNumber);
+        return maxNumber;
     }
 
-    private String getTableId(Class<? extends AbstractEntity> clazz) throws SQLException {
-        Session session = SessionFactory.getSession("biscuits");
-        session.open();
+    private String getTableId(Class<? extends AbstractEntity> clazz, Session session) {
+        String tableId = CLASS_ID_MAPPER.get(clazz.getName());
+        if (tableId != null) {
+            return tableId;
+        }
         String tableName = MapperFactory.getTableName(clazz.getName());
-        Criteria criteria = session.createCriteria(TableNameId.class);
-        criteria.add(Restrictions.equ("tableName", tableName));
+        Criteria criteria = session.createCriteria(TableNameId.class)
+                .add(Restrictions.equ("tableName", tableName));
         TableNameId tableNameId = criteria.unique();
-        session.close();
         if (tableNameId == null) {
             throw new NullPointerException(String.format("数据库表T_TABLE_NAME_ID中未找到TABLE_NAME为%s的数据", tableName));
         }
+        CLASS_ID_MAPPER.put(clazz.getName(), tableNameId.getTableId());
         return tableNameId.getTableId();
     }
 }

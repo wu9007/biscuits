@@ -1,8 +1,8 @@
 package org.hv.biscuits.repository;
 
-import org.hv.pocket.model.AbstractEntity;
 import org.hv.biscuits.controller.FilterView;
 import org.hv.biscuits.service.PageList;
+import org.hv.pocket.model.AbstractEntity;
 
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -13,72 +13,72 @@ import java.util.List;
  */
 public interface CommonRepository<T extends AbstractEntity> {
     /**
-     * Select data by identify (Default with querying subsets).
+     * 根据数据标识加载数据 (默认级联查询).
      *
-     * @param uuid Primary Key
+     * @param uuid 数据标识
      * @return T
      * @throws SQLException e
      */
     T findOne(Serializable uuid) throws SQLException;
 
     /**
-     * Load all data
+     * 加载所有数据
      *
-     * @return List<T
+     * @return List
      */
     List<T> findAll();
 
     /**
-     * Save
+     * 保存（字段为空的字段不进行保存）数据
      *
-     * @param obj     New object who extend {@link AbstractEntity}
-     * @param cascade With save subsets
-     * @return Number of rows affected
+     * @param obj     需要保存的持久化实例数据，该实例类型必须继承自 {@link AbstractEntity}
+     * @param cascade 是否级联更新
+     * @return 影响行数
      * @throws SQLException           e
      * @throws IllegalAccessException e
      */
     int save(T obj, boolean cascade) throws SQLException, IllegalAccessException;
 
     /**
-     * forcible save
+     * 强制（字段为空的字段也进行保存）保存数据
      *
-     * @param obj     New object who extend {@link AbstractEntity}
-     * @param cascade With save subsets
-     * @return Number of rows affected
+     * @param obj     需要保存的持久化实例数据，该实例类型必须继承自 {@link AbstractEntity}
+     * @param cascade 是否级联更新
+     * @return 影响行数
      * @throws SQLException           e
      * @throws IllegalAccessException e
      */
     int forcibleSave(T obj, boolean cascade) throws SQLException, IllegalAccessException;
 
     /**
-     * Update
+     * 更新数据
      *
-     * @param obj     Persisted object who extend {@link AbstractEntity}
-     * @param cascade With update subsets
-     * @return Number of rows affected
+     * @param obj     需要更新的持久化实例数据，该实例类型必须继承自 {@link AbstractEntity}
+     * @param cascade 是否级联更新
+     * @return 影响行数
      * @throws SQLException           e
      * @throws IllegalAccessException e
      */
     int update(T obj, boolean cascade) throws SQLException, IllegalAccessException;
 
     /**
-     * Delete
+     * 删除数据
      *
-     * @param obj Delete object who extend {@link AbstractEntity}
-     * @return Number of rows affected
+     * @param obj 需要删除的持久化实例数据，该实例类型必须继承自 {@link AbstractEntity}
+     * @return 影响行数
      * @throws SQLException           e
      * @throws IllegalAccessException e
      */
     int delete(T obj) throws SQLException, IllegalAccessException;
 
     /**
-     * Save With Track
+     * 保存（字段为空的字段不进行保存）数据 同时记录操作数据
      *
-     * @param obj              New object who extend {@link AbstractEntity}
-     * @param cascade          With save subsets
-     * @param trackOperator    Track Operator
-     * @param trackDescription Track Description
-     * @return Number of rows affected
+     * @param obj              需要保存的持久化实例数据，该实例类型必须继承自 {@link AbstractEntity}
+     * @param cascade          是否级联保存
+     * @param trackOperator    操作人
+     * @param trackDescription 操作描述
+     * @return 影响行数
      * @throws SQLException           e
      * @throws IllegalAccessException e
      */
@@ -86,38 +86,38 @@ public interface CommonRepository<T extends AbstractEntity> {
 
 
     /**
-     * Forcible Save With Track
+     * 强制保存（字段为空的字段也进行保存）数据 同时记录操作数据
      *
-     * @param obj              New object who extend {@link AbstractEntity}
-     * @param cascade          With save subsets
-     * @param trackOperator    Track Operator
-     * @param trackDescription Track Description
-     * @return Number of rows affected
+     * @param obj              需要保存的持久化实例数据，该实例类型必须继承自 {@link AbstractEntity}
+     * @param cascade          是否级联保存
+     * @param trackOperator    操作人
+     * @param trackDescription 操作描述
+     * @return 影响行数
      * @throws SQLException           e
      * @throws IllegalAccessException e
      */
     int forcibleSaveWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException;
 
     /**
-     * Update With Track
+     * 更新数据 同时记录操作数据
      *
-     * @param obj              Persisted object who extend {@link AbstractEntity}
-     * @param cascade          With update subsets
-     * @param operator         Operator
-     * @param trackDescription Track Description
-     * @return Number of rows affected
+     * @param obj              需要更新的持久化实例数据，该实例类型必须继承自 {@link AbstractEntity}
+     * @param cascade          是否级联更新
+     * @param operator         操作人
+     * @param trackDescription 操作描述
+     * @return 影响行数
      * @throws SQLException           e
      * @throws IllegalAccessException e
      */
     int updateWithTrack(T obj, boolean cascade, String operator, String trackDescription) throws SQLException, IllegalAccessException;
 
     /**
-     * Delete With Track
+     * 删除数据 同时记录操作数据
      *
-     * @param obj              Delete object who extend {@link AbstractEntity}
-     * @param operator         Operator
-     * @param trackDescription Track Description
-     * @return Number of rows affected
+     * @param obj              需要删除的持久化实例数据，该实例类型必须继承自 {@link AbstractEntity}
+     * @param operator         操作人
+     * @param trackDescription 操作描述
+     * @return 影响行数
      * @throws SQLException           e
      * @throws IllegalAccessException e
      */

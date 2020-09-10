@@ -302,3 +302,55 @@ public class OrderType {
 ```java
 loadPage(FilterView filterView, String... fieldNames)
 ```
+
+## 0.2.76.PRE -2020/09/04
+- PREF 同一个映射类中不可以存在相同的businessName。
+
+## 0.3.0.PRE -2020/09/07
+- FIX: 修复主键生成策略。
+
+## 0.3.2.PRE -2020/09/09
+- FIX: 加载分工人员数据。
+
+## 0.3.3.PRE -2020/09/10
+- FIX: 修复事务管理切面。
+
+## 0.3.6.PRE -2020/09/10
+- PERF: 重构数据库会话及事务管理功能，@Affair注解可以在应用层、业务层、数据持久层使用，如果出现事务嵌套只开启最外层事务。
+> 注意：<br/>
+>可在 @Affair、@Service、@Session注解中设置数据库会话名称（优先级从高到低）
+
+#### 使用方式
+```java
+// 第一种：
+@Controller(bundleId = "post_setting", name = "岗位管理")
+public class PostSettingController {
+
+    @Affairs(on = false, sessionName = "biscuits")
+    @Action(actionId = "list_post", method = RequestMethod.POST)
+    public Body listPost(@RequestBody FilterView filterView){
+        // do something...
+    }
+}
+// 第二种：
+@Session(sessionName = "biscuits")
+@Controller(bundleId = "post_setting", name = "岗位管理")
+public class PostSettingController {
+
+    @Action(actionId = "list_post", method = RequestMethod.POST)
+    public Body listPost(@RequestBody FilterView filterView){
+        // do something...
+    }
+}
+// 第三种：
+@Service(session = "biscuits")
+public class PostServiceImpl extends AbstractService implements PostService {
+
+    @Override
+    @Affairs(on = false)
+    public List<MenuNode> getGroupTree(String serviceId) {
+        // do something...
+    }
+
+}
+```

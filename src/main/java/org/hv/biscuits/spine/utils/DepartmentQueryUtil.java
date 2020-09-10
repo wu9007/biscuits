@@ -1,5 +1,6 @@
 package org.hv.biscuits.spine.utils;
 
+import org.hv.biscuits.annotation.Affairs;
 import org.hv.biscuits.annotation.Service;
 import org.hv.biscuits.service.AbstractService;
 import org.hv.biscuits.spine.model.Department;
@@ -21,6 +22,7 @@ public class DepartmentQueryUtil extends AbstractService {
      * @param stationUuid 站数据标识
      * @return 部门树
      */
+    @Affairs(on = false)
     public List<TreeNode> getDepartmentTreeByStationUuid(String stationUuid) {
         List<Department> departments = this.getSession().list(Department.class);
         return this.generateDepartmentTree(
@@ -41,6 +43,7 @@ public class DepartmentQueryUtil extends AbstractService {
      * @param stationUuid 站标识
      * @return 部门下拉集合
      */
+    @Affairs(on = false)
     public List<Pair> pairsDepartment(String stationUuid) {
         List<Department> departments = this.getSession().list(Department.class);
         return departments.stream()
