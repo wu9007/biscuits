@@ -53,9 +53,11 @@ public class ActiveSessionCenter {
     /**
      * 在当前线程执行完每个方法的时候需要注销登记，
      * 如果是首节点则关闭当前线程与数据库的当前的会话
+     *
+     * @param enableTransaction 是否开启事务
      */
-    public static void cancelTheRegistration() {
-        TransactionHolder.proProcess();
+    public static void cancelTheRegistration(boolean enableTransaction) {
+        TransactionHolder.proProcess(enableTransaction);
         Integer methodNodeSerialNum = METHOD_NODE_NUMBER_THREAD_LOCAL.get();
         if (methodNodeSerialNum == 0) {
             closeAndRemove();
@@ -67,12 +69,19 @@ public class ActiveSessionCenter {
     /**
      * 在当前线程在开启数据库会话并遇到异常时进行处理
      *
-     * @param throwable 异常
+     * @param enableTransaction 是否开启事务
+     * @param throwable         异常
      */
-    public static void handleException(Throwable throwable) {
-        LOGGER.error(throwable.getMessage());
-        TransactionHolder.exceptionProcess();
-        closeAndRemove();
+    public static void handleException(Throwable throwable, boolean enableTransaction) {
+        TransactionHolder.exceptionProcess(enableTransaction);
+        Integer methodNodeSerialNum = METHOD_NODE_NUMBER_THREAD_LOCAL.get();
+        // NOTE: 在最外层方法捕捉到异常后才进行会话及事务的关闭
+        if (methodNodeSerialNum == 0) {
+            LOGGER.error(throwable.getMessage());
+            closeAndRemove();
+        } else {
+            METHOD_NODE_NUMBER_THREAD_LOCAL.set(methodNodeSerialNum - 1);
+        }
     }
 
     /**

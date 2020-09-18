@@ -354,3 +354,15 @@ public class PostServiceImpl extends AbstractService implements PostService {
 
 }
 ```
+
+## 0.3.11.PRE -2020/09/11
+- PERF: 优化主键生成策略 ServerTableStationDateGenerator
+
+## 0.3.13.PRE -2020/09/11
+- PERF: 打印异常栈信息。
+- FIX: 在Affairs嵌套前提下，切面多次捕捉异常后多次关闭数据库会话异常问题。
+
+## 0.3.17.PRE -2020/09/16
+- 查询单条数据可使用limit
+- 修复事务提交和回滚问题
+- 添加原子更新方法`atomUpdateWithTrack`

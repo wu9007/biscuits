@@ -61,9 +61,9 @@ public class SessionAspect {
         try {
             ActiveSessionCenter.register(sessionName, enableTransaction);
             result = joinPoint.proceed();
-            ActiveSessionCenter.cancelTheRegistration();
+            ActiveSessionCenter.cancelTheRegistration(enableTransaction);
         } catch (Throwable throwable) {
-            ActiveSessionCenter.handleException(throwable);
+            ActiveSessionCenter.handleException(throwable, enableTransaction);
             throw throwable;
         } finally {
             LOGGER.debug("方法出栈 >>>> {}.{}({})", target.getClass().getName(), method.getName(), org.apache.commons.lang3.StringUtils.join(joinPoint.getArgs(), ","));

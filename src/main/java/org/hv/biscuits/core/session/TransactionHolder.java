@@ -42,15 +42,17 @@ public class TransactionHolder {
     /**
      * 在使用ActiveSession取消注册后执行事务的后置处理
      */
-    protected static void proProcess() {
-        Transaction transaction = TRANSACTION_THREAD_LOCAL.get();
-        if (transaction != null) {
-            int methodNodeNumber = METHOD_NODE_NUMBER_THREAD_LOCAL.get();
-            if (methodNodeNumber == 0) {
-                transaction.commit();
-                remove();
-            } else {
-                METHOD_NODE_NUMBER_THREAD_LOCAL.set(methodNodeNumber - 1);
+    protected static void proProcess(boolean enable) {
+        if (enable) {
+            Transaction transaction = TRANSACTION_THREAD_LOCAL.get();
+            if (transaction != null) {
+                int methodNodeNumber = METHOD_NODE_NUMBER_THREAD_LOCAL.get();
+                if (methodNodeNumber == 0) {
+                    transaction.commit();
+                    remove();
+                } else {
+                    METHOD_NODE_NUMBER_THREAD_LOCAL.set(methodNodeNumber - 1);
+                }
             }
         }
     }
@@ -58,11 +60,16 @@ public class TransactionHolder {
     /**
      * 在使用ActiveSession处理异常时执行事务的异常处理
      */
-    protected static void exceptionProcess() {
-        Transaction transaction = TRANSACTION_THREAD_LOCAL.get();
-        if (transaction != null) {
-            transaction.rollBack();
-            remove();
+    protected static void exceptionProcess(boolean enable) {
+        if (enable) {
+            int methodNodeNumber = METHOD_NODE_NUMBER_THREAD_LOCAL.get();
+            if (methodNodeNumber == 0) {
+                Transaction transaction = TRANSACTION_THREAD_LOCAL.get();
+                transaction.rollBack();
+                remove();
+            } else {
+                METHOD_NODE_NUMBER_THREAD_LOCAL.set(methodNodeNumber - 1);
+            }
         }
     }
 

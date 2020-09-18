@@ -112,6 +112,19 @@ public interface CommonRepository<T extends AbstractEntity> {
     int updateWithTrack(T obj, boolean cascade, String operator, String trackDescription) throws SQLException, IllegalAccessException;
 
     /**
+     * 原子性更新数据 同时记录操作数据
+     *
+     * @param newObj           新数据
+     * @param oldObj           老数据
+     * @param filedNameArray   需要更新和比较的字段
+     * @param operator         操作人
+     * @param trackDescription 操作描述
+     * @return 影响行数
+     * @throws SQLException e
+     */
+    int atomUpdateWithTrack(T newObj, T oldObj, String[] filedNameArray, String operator, String trackDescription) throws SQLException;
+
+    /**
      * 删除数据 同时记录操作数据
      *
      * @param obj              需要删除的持久化实例数据，该实例类型必须继承自 {@link AbstractEntity}

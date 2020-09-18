@@ -64,9 +64,9 @@ public class ServerTableStationDateGenerator extends AbstractIdentifyGenerator {
                     }
                     serialNumber.updateAndGet(INTEGER_UNARY_OPERATOR);
                     POOL.put(tableName, serialNumber);
-                    return serialNumber;
+                    return preStr + String.format("%06d", serialNumber.get());
                 } else {
-                    return serialNumber.updateAndGet(INTEGER_UNARY_OPERATOR);
+                    return preStr + String.format("%06d", serialNumber.updateAndGet(INTEGER_UNARY_OPERATOR));
                 }
             }
         } else {
@@ -88,15 +88,21 @@ public class ServerTableStationDateGenerator extends AbstractIdentifyGenerator {
         String tableId = CLASS_ID_MAPPER.get(clazz.getName());
         if (tableId != null) {
             return tableId;
+        } else {
+            synchronized (this) {
+                tableId = CLASS_ID_MAPPER.get(clazz.getName());
+                if (tableId == null) {
+                    String tableName = MapperFactory.getTableName(clazz.getName());
+                    Criteria criteria = session.createCriteria(TableNameId.class)
+                            .add(Restrictions.equ("tableName", tableName));
+                    TableNameId tableNameId = criteria.unique();
+                    if (tableNameId == null) {
+                        throw new NullPointerException(String.format("数据库表T_TABLE_NAME_ID中未找到TABLE_NAME为%s的数据", tableName));
+                    }
+                    CLASS_ID_MAPPER.put(clazz.getName(), tableNameId.getTableId());
+                }
+                return CLASS_ID_MAPPER.get(clazz.getName());
+            }
         }
-        String tableName = MapperFactory.getTableName(clazz.getName());
-        Criteria criteria = session.createCriteria(TableNameId.class)
-                .add(Restrictions.equ("tableName", tableName));
-        TableNameId tableNameId = criteria.unique();
-        if (tableNameId == null) {
-            throw new NullPointerException(String.format("数据库表T_TABLE_NAME_ID中未找到TABLE_NAME为%s的数据", tableName));
-        }
-        CLASS_ID_MAPPER.put(clazz.getName(), tableNameId.getTableId());
-        return tableNameId.getTableId();
     }
 }
