@@ -15,4 +15,4 @@
 - [x] 针对数据库表结构的DDL语句进行持久化（以便于升级或变更数据库表结构时支持可重复执行）
 
 ## 文档
-[Pocket DOC](pages/pocket_why)
+[Pocket DOC](pages/pocket-doc)
