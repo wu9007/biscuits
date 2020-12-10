@@ -4,4 +4,5 @@
 > If you have any improvement, I will be happy to get a pull request from you!
 
 [GitHub](https://github.com/leyan95/biscuits/)
-[Get Started](/pages/get-start)
+
+[Get Started](/pages/pocket-why)
