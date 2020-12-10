@@ -1,12 +1,12 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
-apply plugin: 'maven'
+apply plugin: 'jdepend'
 apply plugin: "jacoco"
 apply plugin: 'build-dashboard'
 apply plugin: 'maven-publish'
 
 group = 'com.github.leyan95'
-version = '0.3.19.PRE'
+version = '0.2.30.PRE'
 sourceCompatibility = 1.8
 
 compileJava {
@@ -19,12 +19,15 @@ compileTestJava {
 
 jar {
     manifest {
-        attributes 'Implementation-Title': 'biscuits',
+        attributes 'Implementation-Title': 'pocket',
                 'Implementation-Version': version
     }
 
-    exclude "biscuits.sql"
-    exclude "./docs"
+    exclude "org/hv/Application.class"
+    exclude "org/hv/demo"
+    exclude "application*.yml"
+    exclude "pocket.sql"
+    exclude "./hv.png"
 }
 
 javadoc {
@@ -35,55 +38,41 @@ test {
     exclude '*'
 }
 
-compileJava.dependsOn(processResources)
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-    maven { url 'https://jitpack.io' }
-}
-
-def pocketVersion = '0.2.5.PRE'
-
-dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web:2.0.6.RELEASE'
-    implementation 'org.springframework.boot:spring-boot-starter-aop:2.0.6.RELEASE'
-    implementation 'org.apache.rocketmq:rocketmq-spring-boot-starter:2.1.0'
-
-    implementation 'com.github.leyan95:pocket:' + pocketVersion
-    implementation 'io.jsonwebtoken:jjwt:0.9.1'
-    implementation 'com.google.code.findbugs:jsr305:3.0.2'
-    implementation 'mysql:mysql-connector-java:8.0.13'
-    implementation 'org.apache.httpcomponents:httpclient:4.5.6'
-    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor:2.1.1.RELEASE")
-    testImplementation('org.springframework.boot:spring-boot-starter-test:2.1.1.RELEASE')
-}
-
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
             pom.withXml {
-                def root = asNode()
-                root.remove(root.get("dependencies"))
-                def dependenciesNode = root.appendNode("dependencies")
-                def httpClientDependencyNode = dependenciesNode.appendNode('dependency')
-                httpClientDependencyNode.appendNode('groupId', 'org.apache.httpcomponents')
-                httpClientDependencyNode.appendNode('artifactId', 'httpclient')
-                httpClientDependencyNode.appendNode('version', '4.5.6')
-                def jwtDependencyNode = dependenciesNode.appendNode('dependency')
-                jwtDependencyNode.appendNode('groupId', 'io.jsonwebtoken')
-                jwtDependencyNode.appendNode('artifactId', 'jjwt')
-                jwtDependencyNode.appendNode('version', '0.9.1')
-                def aopDependencyNode = dependenciesNode.appendNode('dependency')
-                aopDependencyNode.appendNode('groupId', 'org.springframework.boot')
-                aopDependencyNode.appendNode('artifactId', 'spring-boot-starter-aop')
-                aopDependencyNode.appendNode('version', '2.1.1.RELEASE')
-                def pocketDependencyNode = dependenciesNode.appendNode('dependency')
-                pocketDependencyNode.appendNode('groupId', 'com.github.leyan95')
-                pocketDependencyNode.appendNode('artifactId', 'pocket')
-                pocketDependencyNode.appendNode('version', pocketVersion)
+                asNode().remove(asNode().get("dependencies"))
+                def dependenciesNode = asNode().appendNode("dependencies")
+                def lang3Node = dependenciesNode.appendNode('dependency')
+                lang3Node.appendNode('groupId', 'org.apache.commons')
+                lang3Node.appendNode('artifactId', 'commons-lang3')
+                lang3Node.appendNode('version', '3.8.1')
+                def guavaNode = dependenciesNode.appendNode('dependency')
+                guavaNode.appendNode('groupId', 'com.google.guava')
+                guavaNode.appendNode('artifactId', 'guava')
+                guavaNode.appendNode('version', '19.0')
             }
         }
     }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+compileJava.dependsOn(processResources)
+
+dependencies {
+    implementation('org.springframework.boot:spring-boot-starter-web:2.1.1.RELEASE')
+    implementation('org.springframework.boot:spring-boot-starter-aop:2.1.1.RELEASE')
+    implementation('org.apache.commons:commons-lang3:3.8.1')
+    implementation ('com.google.guava:guava:19.0')
+    implementation ('com.google.code.findbugs:jsr305:3.0.2')
+    implementation('mysql:mysql-connector-java:8.0.13')
+    implementation 'com.oracle:ojdbc6:11.2.0'
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor:2.1.1.RELEASE")
+    testImplementation('org.springframework.boot:spring-boot-starter-test:2.1.1.RELEASE')
 }
