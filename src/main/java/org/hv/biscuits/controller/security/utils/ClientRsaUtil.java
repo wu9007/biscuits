@@ -1,7 +1,5 @@
 package org.hv.biscuits.controller.security.utils;
 
-import sun.misc.BASE64Decoder;
-
 import javax.crypto.Cipher;
 import java.security.Key;
 import java.security.KeyFactory;
@@ -45,8 +43,8 @@ public class ClientRsaUtil {
 
     public static PublicKey buildPublicKey(String key) throws Exception {
         byte[] keyBytes;
-        keyBytes = (new BASE64Decoder()).decodeBuffer(key);
-//        keyBytes = java.util.Base64.getDecoder().decode(key);
+//        keyBytes = (new BASE64Decoder()).decodeBuffer(key);
+        keyBytes = java.util.Base64.getDecoder().decode(key);
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         return keyFactory.generatePublic(keySpec);
@@ -54,8 +52,8 @@ public class ClientRsaUtil {
 
     public static PrivateKey buildPrivateKey(String key) throws Exception {
         byte[] keyBytes;
-        keyBytes = (new BASE64Decoder()).decodeBuffer(key);
-//        keyBytes = java.util.Base64.getDecoder().decode(key);
+//        keyBytes = (new BASE64Decoder()).decodeBuffer(key);
+        keyBytes = java.util.Base64.getDecoder().decode(key);
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         return keyFactory.generatePrivate(keySpec);
