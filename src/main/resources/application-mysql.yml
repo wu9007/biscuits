@@ -1,3 +1,11 @@
+server:
+  port: 9081
+spring:
+  application:
+    name: bis1039
+biscuits:
+  serverId: "1039"
+  stationId: "00501"
 pocket:
   datasource:
     node:
@@ -30,10 +38,6 @@ pocket:
         cacheSize: 1000
         session: order,commodity
 
-server:
-  port: 8081
-  servlet:
-    context-path: /
 logging:
   level:
     org.hv: debug

@@ -1,21 +1,54 @@
 {
-  "groups": [
-    {
-      "name": "pocket",
-      "type": "org.hv.pocket.config.DatabaseConfig",
-      "sourceType": "org.hv.pocket.config.DatabaseConfig"
-    }
-  ],
   "properties": [
     {
-      "name": "pocket.datasource.node",
-      "type": "java.util.List<org.hv.pocket.config.DatabaseNodeConfig>",
-      "description": "java.util.List<org.homo.dbconnect.config.DatabaseNode>"
+      "name": "biscuits.cache.hostName",
+      "type": "java.lang.String",
+      "description": "base cache hostName."
     },
     {
-      "name": "pocket.datasource.node.cacheSize",
+      "name": "biscuits.cache.password",
+      "type": "java.lang.String",
+      "description": "base cache password."
+    },
+    {
+      "name": "biscuits.token.secret",
+      "type": "java.lang.String",
+      "description": "token secret code."
+    },
+    {
+      "name": "biscuits.token.expiration",
+      "type": "java.lang.Long",
+      "description": "token expiration."
+    },
+    {
+      "name": "biscuits.token.refreshTime",
+      "type": "java.lang.Long",
+      "description": "token refresh time."
+    },
+    {
+      "name": "biscuits.token.tokenHead",
+      "type": "java.lang.String",
+      "description": "token head."
+    },
+    {
+      "name": "biscuits.filter.turnOn",
+      "type": "java.lang.Boolean",
+      "description": "Do you want to turn on the filter."
+    },
+    {
+      "name": "biscuits.filter.excludeUrlPatterns",
+      "type": "java.lang.String",
+      "description": "application filter exclude url patterns."
+    },
+    {
+      "name": "biscuits.ws.port",
       "type": "java.lang.Integer",
-      "description": "cache size."
+      "description": "ws port."
+    },
+    {
+      "name": "biscuits.ws.single",
+      "type": "java.lang.Boolean",
+      "description": "ws single online."
     }
   ]
 }
