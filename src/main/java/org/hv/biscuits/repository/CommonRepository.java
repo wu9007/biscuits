@@ -72,70 +72,15 @@ public interface CommonRepository<T extends AbstractEntity> {
     int delete(T obj) throws SQLException, IllegalAccessException;
 
     /**
-     * 保存（字段为空的字段不进行保存）数据 同时记录操作数据
+     * 删除数据
      *
-     * @param obj              需要保存的持久化实例数据，该实例类型必须继承自 {@link AbstractEntity}
-     * @param cascade          是否级联保存
-     * @param trackOperator    操作人
-     * @param trackDescription 操作描述
+     * @param obj     需要删除的持久化实例数据，该实例类型必须继承自 {@link AbstractEntity}
+     * @param cascade 是否级联更新
      * @return 影响行数
      * @throws SQLException           e
      * @throws IllegalAccessException e
      */
-    int saveWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException;
-
-
-    /**
-     * 强制保存（字段为空的字段也进行保存）数据 同时记录操作数据
-     *
-     * @param obj              需要保存的持久化实例数据，该实例类型必须继承自 {@link AbstractEntity}
-     * @param cascade          是否级联保存
-     * @param trackOperator    操作人
-     * @param trackDescription 操作描述
-     * @return 影响行数
-     * @throws SQLException           e
-     * @throws IllegalAccessException e
-     */
-    int forcibleSaveWithTrack(T obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException;
-
-    /**
-     * 更新数据 同时记录操作数据
-     *
-     * @param obj              需要更新的持久化实例数据，该实例类型必须继承自 {@link AbstractEntity}
-     * @param cascade          是否级联更新
-     * @param operator         操作人
-     * @param trackDescription 操作描述
-     * @return 影响行数
-     * @throws SQLException           e
-     * @throws IllegalAccessException e
-     */
-    int updateWithTrack(T obj, boolean cascade, String operator, String trackDescription) throws SQLException, IllegalAccessException;
-
-    /**
-     * 原子性更新数据 同时记录操作数据
-     *
-     * @param newObj           新数据
-     * @param oldObj           老数据
-     * @param cascade          是否级联更新
-     * @param filedNameArray   需要更新和比较的字段
-     * @param operator         操作人
-     * @param trackDescription 操作描述
-     * @return 影响行数
-     * @throws SQLException e
-     */
-    int atomUpdateWithTrack(T newObj, T oldObj, boolean cascade, String[] filedNameArray, String operator, String trackDescription) throws Exception;
-
-    /**
-     * 删除数据 同时记录操作数据
-     *
-     * @param obj              需要删除的持久化实例数据，该实例类型必须继承自 {@link AbstractEntity}
-     * @param operator         操作人
-     * @param trackDescription 操作描述
-     * @return 影响行数
-     * @throws SQLException           e
-     * @throws IllegalAccessException e
-     */
-    int deleteWithTrack(T obj, String operator, String trackDescription) throws SQLException, IllegalAccessException;
+    int delete(T obj, boolean cascade) throws SQLException, IllegalAccessException;
 
     /**
      * 加载分页数据 非级联

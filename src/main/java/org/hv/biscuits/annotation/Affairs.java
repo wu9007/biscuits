@@ -14,16 +14,16 @@ import java.lang.annotation.Target;
 @Documented
 public @interface Affairs {
     /**
-     * 是否开启事务，默认开启
-     *
-     * @return 是否开启事务
-     */
-    boolean on() default true;
-
-    /**
      * 要建立的数据库会话名称，默认为空字符时则取通过其他方式获取sessionName
      *
      * @return 要建立的数据库会话名称
      */
     String sessionName() default "";
+
+    /**
+     * 是否开启事务，默认开启
+     *
+     * @return 是否开启事务
+     */
+    boolean on() default true;
 }

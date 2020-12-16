@@ -6,7 +6,7 @@ apply plugin: 'build-dashboard'
 apply plugin: 'maven-publish'
 
 group = 'com.github.leyan95'
-version = '0.4.29.PRE'
+version = '0.4.31.PRE'
 sourceCompatibility = 1.8
 
 compileJava {
@@ -40,9 +40,16 @@ test {
 compileJava.dependsOn(processResources)
 
 repositories {
+    maven {
+        url "${download_url}"
+        credentials {
+            username "${download_username}"
+            password "${download_password}"
+        }
+    }
+    mavenLocal()
     mavenCentral()
     maven { url 'https://jitpack.io' }
-    mavenLocal()
 }
 
 def pocketVersion = '0.2.30.PRE'
@@ -83,6 +90,17 @@ publishing {
                 pocketDependencyNode.appendNode('groupId', 'com.github.leyan95')
                 pocketDependencyNode.appendNode('artifactId', 'pocket')
                 pocketDependencyNode.appendNode('version', pocketVersion)
+            }
+        }
+    }
+    repositories {
+        repositories {
+            maven {
+                credentials {
+                    username "${upload_username}"
+                    password "${upload_password}"
+                }
+                url "${upload_url}"
             }
         }
     }

@@ -7,6 +7,7 @@ import org.hv.biscuits.spine.model.Department;
 import org.hv.biscuits.spine.model.DepartmentClassRelation;
 import org.hv.biscuits.spine.model.Pair;
 import org.hv.biscuits.spine.model.TreeNode;
+import org.hv.biscuits.spine.model.User;
 import org.hv.pocket.criteria.Criteria;
 import org.hv.pocket.criteria.Restrictions;
 
@@ -14,6 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -60,7 +62,24 @@ public class DepartmentQueryUtil extends AbstractService {
                                 department.setName(department.getName() + "(停用)");
                             }
                         }).collect(Collectors.toList()),
-                stationUuid
+                stationUuid, null, null
+        );
+    }
+
+    @Affairs(on = false)
+    public List<TreeNode> getDepartmentTreeWithUserByStationUuid(String stationUuid, List<String> checkedUserUuidList) {
+        List<User> users = this.getSession().list(User.class, false);
+        Map<String, List<User>> userMapper = users.stream().collect(Collectors.groupingBy(User::getDepartmentUuid));
+        List<Department> departments = this.getSession().list(Department.class);
+        return this.generateDepartmentTree(
+                departments.parallelStream()
+                        .sorted(Comparator.comparing(Department::getSort))
+                        .peek(department -> {
+                            if (!department.getEnable()) {
+                                department.setName(department.getName() + "(停用)");
+                            }
+                        }).collect(Collectors.toList()),
+                stationUuid, userMapper, checkedUserUuidList
         );
     }
 
@@ -79,13 +98,25 @@ public class DepartmentQueryUtil extends AbstractService {
                 .collect(Collectors.toList());
     }
 
-    private List<TreeNode> generateDepartmentTree(List<Department> departments, String parentId) {
+    private List<TreeNode> generateDepartmentTree(List<Department> departments, String parentId, Map<String/* department uuid */, List<User>/* user */> userMap, List<String> checkedUserUuidList) {
         return departments.stream().filter(department -> department.getParentUuid().equals(parentId))
                 .map(department -> {
                     TreeNode treeNode = new TreeNode();
                     treeNode.setLabel(department.getName());
                     treeNode.setValue(department.getUuid());
-                    List<TreeNode> treeNodes1 = generateDepartmentTree(departments, department.getUuid());
+                    if (userMap != null) {
+                        List<User> users = userMap.getOrDefault(department.getUuid(), new ArrayList<>());
+                        List<TreeNode> userTreeNodes = users.stream().map(user -> {
+                            TreeNode userTreeNode = new TreeNode();
+                            userTreeNode.setLabel(user.getName());
+                            userTreeNode.setValue(user.getUuid());
+                            userTreeNode.setLeaf(true);
+                            userTreeNode.setChecked(checkedUserUuidList != null && checkedUserUuidList.contains(user.getUuid()));
+                            return userTreeNode;
+                        }).collect(Collectors.toList());
+                        treeNode.setChildren(userTreeNodes);
+                    }
+                    List<TreeNode> treeNodes1 = generateDepartmentTree(departments, department.getUuid(), userMap, checkedUserUuidList);
                     if (treeNodes1.size() > 0) {
                         treeNode.setChildren(treeNodes1);
                     }

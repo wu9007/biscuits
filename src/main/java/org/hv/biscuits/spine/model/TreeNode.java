@@ -16,6 +16,7 @@ public class TreeNode extends Pair {
     private static final long serialVersionUID = 4169755587846928569L;
     private List<TreeNode> children;
     private boolean leaf;
+    private boolean checked;
 
     public List<TreeNode> getChildren() {
         return children;
@@ -31,5 +32,13 @@ public class TreeNode extends Pair {
 
     public void setLeaf(boolean leaf) {
         this.leaf = leaf;
+    }
+
+    public boolean isChecked() {
+        return checked;
+    }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
     }
 }

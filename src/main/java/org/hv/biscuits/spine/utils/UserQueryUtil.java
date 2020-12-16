@@ -6,11 +6,13 @@ import org.hv.biscuits.service.AbstractService;
 import org.hv.biscuits.spine.model.Department;
 import org.hv.biscuits.spine.model.Post;
 import org.hv.biscuits.spine.model.User;
+import org.hv.pocket.criteria.Restrictions;
 import org.hv.pocket.query.SQLQuery;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
 import java.sql.SQLException;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -133,5 +135,27 @@ public class UserQueryUtil extends AbstractService {
     @Affairs(on = false)
     public List<User> getAllUser() {
         return this.getSession().list(User.class, false);
+    }
+
+    /**
+     * 获取部门下的所有人员
+     *
+     * @return 人员集合
+     */
+    @Affairs(on = false)
+    public List<User> getUserByDeptUuid(String deptUuid) {
+        List<User> users = new LinkedList<>();
+        this.appendUser(users, deptUuid);
+        return users;
+    }
+
+    private void appendUser(List<User> users, String deptUuid) {
+        users.addAll(this.getSession().createCriteria(User.class).add(Restrictions.equ("departmentUuid", deptUuid)).list(false));
+        List<Department> departments = this.getSession().createCriteria(Department.class).add(Restrictions.equ("parentUuid", deptUuid)).list(false);
+        if (!departments.isEmpty()) {
+            for (Department item : departments) {
+                this.appendUser(users, item.getUuid());
+            }
+        }
     }
 }

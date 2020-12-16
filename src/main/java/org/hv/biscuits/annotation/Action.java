@@ -27,6 +27,8 @@ public @interface Action {
 
     String authId() default "";
 
+    String[] consumes() default {};
+
     @AliasFor(annotation = RequestMapping.class)
     String[] produces() default {"application/json; charset=UTF-8"};
 

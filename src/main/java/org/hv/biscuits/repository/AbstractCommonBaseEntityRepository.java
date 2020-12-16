@@ -1,7 +1,5 @@
 package org.hv.biscuits.repository;
 
-import org.hv.biscuits.annotation.Track;
-import org.hv.biscuits.constant.OperateEnum;
 import org.hv.biscuits.controller.FilterView;
 import org.hv.biscuits.service.PageList;
 import org.hv.pocket.criteria.Criteria;
@@ -51,25 +49,21 @@ public abstract class AbstractCommonBaseEntityRepository extends AbstractReposit
     }
 
     @Override
-    @Track(data = "#obj", operateName = "#trackDescription", operator = "#trackOperator", operate = OperateEnum.ADD)
     public int saveWithTrack(AbstractEntity obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException {
         return this.save(obj, cascade);
     }
 
     @Override
-    @Track(data = "#obj", operateName = "#trackDescription", operator = "#trackOperator", operate = OperateEnum.ADD)
     public int forcibleSaveWithTrack(AbstractEntity obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException {
         return this.forcibleSave(obj, cascade);
     }
 
     @Override
-    @Track(data = "#obj", operateName = "#trackDescription", operator = "#trackOperator", operate = OperateEnum.EDIT)
     public int updateWithTrack(AbstractEntity obj, boolean cascade, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException {
         return this.update(obj, cascade);
     }
 
     @Override
-    @Track(data = "#obj", operateName = "#trackDescription", operator = "#trackOperator", operate = OperateEnum.DELETE)
     public int deleteWithTrack(AbstractEntity obj, String trackOperator, String trackDescription) throws SQLException, IllegalAccessException {
         return this.delete(obj);
     }
