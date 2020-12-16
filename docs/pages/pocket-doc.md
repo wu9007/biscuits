@@ -262,7 +262,7 @@ Function<ResultSet, Order> mapperFunction = (resultSet) -> {
 Order order = processQuery.unique(mapperFunction);
 ```
 
-### Session 发放说明
+### Session 方法说明
 
 | **Modifier and Type** | **Method and Description** |  |
 | :---: | --- | --- |
