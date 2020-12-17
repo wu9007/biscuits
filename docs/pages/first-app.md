@@ -10,12 +10,11 @@
 ```
 
 ## 2.功能点实现
-> 实现订单的 分页查询、新增、修改、详情、删除 功能
+> 实现订单的 分页查询、新增 功能
 #### 在 model 目录下创建 `Order.java` 内容如下：
 ```java
 @Entity(table = "TBL_ORDER", businessName = "订单")
 public class Order extends BaseEntity {
-
     private static final long serialVersionUID = 1910123140032558152L;
     @Column
     private String code;
@@ -30,7 +29,6 @@ public class Order extends BaseEntity {
 ```java
 public interface OrderPersistencePort extends CommonRepository<Order> {
 }
-
 @Component
 public class OrderPersistence extends AbstractCommonRepository<Order> implements OrderPersistencePort {
 }
@@ -47,29 +45,10 @@ public class OrderController {
     public Body pageList(@RequestBody FilterView filterView){
         return Body.success().data(orderPersistence.loadPage(filterView));
     }
-    
     // 访问 ./order/add 需要用户拥有 order_manager 权限
     @Action(actionId = "add", authId = "order_manage", method = RequestMethod.POST)
     public Body add(@RequestBody Order order){
         return Body.success().data(orderPersistence.save(order));
-    }
-    
-    // 访问 ./order/update 需要用户拥有 order_manager 权限
-    @Action(actionId = "update", authId = "order_manage", method = RequestMethod.POST)
-    public Body update(@RequestBody Order order){
-        return Body.success().data(orderPersistence.update(order));
-    }
-    
-    // 访问 ./order/delete 需要用户拥有 order_manager 权限
-    @Action(actionId = "delete", authId = "order_manage", method = RequestMethod.POST)
-    public Body delete(@RequestBody Order order){
-        return Body.success().data(orderPersistence.delete(order));
-    }
-    
-    // 访问 ./order/detail 需要用户拥有 order_manager 权限
-    @Action(actionId = "detail", authId = "order_read")
-    public Body detail(@RequstParam String uuid){
-        return Body.success().data(orderPersistence.findOne(uuid));
     }
 }
 ```
