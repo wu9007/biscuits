@@ -147,12 +147,12 @@ public class IdGenerator {
                     case DAY:
                         break;
                     case MONTH:
-                        now = LocalDate.of(now.getYear(), now.getMonth(), 0);
-                        latestDate = LocalDate.of(latestDate.getYear(), latestDate.getMonth(), 0);
+                        now = LocalDate.of(now.getYear(), now.getMonth(), 1);
+                        latestDate = LocalDate.of(latestDate.getYear(), latestDate.getMonth(), 1);
                         break;
                     case YEAR:
-                        now = LocalDate.of(now.getYear(), Month.JANUARY, 0);
-                        latestDate = LocalDate.of(latestDate.getYear(), Month.JANUARY, 0);
+                        now = LocalDate.of(now.getYear(), Month.JANUARY, 1);
+                        latestDate = LocalDate.of(latestDate.getYear(), Month.JANUARY, 1);
                         break;
                     default:
                         throw new IllegalArgumentException(String.format("不支持的规则 - %s", resetRule));

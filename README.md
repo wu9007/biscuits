@@ -8,7 +8,6 @@
 
 ## Contents
 - [Quick Start](https://leyan95.github.io/biscuits/#/pages/get-start)
-- [Elaborate Tutoria](https://leyan95.github.io/biscuits/#/pages/step-by-step)
 - [Template](https://github.com/leyan95/bis-template)
 
 ## License

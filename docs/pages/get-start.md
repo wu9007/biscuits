@@ -4,12 +4,14 @@
 #### Add it in your root `build.gradle`:
 ```groovy
 repositories {
-    ...
+    mavenLocal()
+    mavenCentral()
     maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-        implementation 'com.github.leyan95:biscuits:0.1.2'
+        implementation 'com.github.leyan95:biscuits:0.4.29.PRE'
+        implementation 'com.github.leyan95:dipper:0.1.26.PRE'
 }
 ```
 #### If you use maven to manage project dependencies, Add it in your root `pom.xml`:
@@ -24,7 +26,13 @@ dependencies {
 <dependency>
     <groupId>com.github.leyan95</groupId>
     <artifactId>biscuits</artifactId>
-    <version>0.1.2</version>
+    <version>0.4.29</version>
+</dependency>
+
+<dependency>
+    <groupId>com.github.leyan95</groupId>
+    <artifactId>dipper</artifactId>
+    <version>0.1.26</version>
 </dependency>
 ```
 ## 2.Edit profile
@@ -41,18 +49,15 @@ server:
 ```json
 pocket:
   datasource:
-    serverId: 101
     node:
-      - url: jdbc:mysql://localhost:3306/demo?useUnicode=true&characterEncoding=UTF-8
-        nodeName: mysql-01
+      - url: jdbc:mysql://127.0.0.1:3306/demo?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8&useAffectedRows=true
+        nodeName: node-01
         driverName: com.mysql.cj.jdbc.Driver
         showSql: true
         user: root
         password: root
-        poolMiniSize: 10
-        poolMaxSize: 100
-        timeout: 1000
-        cacheSize: 1000
+        poolMiniSize: 5
+        poolMaxSize: 50
         session: biscuits
 ```
 #### Add configuration information related to permissions:
@@ -64,3 +69,6 @@ biscuits:
     refreshTime: 300000
     tokenHead: Bearer 
 ```
+
+#### Init database
+Run the SQL script [SQL](pages/bis.sql)

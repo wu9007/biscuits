@@ -6,7 +6,7 @@ apply plugin: 'build-dashboard'
 apply plugin: 'maven-publish'
 
 group = 'com.github.leyan95'
-version = '0.4.31.PRE'
+version = '0.4.33.PRE'
 sourceCompatibility = 1.8
 
 compileJava {
@@ -25,7 +25,6 @@ jar {
 
     exclude "org/hv/Application.class"
     exclude "application*.yml"
-    exclude "biscuits.sql"
     exclude "./docs"
 }
 
@@ -52,7 +51,7 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
-def pocketVersion = '0.2.30.PRE'
+def pocketVersion = '0.2.31.PRE'
 
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-web:2.1.1.RELEASE')

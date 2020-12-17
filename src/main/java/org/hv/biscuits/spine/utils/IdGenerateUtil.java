@@ -99,27 +99,22 @@ public class IdGenerateUtil {
     }
 
     private IdRule getRule(String billTypeCode, String sessionName) {
-        IdRule idRule;
-        Session parentSession = ActiveSessionCenter.getCurrentSession();
-        if (parentSession != null) {
-            idRule = parentSession.createCriteria(IdRule.class).add(Restrictions.equ("serviceId", serviceId)).add(Restrictions.equ("billType", billTypeCode)).unique();
-        } else {
-            Session newSession = SessionFactory.getSession(sessionName);
-            if (newSession == null) {
-                throw new SessionException("请正确开启数据库会话");
-            }
-            newSession.open();
-            idRule = newSession.createCriteria(IdRule.class).add(Restrictions.equ("serviceId", serviceId)).add(Restrictions.equ("billType", billTypeCode)).unique();
-            if (idRule == null) {
-                BillType billType = newSession.createCriteria(BillType.class).add(Restrictions.equ("code", billTypeCode)).unique();
-                if (billType == null) {
-                    throw new IllegalArgumentException(String.format("找不到 bill type code 为 %s 的单号生成规则", billTypeCode));
-                } else {
-                    throw new IllegalArgumentException(String.format("请先维护【%s】单据信息。", billType.getName()));
-                }
-            }
-            newSession.close();
+        Session newSession = SessionFactory.getSession(sessionName);
+        if (newSession == null) {
+            throw new SessionException("请正确开启数据库会话");
         }
+        newSession.open();
+        // 去掉系统区分条件，给billType添加唯一索引  .add(Restrictions.equ("serviceId", serviceId))
+        IdRule idRule = newSession.createCriteria(IdRule.class).add(Restrictions.equ("billType", billTypeCode)).unique();
+        if (idRule == null) {
+            BillType billType = newSession.createCriteria(BillType.class).add(Restrictions.equ("code", billTypeCode)).unique();
+            if (billType == null) {
+                throw new IllegalArgumentException(String.format("找不到 bill type code 为 %s 的单号生成规则", billTypeCode));
+            } else {
+                throw new IllegalArgumentException(String.format("请先维护【%s】单据信息。", billType.getName()));
+            }
+        }
+        newSession.close();
         return idRule;
     }
 }

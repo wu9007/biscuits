@@ -261,3 +261,11 @@ idGenerateUtil.generate("check", ConsultBean.class, "code", "TCK", false, "ibc")
 
 ## 公用方法
 `AbstractCommonRepository` 包含新建、更新、删除、分页查询（可根据明细数据进行过滤）、查询所有、查询单条数据等方法，并可选择是否级联
+
+```java
+public interface StationPersistencePort extends CommonRepository<Station> {
+}
+
+public class StationPersistenceImpl extends AbstractCommonRepository<Station> implements StationPersistencePort {
+}
+```
